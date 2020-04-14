@@ -1,0 +1,17 @@
+{% load static %}
+<html> 
+     <head> 
+      <title>Edit graph</title>
+         <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
+     </head> 
+     <body> 
+      <svg viewBox="0 0 25 15">
+        <rect x="0" y="0" height="10" width="10" fill="black" />
+        <circle cx="5" cy="5" r="4" fill="white"
+                pointer-events="visiblePoint" />
+        <rect x="10" y="0" height="10" width="10" fill="black" />
+        <circle cx="15" cy="5" r="4" fill="white"
+                pointer-events="none" />        
+      </svg>
+     </body> 
+ </html>        
