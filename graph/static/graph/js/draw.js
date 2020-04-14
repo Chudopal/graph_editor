@@ -1,3 +1,3 @@
-window.addEventListener('mousedown', (e) => {
-  alert("Good morning");
+window.addEventListener("mousedown", e=>{
+    d3.select("h1").style("color", "green");
 })
