@@ -7,22 +7,53 @@
      <body> 
       <div id="drawing">
         <svg id="draw" width="1000" height="900">
-          <rect x="0" y="0" height="900" width="1000" fill="black" />
-          <circle id ="ball" cx="20" cy="20" r="10" fill="white"
-                  pointer-events="visiblePoint" />
+          <rect x="0" y="0" height="900" width="1000" fill="DarkSlateGray" />
         </svg>
-      </div>
-      <script>
-        ns = 'http://www.w3.org/2000/svg';
+        <script>
+          ns = 'http://www.w3.org/2000/svg';
+        var balls = [];
         var draw = document.getElementById("draw");
         draw.addEventListener("dblclick", (e)=>{
           let ball = document.createElementNS(ns, 'circle');
           ball.setAttributeNS(null, 'cx', e.clientX);
           ball.setAttributeNS(null, 'cy', e.clientY);
           ball.setAttributeNS(null, 'r', 10);
-          ball.setAttributeNS(null, 'fill', "white");
-          draw.appendChild(ball);
+          ball.setAttributeNS(null, 'fill', "PapayaWhip");
+          balls.push(ball);
+          draw.append(ball);
+          
+          ball.addEventListener("mouseover", (e)=>{
+            ball.setAttributeNS(null, "fill", "Salmon");
+          })
+
+          ball.addEventListener("mouseout", (e) => {
+            ball.setAttributeNS(null, "fill", "PapayaWhip");
+          });
+          
+
+          ball.addEventListener("mousedown", (e) => {
+
+
+            draw.addEventListener("mousemove", function move(e){
+              ball.setAttributeNS(null, 'cx', e.clientX);
+              ball.setAttributeNS(null, 'cy', e.clientY);
+
+              draw.addEventListener("mouseup", function mouseup(e){
+                draw.removeEventListener("mousemove", move);
+                ball.setAttributeNS(null, 'cx', e.clientX);
+                ball.setAttributeNS(null, 'cy', e.clientY);
+
+
+                draw.addEventListener("mousedown", (e)=>{
+                  draw.removeEventListener("mouseup", mouseup);
+                });
+              });
+            });
+          });
+          
+          
         });
-      </script>
+        </script>
+      </div>
      </body> 
  </html> 
