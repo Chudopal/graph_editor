@@ -1,3 +1,3 @@
-window.addEventListener('mousedown', (e) => {
-  alert("Good morning");
-})
+ball.addEventListener("click", e=>{
+  alert("Hello");
+  });

@@ -2,12 +2,27 @@
 <html> 
      <head> 
       <title>Edit graph</title>
-         <script type="text/javascript" src={% static "graph/js/d3.min.js" %}></script>
          <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
-      </head> 
+     </head> 
      <body> 
-         <h1>Заголовок</h1>
-         <p>Текстик</p>
-
+      <div id="drawing">
+        <svg id="draw" width="1000" height="900">
+          <rect x="0" y="0" height="900" width="1000" fill="black" />
+          <circle id ="ball" cx="20" cy="20" r="10" fill="white"
+                  pointer-events="visiblePoint" />
+        </svg>
+      </div>
+      <script>
+        ns = 'http://www.w3.org/2000/svg';
+        var draw = document.getElementById("draw");
+        draw.addEventListener("dblclick", (e)=>{
+          let ball = document.createElementNS(ns, 'circle');
+          ball.setAttributeNS(null, 'cx', e.clientX);
+          ball.setAttributeNS(null, 'cy', e.clientY);
+          ball.setAttributeNS(null, 'r', 10);
+          ball.setAttributeNS(null, 'fill', "white");
+          draw.appendChild(ball);
+        });
+      </script>
      </body> 
- </html>        
+ </html> 
