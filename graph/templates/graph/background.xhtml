@@ -5,14 +5,17 @@
          <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
      </head> 
      <body> 
-        <svg id="draw" width="1000" height="900">
-          <rect x="0" y="0" height="900" width="1000" fill="DarkSlateGray" />
+        <svg id="draw" width="1000" height="900" style="background-color:#0B2F3A;" >
         </svg>
         <script>
           ns = 'http://www.w3.org/2000/svg';
           var balls = [];
+          var edges = [];
           var draw = document.getElementById("draw");
+          var isCreatingEdges = true;
           draw.addEventListener("dblclick", (e)=>{
+            
+            //var buffForEdge;
             let ball = document.createElementNS(ns, 'circle');
             ball.setAttributeNS(null, 'cx', e.clientX);
             ball.setAttributeNS(null, 'cy', e.clientY);
@@ -30,29 +33,57 @@
             });
             
             ball.addEventListener("click", (e)=>{
-              var triangle = document.createElement("polygon");
-              
-              draw.addEventListener("mousemove", (e)=>{
-                var coords =  e.clientX + "," + e.clientY;
-                var tgOfAngle = (Math.abs(Number(ball.getAttribute("cy") - e.clientY )) /
-                Math.abs(Number(ball.getAttribute('cx')) - e.clientX));
-                console.log(tgOfAngle);
-              });
+              var move;
+              if(isCreatingEdges){
+                isCreatingEdges = false;
+                var triangle = document.createElementNS(ns ,"polygon");
+                edges.push(triangle);
+                triangle.setAttributeNS(null, 'fill', '#8904B1');
+                triangle.setAttributeNS(null, 'stroke', '#B40486');
+                draw.prepend(triangle);
+                
+                draw.addEventListener("mousemove", move = function (e){
+                  var coords =  e.clientX + "," + e.clientY + " ";
+                  var tgOfAngle = Math.abs(Number(ball.getAttribute('cx')) - e.clientX) / 
+                  Math.abs(Number(ball.getAttribute("cy") - e.clientY ));
+                  var xDelta = Number(ball.getAttribute("r")) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
+                  var yDelta = xDelta*tgOfAngle;
+                  coords += (Number(ball.getAttribute('cx')) + xDelta) + "," +
+                  (Number(ball.getAttribute('cy')) - yDelta) +  " " +
+                  (Number(ball.getAttribute('cx')) - xDelta) + "," +
+                  (Number(ball.getAttribute('cy')) + yDelta);
+                  triangle.setAttributeNS(null, 'points', coords);
+                  balls.forEach(ball=>{
+                    ball.addEventListener("click", (e)=>{
+                      draw.removeEventListener("mousemove", move);  
+                    });
+                  });
+                  
+                });
+              } else{
+                  isCreatingEdges = true;
+                  var coords = edges[edges.length-1].getAttribute("points");
+                  for(let i = 0; i < coords.length; i++){
+                    if(coords[i] == " "){
+                      coords = ball.getAttribute("cx") + ',' + ball.getAttribute("cy") + coords.slice(i, coords.length);
+                      break;
+                    }
+                  }
+                  edges[edges.length-1].setAttributeNS(null, "points", coords);
+                }
             });
 
             ball.addEventListener("mousedown", function mousedown(e){
-
               var isClick = false;
-
               draw.addEventListener("mouseup", (e)=>{
                 isClick = true;
               });
 
-                draw.addEventListener("mousemove", function move(e){
-                  if(!isClick){
+              draw.addEventListener("mousemove", function move(e){
+                if(!isClick){
                   ball.setAttributeNS(null, 'cx', e.clientX);
                   ball.setAttributeNS(null, 'cy', e.clientY);
-                
+                  
                   draw.addEventListener("mouseup", function mouseup(e){
                     ball.setAttributeNS(null, 'cx', e.clientX);
                     ball.setAttributeNS(null, 'cy', e.clientY);
