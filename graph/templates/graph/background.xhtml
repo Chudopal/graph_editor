@@ -9,37 +9,92 @@
         </svg>
         <script>
           ns = 'http://www.w3.org/2000/svg';
+
+          
+          function Node(coordX, coordY){
+            this.edgesIn = [];
+            this.edgesOut = [];
+
+            this.ball = document.createElementNS(ns, 'circle');
+            this.ball.setAttributeNS(null, 'cx', coordX);
+            this.ball.setAttributeNS(null, 'cy', coordY);
+            this.ball.setAttributeNS(null, 'r', 10);
+            this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
+            draw.append(this.ball);
+
+          }
+
+          function Edge(node){
+            this.firstNode = node;
+            this.triangle = document.createElementNS(ns ,"polygon");
+            this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+            draw.prepend(triangle);
+            
+            this.setPosition = function(beginX, beginY, endX, endY, r){
+              var coords =  endX + "," + endY + " ";
+              var tgOfAngle = Math.abs(beginX - endX) / 
+              Math.abs(beginY - endY );
+              var xDelta = r / Math.sqrt(tgOfAngle*tgOfAngle + 1);
+              var yDelta = xDelta*tgOfAngle;
+              coords += (beginX + xDelta) + "," +
+              (beginY - yDelta) +  " " +
+              (beginX - xDelta) + "," +
+              (beginY + yDelta);
+              this.triangle.setAttributeNS(null, 'points', coords);
+            };
+
+            draw.addEventListener("mousemove", move = function (e){
+            this.calculatePosition(this.firstNode.ball.getAttribute("cx"),
+                                   this.firstNode.ball.getAttribute("cy"),
+                                   e.clientX,
+                                   e.clientY,
+                                   this.firstNode.ball.getAttribute("r"));
+            });
+          }
+
+
+
+
           var balls = [];
           var edges = [];
+
           var draw = document.getElementById("draw");
           var isCreatingEdges = true;
+
           draw.addEventListener("dblclick", (e)=>{
+
+            var node = new Node(e.clientX, e.clientY);
             
-            //var buffForEdge;
-            let ball = document.createElementNS(ns, 'circle');
-            ball.setAttributeNS(null, 'cx', e.clientX);
-            ball.setAttributeNS(null, 'cy', e.clientY);
-            ball.setAttributeNS(null, 'r', 10);
-            ball.setAttributeNS(null, 'fill', "PapayaWhip");
-            balls.push(ball);
-            draw.append(ball);
-            
-            ball.addEventListener("mouseover", (e)=>{
-              ball.setAttributeNS(null, "fill", "Salmon");
+            node.ball.addEventListener("mouseover", (e)=>{
+              node.ball.setAttributeNS(null, "fill", "#FA5858");
+              node.ball.setAttributeNS(null, "r", 20);
             });
           
-            ball.addEventListener("mouseout", (e) => {
-              ball.setAttributeNS(null, "fill", "PapayaWhip");
+            node.ball.addEventListener("mouseout", (e) => {
+              node.ball.setAttributeNS(null, "fill", "#F5A9A9");
+              node.ball.setAttributeNS(null, "r", 10);
             });
             
-            ball.addEventListener("click", (e)=>{
+
+            node.ball.addEventListener("click", (e)=>{
+              if(isCreatingEdges){
+                isCreatingEdges = false;
+                var edge = new Edge(node);
+                node.edgesOut.push(edge);
+              }else{
+                isCreatingEdges = true;
+                
+              }
+            });
+
+
+            /*node.ball.addEventListener("click", (e)=>{
               var move;
               if(isCreatingEdges){
                 isCreatingEdges = false;
                 var triangle = document.createElementNS(ns ,"polygon");
                 edges.push(triangle);
-                triangle.setAttributeNS(null, 'fill', '#8904B1');
-                triangle.setAttributeNS(null, 'stroke', '#B40486');
+                triangle.setAttributeNS(null, 'fill', '#F2F5A9');
                 draw.prepend(triangle);
                 
                 draw.addEventListener("mousemove", move = function (e){
@@ -58,7 +113,6 @@
                       draw.removeEventListener("mousemove", move);  
                     });
                   });
-                  
                 });
               } else{
                   isCreatingEdges = true;
@@ -71,6 +125,14 @@
                   }
                   edges[edges.length-1].setAttributeNS(null, "points", coords);
                 }
+            });*/
+
+            node.ball.addEventListener("click", (e)=>{
+              var move;
+              if(isCreatingEdges){
+                isCreatingEdges = false;
+                
+              }
             });
 
             ball.addEventListener("mousedown", function mousedown(e){
@@ -87,7 +149,6 @@
                   draw.addEventListener("mouseup", function mouseup(e){
                     ball.setAttributeNS(null, 'cx', e.clientX);
                     ball.setAttributeNS(null, 'cy', e.clientY);
-                    //console.log("Here");
                     draw.removeEventListener("mousemove", move);
                     draw.removeEventListener("mouseup", mouseup);            
                   });
