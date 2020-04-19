@@ -30,11 +30,41 @@
             this.ball.addEventListener("mouseover", (e)=>{
               this.ball.setAttributeNS(null, "fill", "#FA5858");
               this.ball.setAttributeNS(null, "r", 20);
+              this.edgesOut.forEach(element=>{
+                element.changeEdge = true;
+                element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
+                element.setPosition(
+                  this.ball.getAttribute("cx"),
+                  this.ball.getAttribute("cy"),
+                  element.secondNode.ball.getAttribute("cx"),
+                  element.secondNode.ball.getAttribute("cy"),
+                  this.ball.getAttribute("r")
+                );
+                element.changeEdge = false;
+              });
+              this.edgesIn.forEach(element=>{
+                element.triangle.setAttributeNS(null, "fill", "#F84040");
+              });
             });
           
             this.ball.addEventListener("mouseout", (e) => {
               this.ball.setAttributeNS(null, "fill", "#F5A9A9");
               this.ball.setAttributeNS(null, "r", 10);
+              this.edgesOut.forEach(element=>{
+                element.changeEdge = true;
+                element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
+                element.setPosition(
+                  this.ball.getAttribute("cx"),
+                  this.ball.getAttribute("cy"),
+                  element.secondNode.ball.getAttribute("cx"),
+                  element.secondNode.ball.getAttribute("cy"),
+                  this.ball.getAttribute("r")
+                );
+                element.changeEdge = false;
+              });
+              this.edgesIn.forEach(element=>{
+                element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
+              });
             });
 
             var mouseDown = false;
@@ -49,7 +79,30 @@
               if(mouseDown){
                 mouseMove = true;
                 this.ball.setAttributeNS(null, 'cx', e.clientX);
-                this.ball.setAttributeNS(null, 'cy', e.clientY); 
+                this.ball.setAttributeNS(null, 'cy', e.clientY);
+                this.ball.setAttributeNS(null, 'r', 20);
+                this.edgesIn.forEach(element => {
+                  element.changeEdge = true;
+                  element.setPosition(
+                    element.firstNode.ball.getAttribute("cx"),
+                    element.firstNode.ball.getAttribute("cy"),
+                    this.ball.getAttribute("cx"),
+                    this.ball.getAttribute("cy"),
+                    element.firstNode.ball.getAttribute("r")
+                  );
+                  element.changeEdge = false;
+                });
+                this.edgesOut.forEach(element => {
+                  element.changeEdge = true;
+                  element.setPosition(
+                    this.ball.getAttribute("cx"),
+                    this.ball.getAttribute("cy"),
+                    element.secondNode.ball.getAttribute("cx"),
+                    element.secondNode.ball.getAttribute("cy"),
+                    this.ball.getAttribute("r")
+                  );
+                  element.changeEdge = false;
+                });
               }
             });
 
@@ -69,6 +122,7 @@
                                                       this.ball.getAttribute("cx"),
                                                       this.ball.getAttribute("cy"),
                                                       10);
+                  edges[edges.length - 1].secondNode = this;
                   edges[edges.length - 1].changeEdge = false;
                   mouseMove = true;
                 }
@@ -86,6 +140,7 @@
 
           function Edge(node){
             this.firstNode = node;
+            this.secondNode;
             this.triangle = document.createElementNS(ns ,"polygon");
             this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
             draw.prepend(this.triangle);
@@ -111,6 +166,7 @@
                 (Number(beginY) - yDelta) +  " " +
                 (Number(beginX) - xDelta) + "," +
                 (Number(beginY) + yDelta);
+                console.log(coords);
                 this.triangle.setAttributeNS(null, 'points', coords);
               }
             };
