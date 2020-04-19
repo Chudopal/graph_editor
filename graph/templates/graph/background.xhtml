@@ -25,6 +25,7 @@
             this.ball.setAttributeNS(null, 'cy', coordY);
             this.ball.setAttributeNS(null, 'r', 10);
             this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
+            
             draw.append(this.ball);
 
             this.ball.addEventListener("mouseover", (e)=>{
@@ -143,9 +144,21 @@
             this.secondNode;
             this.triangle = document.createElementNS(ns ,"polygon");
             this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+            this.triangle.setAttributeNS(null, "stroke", "#F79F81");
+            this.line = document.createElementNS(ns ,"line");
+            this.line.setAttributeNS(null, "stroke", "#F79F81");
+            draw.prepend(this.line);
             draw.prepend(this.triangle);
             this.changeEdge = true;
-          
+
+            this.triangle.addEventListener("mouseover", (e)=>{
+              this.triangle.setAttributeNS(null, "fill", "#CEECF5");
+            });
+
+            this.triangle.addEventListener("mouseout", (e)=>{
+              this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+            });
+
             draw.addEventListener("mousemove", (e) => {
               this.setPosition(this.firstNode.ball.getAttribute("cx"),
                                this.firstNode.ball.getAttribute("cy"),
@@ -156,17 +169,22 @@
 
             this.setPosition = function(beginX, beginY, endX, endY, r){
               if(this.changeEdge){
+
+                this.line.setAttributeNS(null, "x1", Number(beginX));
+                this.line.setAttributeNS(null, "y1", Number(beginY));
+                this.line.setAttributeNS(null, "x2", Number(endX));
+                this.line.setAttributeNS(null, "y2", Number(endY));
+
                 var coords =  endX + "," + endY + " ";
                 var tgOfNearAngle = (beginY - endY) / 
                 (beginX - endX);
                 var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
-                var xDelta = r / Math.sqrt(tgOfAngle*tgOfAngle + 1);
+                var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
                 var yDelta = xDelta*tgOfAngle;
                 coords += (Number(beginX) + xDelta) + "," +
                 (Number(beginY) - yDelta) +  " " +
                 (Number(beginX) - xDelta) + "," +
                 (Number(beginY) + yDelta);
-                console.log(coords);
                 this.triangle.setAttributeNS(null, 'points', coords);
               }
             };
