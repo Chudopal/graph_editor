@@ -8,13 +8,19 @@
         <svg id="draw" width="1000" height="900" style="background-color:#0B2F3A;" >
         </svg>
         <script>
+          
           ns = 'http://www.w3.org/2000/svg';
 
+          var nodes = [];
+          var edges = [];
+
+          var draw = document.getElementById("draw");
+          var isCreatingEdges = true;
+          isClc = false;
           
           function Node(coordX, coordY){
             this.edgesIn = [];
             this.edgesOut = [];
-
             this.ball = document.createElementNS(ns, 'circle');
             this.ball.setAttributeNS(null, 'cx', coordX);
             this.ball.setAttributeNS(null, 'cy', coordY);
@@ -22,140 +28,96 @@
             this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
             draw.append(this.ball);
 
+            this.ball.addEventListener("mouseover", (e)=>{
+              this.ball.setAttributeNS(null, "fill", "#FA5858");
+              this.ball.setAttributeNS(null, "r", 20);
+            });
+          
+            this.ball.addEventListener("mouseout", (e) => {
+              this.ball.setAttributeNS(null, "fill", "#F5A9A9");
+              this.ball.setAttributeNS(null, "r", 10);
+            });
+
+            this.ball.addEventListener("click", (e)=>{
+              if(isClc){
+              if(isCreatingEdges){  
+                isCreatingEdges = false;
+                var edge = new Edge(this);
+                this.edgesOut.push(edge);
+                edges.push(edge);
+              }else{
+                isCreatingEdges = true;
+                this.edgesIn.push(edges[edges.length - 1]);
+                edges[edges.length - 1].setPosition(edges[edges.length - 1].firstNode.ball.getAttribute("cx"),
+                                                    edges[edges.length - 1].firstNode.ball.getAttribute("cy"),
+                                                    this.ball.getAttribute("cx"),
+                                                    this.ball.getAttribute("cy"),
+                                                    10);
+                edges[edges.length - 1].changeEdge = false;
+              }
+            }
+            });
+
+            this.ball.addEventListener("mousedown", (e)=>{
+              var isClick = false;
+              draw.addEventListener("mouseup", function mouseup(e){
+                isClick = true;
+                isClc = true;
+              });
+              draw.addEventListener("mousemove", (e)=>{
+                if(!isClick){
+                  this.ball.setAttributeNS(null, 'cx', e.clientX);
+                  this.ball.setAttributeNS(null, 'cy', e.clientY);
+                  
+                  this.ball.addEventListener("mouseup", (e)=>{
+                    this.ball.setAttributeNS(null, 'cx', e.clientX);
+                    this.ball.setAttributeNS(null, 'cy', e.clientY);     
+                  });
+                };
+              });
+            });
           }
+
 
           function Edge(node){
             this.firstNode = node;
             this.triangle = document.createElementNS(ns ,"polygon");
             this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
-            draw.prepend(triangle);
+            draw.prepend(this.triangle);
+            this.changeEdge = true;
+          
+            draw.addEventListener("mousemove", (e) => {
+                this.setPosition(this.firstNode.ball.getAttribute("cx"),
+                                 this.firstNode.ball.getAttribute("cy"),
+                                 e.clientX,
+                                 e.clientY,
+                                 this.firstNode.ball.getAttribute("r"));  
             
-            this.setPosition = function(beginX, beginY, endX, endY, r){
-              var coords =  endX + "," + endY + " ";
-              var tgOfAngle = Math.abs(beginX - endX) / 
-              Math.abs(beginY - endY );
-              var xDelta = r / Math.sqrt(tgOfAngle*tgOfAngle + 1);
-              var yDelta = xDelta*tgOfAngle;
-              coords += (beginX + xDelta) + "," +
-              (beginY - yDelta) +  " " +
-              (beginX - xDelta) + "," +
-              (beginY + yDelta);
-              this.triangle.setAttributeNS(null, 'points', coords);
-            };
+            }); 
 
-            draw.addEventListener("mousemove", move = function (e){
-            this.calculatePosition(this.firstNode.ball.getAttribute("cx"),
-                                   this.firstNode.ball.getAttribute("cy"),
-                                   e.clientX,
-                                   e.clientY,
-                                   this.firstNode.ball.getAttribute("r"));
-            });
+            this.setPosition = function(beginX, beginY, endX, endY, r){
+              if(this.changeEdge){
+                var coords =  endX + "," + endY + " ";
+                var tgOfNearAngle = (beginY - endY) / 
+                (beginX - endX);
+                var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
+                var xDelta = r / Math.sqrt(tgOfAngle*tgOfAngle + 1);
+                var yDelta = xDelta*tgOfAngle;
+                coords += (Number(beginX) + xDelta) + "," +
+                (Number(beginY) - yDelta) +  " " +
+                (Number(beginX) - xDelta) + "," +
+                (Number(beginY) + yDelta);
+                this.triangle.setAttributeNS(null, 'points', coords);
+              }
+            };
           }
 
 
-
-
-          var balls = [];
-          var edges = [];
-
-          var draw = document.getElementById("draw");
-          var isCreatingEdges = true;
-
           draw.addEventListener("dblclick", (e)=>{
-
             var node = new Node(e.clientX, e.clientY);
-            
-            node.ball.addEventListener("mouseover", (e)=>{
-              node.ball.setAttributeNS(null, "fill", "#FA5858");
-              node.ball.setAttributeNS(null, "r", 20);
-            });
-          
-            node.ball.addEventListener("mouseout", (e) => {
-              node.ball.setAttributeNS(null, "fill", "#F5A9A9");
-              node.ball.setAttributeNS(null, "r", 10);
-            });
-            
-
-            node.ball.addEventListener("click", (e)=>{
-              if(isCreatingEdges){
-                isCreatingEdges = false;
-                var edge = new Edge(node);
-                node.edgesOut.push(edge);
-              }else{
-                isCreatingEdges = true;
-                
-              }
-            });
-
-
-            /*node.ball.addEventListener("click", (e)=>{
-              var move;
-              if(isCreatingEdges){
-                isCreatingEdges = false;
-                var triangle = document.createElementNS(ns ,"polygon");
-                edges.push(triangle);
-                triangle.setAttributeNS(null, 'fill', '#F2F5A9');
-                draw.prepend(triangle);
-                
-                draw.addEventListener("mousemove", move = function (e){
-                  var coords =  e.clientX + "," + e.clientY + " ";
-                  var tgOfAngle = Math.abs(Number(ball.getAttribute('cx')) - e.clientX) / 
-                  Math.abs(Number(ball.getAttribute("cy") - e.clientY ));
-                  var xDelta = Number(ball.getAttribute("r")) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
-                  var yDelta = xDelta*tgOfAngle;
-                  coords += (Number(ball.getAttribute('cx')) + xDelta) + "," +
-                  (Number(ball.getAttribute('cy')) - yDelta) +  " " +
-                  (Number(ball.getAttribute('cx')) - xDelta) + "," +
-                  (Number(ball.getAttribute('cy')) + yDelta);
-                  triangle.setAttributeNS(null, 'points', coords);
-                  balls.forEach(ball=>{
-                    ball.addEventListener("click", (e)=>{
-                      draw.removeEventListener("mousemove", move);  
-                    });
-                  });
-                });
-              } else{
-                  isCreatingEdges = true;
-                  var coords = edges[edges.length-1].getAttribute("points");
-                  for(let i = 0; i < coords.length; i++){
-                    if(coords[i] == " "){
-                      coords = ball.getAttribute("cx") + ',' + ball.getAttribute("cy") + coords.slice(i, coords.length);
-                      break;
-                    }
-                  }
-                  edges[edges.length-1].setAttributeNS(null, "points", coords);
-                }
-            });*/
-
-            node.ball.addEventListener("click", (e)=>{
-              var move;
-              if(isCreatingEdges){
-                isCreatingEdges = false;
-                
-              }
-            });
-
-            ball.addEventListener("mousedown", function mousedown(e){
-              var isClick = false;
-              draw.addEventListener("mouseup", (e)=>{
-                isClick = true;
-              });
-
-              draw.addEventListener("mousemove", function move(e){
-                if(!isClick){
-                  ball.setAttributeNS(null, 'cx', e.clientX);
-                  ball.setAttributeNS(null, 'cy', e.clientY);
-                  
-                  draw.addEventListener("mouseup", function mouseup(e){
-                    ball.setAttributeNS(null, 'cx', e.clientX);
-                    ball.setAttributeNS(null, 'cy', e.clientY);
-                    draw.removeEventListener("mousemove", move);
-                    draw.removeEventListener("mouseup", mouseup);            
-                  });
-                }
-              });
-            });
+            nodes.push(node);
           });
+
         </script>
      </body> 
  </html> 
