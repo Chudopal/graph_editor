@@ -59,14 +59,31 @@ window.onload = function(){
     var mouseUp = false;
     var mouseMove = false;
     this.ball.oncontextmenu = (e)=>  { 
-      return false;
+        rightButton = true;
+        this.edgesIn.forEach(element=>{
+            element.line.remove();
+            element.triangle.remove();
+            edges.splice(edges.indexOf(element),edges.indexOf(element));
+            delete element;
+        });
+        this.edgesOut.forEach(element=>{
+            element.line.remove();
+            element.triangle.remove();
+            edges.splice(edges.indexOf(element), edges.indexOf(element));
+            delete element;
+        });
+        this.ball.remove();
+        nodes.splice(nodes.indexOf(this), nodes.indexOf(this));
+        delete this;
+        return false;
     };
     this.ball.addEventListener("mousedown", (e)=>{
-      rightButton = true;
-      mouseDown = true;
+      if(!rightButton){
+        mouseDown = true;
+      }
     });
     draw.addEventListener("mousemove", (e)=>{
-      if(mouseDown){
+      if(mouseDown && !rightButton){
         mouseMove = true;
         this.ball.setAttributeNS(null, 'cx', e.clientX);
         this.ball.setAttributeNS(null, 'cy', e.clientY);
@@ -96,6 +113,7 @@ window.onload = function(){
       }
     });
     this.ball.addEventListener("mouseup", (e)=>{
+        if(!rightButton){
       mouseUp = true;
       if(!mouseMove){
         if(isCreatingEdges){  
@@ -120,11 +138,15 @@ window.onload = function(){
         this.ball.setAttributeNS(null, 'cy', e.clientY);
         mouseMove = false;
       }
+    }
+      rightButton = false;
       mouseDown = false;
       mouseUp = false;
       mouseMove = false;
     });
   }
+
+
   function Edge(node){
     this.firstNode = node;
     this.secondNode;
@@ -149,6 +171,13 @@ window.onload = function(){
                        e.clientY,
                        this.firstNode.ball.getAttribute("r"));
     }); 
+    this.triangle.oncontextmenu = (e)=>  { 
+        this.triangle.remove();
+        this.line.remove();
+        edges.splice(edges.indexOf(this),edges.indexOf(this));
+        delete this;
+        return false;
+    };
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
         this.line.setAttributeNS(null, "x1", Number(beginX));
@@ -169,6 +198,8 @@ window.onload = function(){
       }
     };
   }
+
+
   draw.addEventListener("dblclick", (e)=>{
     var node = new Node(e.clientX, e.clientY);
     nodes.push(node);

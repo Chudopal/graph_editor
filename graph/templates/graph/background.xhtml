@@ -2,10 +2,18 @@
 <html> 
      <head> 
       <title>Edit graph</title>
-     </head> 
-     <body> 
-        <svg id="draw" width="1000" height="900" style="background-color:#0B2F3A;" >
-        </svg>
-        <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
+      <link rel="stylesheet" href="{% static 'graph/css/background.css' %}">
+    </head> 
+    <body> 
+      <svg id="draw" width="1000" height="900" style="background-color:#0B2F3A;" >
+      </svg>
+      <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
+      <div class="layer">
+        <h2>Duis te feugifacilisi</h2>
+        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diem 
+         nonummy nibh euismod tincidunt ut lacreet dolore magna aliguam erat volutpat. 
+         Ut wisis enim ad minim veniam, quis nostrud exerci tution ullamcorper suscipit 
+         lobortis nisl ut aliquip ex ea commodo consequat.</p>
+       </div> 
      </body> 
  </html> 
