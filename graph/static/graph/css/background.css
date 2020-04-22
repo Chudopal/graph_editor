@@ -1,8 +1,14 @@
+.show {
+    background-color: #0B4C5F;
+}
+
 .layer {
-    
+    background-color: #0B2F3A;
+    right: 50px;
+    top: 5px;
+    position: fixed;
     overflow: scroll; /* Добавляем полосы прокрутки */
-    width: 1000px; /* Ширина блока */
-    height: 100px; /* Высота блока */
-    padding: 5px; /* Поля вокруг текста */
-    border: solid 1px black; /* Параметры рамки */
-   } 
+    width: 700px; /* Ширина блока */
+    height: 900px; /* Высота блока */
+    } 
+
