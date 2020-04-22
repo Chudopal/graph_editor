@@ -85,8 +85,8 @@ window.onload = function(){
     draw.addEventListener("mousemove", (e)=>{
       if(mouseDown && !rightButton){
         mouseMove = true;
-        this.ball.setAttributeNS(null, 'cx', e.clientX);
-        this.ball.setAttributeNS(null, 'cy', e.clientY);
+        this.ball.setAttributeNS(null, 'cx', e.clientX -50);
+        this.ball.setAttributeNS(null, 'cy', e.clientY -1);
         this.ball.setAttributeNS(null, 'r', 20);
         this.edgesIn.forEach(element => {
           element.changeEdge = true;
@@ -134,8 +134,8 @@ window.onload = function(){
           mouseMove = true;
         }
       }else{
-        this.ball.setAttributeNS(null, 'cx', e.clientX);
-        this.ball.setAttributeNS(null, 'cy', e.clientY);
+        this.ball.setAttributeNS(null, 'cx', e.clientX-50);
+        this.ball.setAttributeNS(null, 'cy', e.clientY-1);
         mouseMove = false;
       }
     }
@@ -167,8 +167,8 @@ window.onload = function(){
     draw.addEventListener("mousemove", (e) => {
       this.setPosition(this.firstNode.ball.getAttribute("cx"),
                        this.firstNode.ball.getAttribute("cy"),
-                       e.clientX,
-                       e.clientY,
+                       e.clientX-50,
+                       e.clientY-1,
                        this.firstNode.ball.getAttribute("r"));
     }); 
     this.triangle.oncontextmenu = (e)=>  { 
@@ -201,7 +201,7 @@ window.onload = function(){
 
 
   draw.addEventListener("dblclick", (e)=>{
-    var node = new Node(e.clientX, e.clientY);
+    var node = new Node(e.clientX -50, e.clientY-1);
     nodes.push(node);
   });
 }
