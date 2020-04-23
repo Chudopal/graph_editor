@@ -5,17 +5,25 @@
       <link rel="stylesheet" href="{% static 'graph/css/background.css' %}">
     </head> 
     <body class="show"> 
-      <svg id="draw"  >
-      </svg>
-      <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
+
+      <div id="names">
+        <svg id="draw">
+
+        </svg>
+        
+      </div>
+
+
       <div class="layer">
         <div class="record">
           <h2 class="text">Duis te feugifacilisi</h2>
         </div>
+        
+      </div> 
+        <div class="buttons">
+      </div>
 
-        </div> 
-       <div class="buttons">
 
-       </div>
+      <script type="text/javascript" src={% static "graph/js/draw.js" %}></script>
      </body> 
  </html> 

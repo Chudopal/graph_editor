@@ -51,10 +51,35 @@
     color: rgb(255, 227, 227);
 }
 
-polygon{
-    color: #FE9A2E;
+#names{
+    width: 1100;
+    height: 900;
+    border: 1px solid #F5A9A9;
+    position: fixed;
+    left: 50;
 }
 
-#vertex{
-    fill: rgb(255, 227, 227);
-}
+/*#test{
+    position: fixed;
+    top: 800;
+    left: 1000;
+    color: seashell;
+}*/
+/*polygon{
+    color: #FE9A2E;
+}*/
+
+/*.vertex{
+    position: fixed;
+    top: 900; 
+    left: 1100;
+    color: seashell;
+}*/
+
+
+
+/*#hello{
+    position: fixed;
+    left: 500;
+    top:500;
+}*/

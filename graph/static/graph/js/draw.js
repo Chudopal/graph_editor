@@ -3,6 +3,7 @@ window.onload = function(){
   var nodes = [];
   var edges = [];
   var draw = document.getElementById("draw");
+  var names = document.getElementById("names");
   var isCreatingEdges = true;
   
   function Node(coordX, coordY){
@@ -14,21 +15,23 @@ window.onload = function(){
     this.ball.setAttributeNS(null, 'r', 10);
     this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
     
-    this.name = "vertex" + nodes.length;
-    this.text = document.createElementNS(ns, "text");
-    this.text.setAttributeNS(null, "x", coordX-15);
-    this.text.setAttributeNS(null, "y", coordY+30);
-    this.text.setAttributeNS(null, "id", "vertex");
-    //this.text.setAttributeNS(null, "color", "#F8ECE0");
-    this.text.innerHTML = this.name;
-    draw.append(this.text);
-
     
-    draw.append(this.ball);
+    this.text = document.createElement('p');
+    this.name = "vertex" + nodes.length;
+    this.text.innerHTML = this.name;
+    this.text.setAttributeNS(null, "contenteditable", "true");
+    this.text.setAttributeNS(null, "style", 
+      "position: fixed; top:" + (coordY + 10) + "; left: " + (coordX + 25) + "; color: seashell;");
+    names.append(this.text);
+    
+    draw.append(this.ball);  
     
     this.ball.addEventListener("mouseover", (e)=>{
       this.ball.setAttributeNS(null, "fill", "#FA5858");
       this.ball.setAttributeNS(null, "r", 20);
+      this.text.setAttributeNS(null, "style", 
+      "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: #FE2EC8; font-size:x-large;");
+      
       this.edgesOut.forEach(element=>{  
         element.changeEdge = true;
         element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
@@ -49,6 +52,8 @@ window.onload = function(){
     this.ball.addEventListener("mouseout", (e) => {
       this.ball.setAttributeNS(null, "fill", "#F5A9A9");
       this.ball.setAttributeNS(null, "r", 10);
+      this.text.setAttributeNS(null, "style", 
+      "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: seashell;");
       this.edgesOut.forEach(element=>{
         element.changeEdge = true;
         element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
@@ -99,6 +104,9 @@ window.onload = function(){
         this.ball.setAttributeNS(null, 'cx', e.clientX -50);
         this.ball.setAttributeNS(null, 'cy', e.clientY -1);
         this.ball.setAttributeNS(null, 'r', 20);
+        console.log(e.clientX + " " + e.clientY);
+        this.text.setAttributeNS(null, "style", 
+        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 20) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: seashell;");
         this.edgesIn.forEach(element => {
           element.changeEdge = true;
           element.setPosition(
@@ -147,6 +155,9 @@ window.onload = function(){
       }else{
         this.ball.setAttributeNS(null, 'cx', e.clientX-50);
         this.ball.setAttributeNS(null, 'cy', e.clientY-1);
+        this.text.setAttributeNS(null, "style",   
+      "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 20) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: seashell;");
+      
         mouseMove = false;
       }
     }
