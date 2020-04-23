@@ -24,9 +24,26 @@ window.onload = function(){
       "position: fixed; top:" + (coordY + 10) + "; left: " + (coordX + 25) + "; color: seashell;");
     names.append(this.text);
     
-    draw.append(this.ball);  
-    
+    draw.append(this.ball);
+
+    this.information = document.createElement('p');
+    //this.information.className = "information";
+
     this.ball.addEventListener("mouseover", (e)=>{
+      this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>" + "out: " + this.edgesOut.length;
+      this.information.setAttributeNS(
+        null,
+        "style",
+        ("position: fixed; " +
+        "top: " + (Number(this.ball.getAttribute('cy')) - 60) + ";" +
+        "left: " + (Number(this.ball.getAttribute('cx')) + 70) + ";" +
+        "wigth: 100; " +
+        "height: 50" +
+        "background-color: #35414A;" +
+        "color: #EEF7A4;" +
+        "border: 1px solid #F5A9A9;")
+      );
+      names.append(this.information);
       this.ball.setAttributeNS(null, "fill", "#FA5858");
       this.ball.setAttributeNS(null, "r", 20);
       this.text.setAttributeNS(null, "style", 
@@ -50,6 +67,7 @@ window.onload = function(){
     });
   
     this.ball.addEventListener("mouseout", (e) => {
+      this.information.remove();
       this.ball.setAttributeNS(null, "fill", "#F5A9A9");
       this.ball.setAttributeNS(null, "r", 10);
       this.text.setAttributeNS(null, "style", 
