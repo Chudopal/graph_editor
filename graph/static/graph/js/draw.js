@@ -16,39 +16,57 @@ window.onload = function(){
     this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
     
     
+    this.information = document.createElement('p');
     this.text = document.createElement('p');
     this.name = "vertex" + nodes.length;
     this.text.innerHTML = this.name;
     this.text.setAttributeNS(null, "contenteditable", "true");
     this.text.setAttributeNS(null, "style", 
-      "position: fixed; top:" + (coordY + 10) + "; left: " + (coordX + 25) + "; color: seashell;");
+      "position: fixed; top:"
+      + (coordY + 10) + "; left: " 
+      + (coordX + 25) + "; color: seashell;" 
+    );
     names.append(this.text);
     
     draw.append(this.ball);
 
-    this.information = document.createElement('p');
-    //this.information.className = "information";
+
+    var rightButton = false;
+    var mouseDown = false;
+    var mouseUp = false;
+    var mouseMove = false;
+
 
     this.ball.addEventListener("mouseover", (e)=>{
-      this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>" + "out: " + this.edgesOut.length;
-      this.information.setAttributeNS(
-        null,
-        "style",
-        ("position: fixed; " +
-        "top: " + (Number(this.ball.getAttribute('cy')) - 60) + ";" +
-        "left: " + (Number(this.ball.getAttribute('cx')) + 70) + ";" +
-        "wigth: 100; " +
-        "height: 50" +
-        "background-color: #35414A;" +
-        "color: #EEF7A4;" +
-        "border: 1px solid #F5A9A9;")
-      );
-      names.append(this.information);
+      if(!mouseMove){
+        this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
+         + "out: " + this.edgesOut.length;
+        this.information.setAttributeNS(
+          null,
+          "style",
+          ("position: fixed; " +
+          "top: " + (Number(this.ball.getAttribute('cy')) - 60) + ";" +
+          "left: " + (Number(this.ball.getAttribute('cx')) + 70) + ";" +
+          "color: #EEF7A4;" + 
+          "wigth: 100; " +
+          "height: 50" +
+          "font-size: small;" +
+          "border: 1px solid #F5A9A9;" +
+          "background-color: #35414A;") 
+          );
+          names.append(this.information);
+      }
       this.ball.setAttributeNS(null, "fill", "#FA5858");
       this.ball.setAttributeNS(null, "r", 20);
-      this.text.setAttributeNS(null, "style", 
-      "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: #FE2EC8; font-size:x-large;");
-      
+      this.text.setAttributeNS(
+        null, 
+        "style", 
+        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
+        "; left: " + (Number(this.ball.getAttribute('cx')) + 15) + 
+        "; color: #EEF7A4; font-size:x-large;" +
+        "border: 1px solid rgb(255, 203, 203);" +
+        "background-color: #424242;"
+      );
       this.edgesOut.forEach(element=>{  
         element.changeEdge = true;
         element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
@@ -71,7 +89,10 @@ window.onload = function(){
       this.ball.setAttributeNS(null, "fill", "#F5A9A9");
       this.ball.setAttributeNS(null, "r", 10);
       this.text.setAttributeNS(null, "style", 
-      "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: seashell;");
+        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
+        "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + 
+        "; color: seashell;"
+      );
       this.edgesOut.forEach(element=>{
         element.changeEdge = true;
         element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
@@ -88,10 +109,6 @@ window.onload = function(){
         element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
       });
     });
-    var rightButton = false;
-    var mouseDown = false;
-    var mouseUp = false;
-    var mouseMove = false;
     this.ball.oncontextmenu = (e)=>  { 
         rightButton = true;
         this.edgesIn.forEach(element=>{
@@ -123,8 +140,15 @@ window.onload = function(){
         this.ball.setAttributeNS(null, 'cy', e.clientY -1);
         this.ball.setAttributeNS(null, 'r', 20);
         console.log(e.clientX + " " + e.clientY);
-        this.text.setAttributeNS(null, "style", 
-        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 20) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: seashell;");
+        this.text.setAttributeNS(
+          null, 
+          "style", 
+          "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
+          "; left: " + (Number(this.ball.getAttribute('cx')) + 15) + 
+          "; color: #EEF7A4; font-size:x-large;" +
+          "border: 1px solid rgb(255, 203, 203);" +
+          "background-color: #424242;"
+        );
         this.edgesIn.forEach(element => {
           element.changeEdge = true;
           element.setPosition(
@@ -173,8 +197,15 @@ window.onload = function(){
       }else{
         this.ball.setAttributeNS(null, 'cx', e.clientX-50);
         this.ball.setAttributeNS(null, 'cy', e.clientY-1);
-        this.text.setAttributeNS(null, "style",   
-      "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 20) + "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + "; color: seashell;");
+        this.text.setAttributeNS(
+          null, 
+          "style", 
+          "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
+          "; left: " + (Number(this.ball.getAttribute('cx')) + 15) + 
+          "; color: #EEF7A4; font-size:x-large;" +
+          "border: 1px solid rgb(255, 203, 203);" +
+          "background-color: #424242;"
+        );
       
         mouseMove = false;
       }
