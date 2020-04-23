@@ -17,7 +17,7 @@
     right: 50px;
     border: 1px solid #F5A9A9;
     position: fixed;
-    /*overflow: scroll; /* Добавляем полосы прокрутки */
+    overflow: scroll; /* Добавляем полосы прокрутки */
     width: 700px; /* Ширина блока */
     height: 480px; /* Высота блока */
     }
@@ -49,4 +49,12 @@
 .text{
     text-align: center;
     color: rgb(255, 227, 227);
+}
+
+polygon{
+    color: #FE9A2E;
+}
+
+#vertex{
+    fill: rgb(255, 227, 227);
 }

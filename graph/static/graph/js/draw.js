@@ -14,11 +14,22 @@ window.onload = function(){
     this.ball.setAttributeNS(null, 'r', 10);
     this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
     
+    this.name = "vertex" + nodes.length;
+    this.text = document.createElementNS(ns, "text");
+    this.text.setAttributeNS(null, "x", coordX-15);
+    this.text.setAttributeNS(null, "y", coordY+30);
+    this.text.setAttributeNS(null, "id", "vertex");
+    //this.text.setAttributeNS(null, "color", "#F8ECE0");
+    this.text.innerHTML = this.name;
+    draw.append(this.text);
+
+    
     draw.append(this.ball);
+    
     this.ball.addEventListener("mouseover", (e)=>{
       this.ball.setAttributeNS(null, "fill", "#FA5858");
       this.ball.setAttributeNS(null, "r", 20);
-      this.edgesOut.forEach(element=>{
+      this.edgesOut.forEach(element=>{  
         element.changeEdge = true;
         element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
         element.setPosition(
