@@ -24,7 +24,7 @@ window.onload = function(){
     this.text.setAttributeNS(null, "style", 
       "position: fixed; top:"
       + (coordY + 10) + "; left: " 
-      + (coordX + 25) + "; color: seashell;" 
+      + (coordX + 25) + "; color: #F5A9A9;" 
     );
     names.append(this.text);
     
@@ -36,28 +36,26 @@ window.onload = function(){
     var mouseUp = false;
     var mouseMove = false;
 
-
-    this.ball.addEventListener("mouseover", (e)=>{
-      if(!mouseMove){
-        this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
-         + "out: " + this.edgesOut.length;
-        this.information.setAttributeNS(
-          null,
-          "style",
-          ("position: fixed; " +
-          "top: " + (Number(this.ball.getAttribute('cy')) - 60) + ";" +
-          "left: " + (Number(this.ball.getAttribute('cx')) + 70) + ";" +
-          "color: #EEF7A4;" + 
-          "wigth: 100; " +
-          "height: 50" +
-          "font-size: small;" +
-          "border: 1px solid #F5A9A9;" +
-          "background-color: #35414A;") 
-          );
-          names.append(this.information);
+    this.showInformation = function(){
+      this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
+      + "out: " + this.edgesOut.length;
+     this.information.setAttributeNS(
+       null,
+       "style",
+       ("position: fixed; " +
+       "top: " + (Number(this.ball.getAttribute('cy')) - 60) + ";" +
+       "left: " + (Number(this.ball.getAttribute('cx')) + 70) + ";" +
+       "color: #EEF7A4;" + 
+       "wigth: 100; " +
+       "height: 50" +
+       "font-size: small;" +
+       "border: 1px solid #F5A9A9;" +
+       "background-color: #35414A;") 
+       );
+       names.append(this.information);
       }
-      this.ball.setAttributeNS(null, "fill", "#FA5858");
-      this.ball.setAttributeNS(null, "r", 20);
+
+    this.makeNameBigger = function(){
       this.text.setAttributeNS(
         null, 
         "style", 
@@ -67,6 +65,16 @@ window.onload = function(){
         "border: 1px solid rgb(255, 203, 203);" +
         "background-color: #424242;"
       );
+    }
+
+    this.ball.addEventListener("mouseover", (e)=>{
+      if(!mouseMove){
+        this.showInformation();
+      }
+      this.makeNameBigger();
+      this.ball.setAttributeNS(null, "fill", "#FA5858");
+      this.ball.setAttributeNS(null, "r", 20);
+      
       this.edgesOut.forEach(element=>{  
         element.changeEdge = true;
         element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
@@ -91,7 +99,7 @@ window.onload = function(){
       this.text.setAttributeNS(null, "style", 
         "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
         "; left: " + (Number(this.ball.getAttribute('cx')) + 25) + 
-        "; color: seashell;"
+        "; color: #FA5858;"
       );
       this.edgesOut.forEach(element=>{
         element.changeEdge = true;
@@ -123,6 +131,8 @@ window.onload = function(){
             edges.splice(edges.indexOf(element), edges.indexOf(element));
             delete element;
         });
+        this.text.remove();
+        this.information.remove();
         this.ball.remove();
         nodes.splice(nodes.indexOf(this), nodes.indexOf(this));
         delete this;
@@ -139,16 +149,7 @@ window.onload = function(){
         this.ball.setAttributeNS(null, 'cx', e.clientX -50);
         this.ball.setAttributeNS(null, 'cy', e.clientY -1);
         this.ball.setAttributeNS(null, 'r', 20);
-        console.log(e.clientX + " " + e.clientY);
-        this.text.setAttributeNS(
-          null, 
-          "style", 
-          "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
-          "; left: " + (Number(this.ball.getAttribute('cx')) + 15) + 
-          "; color: #EEF7A4; font-size:x-large;" +
-          "border: 1px solid rgb(255, 203, 203);" +
-          "background-color: #424242;"
-        );
+        this.makeNameBigger();
         this.edgesIn.forEach(element => {
           element.changeEdge = true;
           element.setPosition(
@@ -185,11 +186,13 @@ window.onload = function(){
         }else{
           isCreatingEdges = true;
           this.edgesIn.push(edges[edges.length - 1]);
-          edges[edges.length - 1].setPosition(edges[edges.length - 1].firstNode.ball.getAttribute("cx"),
-                                              edges[edges.length - 1].firstNode.ball.getAttribute("cy"),
-                                              this.ball.getAttribute("cx"),
-                                              this.ball.getAttribute("cy"),
-                                              10);
+          edges[edges.length - 1].setPosition(
+            edges[edges.length - 1].firstNode.ball.getAttribute("cx"),
+            edges[edges.length - 1].firstNode.ball.getAttribute("cy"),
+            this.ball.getAttribute("cx"),
+            this.ball.getAttribute("cy"),
+            10
+          );
           edges[edges.length - 1].secondNode = this;
           edges[edges.length - 1].changeEdge = false;
           mouseMove = true;
@@ -197,16 +200,7 @@ window.onload = function(){
       }else{
         this.ball.setAttributeNS(null, 'cx', e.clientX-50);
         this.ball.setAttributeNS(null, 'cy', e.clientY-1);
-        this.text.setAttributeNS(
-          null, 
-          "style", 
-          "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) + 
-          "; left: " + (Number(this.ball.getAttribute('cx')) + 15) + 
-          "; color: #EEF7A4; font-size:x-large;" +
-          "border: 1px solid rgb(255, 203, 203);" +
-          "background-color: #424242;"
-        );
-      
+        this.makeNameBigger();
         mouseMove = false;
       }
     }
@@ -221,10 +215,12 @@ window.onload = function(){
   function Edge(node){
     this.firstNode = node;
     this.secondNode;
-    this.triangle = document.createElementNS(ns ,"polygon");
+    //this.triangle = document.createElementNS(ns ,"polygon");
+    this.triangle = document.createElementNS(ns ,"path");
     this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
     this.triangle.setAttributeNS(null, "stroke", "#F79F81");
-    this.line = document.createElementNS(ns ,"line");
+    //this.line = document.createElementNS(ns ,"line");
+    this.line = document.createElementNS(ns ,"path");
     this.line.setAttributeNS(null, "stroke", "#F79F81");
     draw.prepend(this.line);
     draw.prepend(this.triangle);
@@ -242,7 +238,8 @@ window.onload = function(){
                        e.clientY-1,
                        this.firstNode.ball.getAttribute("r"));
     }); 
-    this.triangle.oncontextmenu = (e)=>  { 
+    this.triangle.oncontextmenu = (e)=>  {
+
         this.triangle.remove();
         this.line.remove();
         edges.splice(edges.indexOf(this),edges.indexOf(this));
@@ -251,23 +248,50 @@ window.onload = function(){
     };
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
-        this.line.setAttributeNS(null, "x1", Number(beginX));
+        /*this.line.setAttributeNS(null, "x1", Number(beginX));
         this.line.setAttributeNS(null, "y1", Number(beginY));
         this.line.setAttributeNS(null, "x2", Number(endX));
-        this.line.setAttributeNS(null, "y2", Number(endY));
-        var coords =  endX + "," + endY + " ";
+        this.line.setAttributeNS(null, "y2", Number(endY));*/
+        //var coords =  endX + "," + endY + " ";
         var tgOfNearAngle = (beginY - endY) / 
         (beginX - endX);
         var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
         var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
         var yDelta = xDelta*tgOfAngle;
-        coords += (Number(beginX) + xDelta) + "," +
+        /*coords += (Number(beginX) + xDelta) + "," +
         (Number(beginY) - yDelta) +  " " +
         (Number(beginX) - xDelta) + "," +
-        (Number(beginY) + yDelta);
-        this.triangle.setAttributeNS(null, 'points', coords);
+        (Number(beginY) + yDelta);*/
+        var coords = ("M" + " " +
+        (Number(beginX) + xDelta) + " " +
+        (Number(beginY) - yDelta) + " " +
+        "Q" + " " +
+        (Number(beginX) + xDelta) + " " +
+        (Number(beginY) - yDelta) + " " +
+        endX + " " + 
+        endY + " " +
+        "Q" + " " +
+        endX + " " + 
+        endY + " " +
+        (Number(beginX) - xDelta) + " " +
+        (Number(beginY) + yDelta) + " " +
+        "Z"); 
+        console.log(coords);
+        this.triangle.setAttributeNS(null, "d", coords);
+        this.line.setAttributeNS(
+          null, "d", 
+          "M" + " " + 
+          beginX + " " +
+          beginY + " " +
+          "Q" + " " +
+          beginX + " " +
+          beginY + " " +
+          endX + " " +
+          endY
+        );
+        //this.triangle.setAttributeNS(null, 'points', coords);
       }
-    };
+    };  
   }
 
 

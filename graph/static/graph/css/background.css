@@ -20,7 +20,7 @@
     overflow: scroll; /* Добавляем полосы прокрутки */
     width: 700px; /* Ширина блока */
     height: 480px; /* Высота блока */
-    }
+}
 
 .buttons{
     background-color: #0B2F3A;
@@ -58,28 +58,3 @@
     position: fixed;
     left: 50;
 }
-
-/*#test{
-    position: fixed;
-    top: 800;
-    left: 1000;
-    color: seashell;
-}*/
-/*polygon{
-    color: #FE9A2E;
-}*/
-
-/*.vertex{
-    position: fixed;
-    top: 900; 
-    left: 1100;
-    color: seashell;
-}*/
-
-
-
-/*#hello{
-    position: fixed;
-    left: 500;
-    top:500;
-}*/
