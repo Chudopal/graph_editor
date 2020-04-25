@@ -120,13 +120,11 @@ window.onload = function(){
     this.ball.oncontextmenu = (e)=>  { 
         rightButton = true;
         this.edgesIn.forEach(element=>{
-            element.line.remove();
             element.triangle.remove();
             edges.splice(edges.indexOf(element),edges.indexOf(element));
             delete element;
         });
         this.edgesOut.forEach(element=>{
-            element.line.remove();
             element.triangle.remove();
             edges.splice(edges.indexOf(element), edges.indexOf(element));
             delete element;
@@ -214,15 +212,13 @@ window.onload = function(){
 
   function Edge(node){
     this.firstNode = node;
+    this.isArc = false;
     this.secondNode;
-    //this.triangle = document.createElementNS(ns ,"polygon");
+    this.bisieX = 0;
+    this.bisieY = 0;
     this.triangle = document.createElementNS(ns ,"path");
     this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
     this.triangle.setAttributeNS(null, "stroke", "#F79F81");
-    //this.line = document.createElementNS(ns ,"line");
-    this.line = document.createElementNS(ns ,"path");
-    this.line.setAttributeNS(null, "stroke", "#F79F81");
-    draw.prepend(this.line);
     draw.prepend(this.triangle);
     this.changeEdge = true;
     this.triangle.addEventListener("mouseover", (e)=>{
@@ -231,67 +227,93 @@ window.onload = function(){
     this.triangle.addEventListener("mouseout", (e)=>{
       this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
     });
+
+    var mouseDown = false;
+    
+    this.triangle.addEventListener("mousedown", (e)=>{
+      this.isArc = true;
+      mouseDown = true;
+      this.changeEdge = true;
+    });
+
+    draw.addEventListener("mouseup", (e)=>{
+      mouseDown = false;
+      this.changeEdge = false;
+    });
+
     draw.addEventListener("mousemove", (e) => {
-      this.setPosition(this.firstNode.ball.getAttribute("cx"),
-                       this.firstNode.ball.getAttribute("cy"),
-                       e.clientX-50,
-                       e.clientY-1,
-                       this.firstNode.ball.getAttribute("r"));
+      if(mouseDown){
+        this.bisieX = e.clientX;
+        this.bisieY = e.clientY;
+        this.setPosition(
+          this.firstNode.ball.getAttribute("cx"),
+          this.firstNode.ball.getAttribute("cy"),
+          this.secondNode.ball.getAttribute("cx"),
+          this.secondNode.ball.getAttribute("cy"),
+          this.firstNode.ball.getAttribute("r"));
+      } else {
+        this.setPosition(
+          this.firstNode.ball.getAttribute("cx"),
+          this.firstNode.ball.getAttribute("cy"),
+          e.clientX-50,
+          e.clientY-1,
+          this.firstNode.ball.getAttribute("r")
+          );
+      }
     }); 
     this.triangle.oncontextmenu = (e)=>  {
-
         this.triangle.remove();
-        this.line.remove();
         edges.splice(edges.indexOf(this),edges.indexOf(this));
         delete this;
         return false;
     };
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
-        /*this.line.setAttributeNS(null, "x1", Number(beginX));
-        this.line.setAttributeNS(null, "y1", Number(beginY));
-        this.line.setAttributeNS(null, "x2", Number(endX));
-        this.line.setAttributeNS(null, "y2", Number(endY));*/
-        //var coords =  endX + "," + endY + " ";
         var tgOfNearAngle = (beginY - endY) / 
         (beginX - endX);
         var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
         var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
         var yDelta = xDelta*tgOfAngle;
-        /*coords += (Number(beginX) + xDelta) + "," +
-        (Number(beginY) - yDelta) +  " " +
-        (Number(beginX) - xDelta) + "," +
-        (Number(beginY) + yDelta);*/
-        var coords = ("M" + " " +
-        (Number(beginX) + xDelta) + " " +
-        (Number(beginY) - yDelta) + " " +
-        "Q" + " " +
-        (Number(beginX) + xDelta) + " " +
-        (Number(beginY) - yDelta) + " " +
-        endX + " " + 
-        endY + " " +
-        "Q" + " " +
-        endX + " " + 
-        endY + " " +
-        (Number(beginX) - xDelta) + " " +
-        (Number(beginY) + yDelta) + " " +
-        "Z"); 
-        console.log(coords);
-        this.triangle.setAttributeNS(null, "d", coords);
-        this.line.setAttributeNS(
-          null, "d", 
-          "M" + " " + 
-          beginX + " " +
-          beginY + " " +
+        if(!this.isArc){
+          var coords = ("M" + " " +
+          (Number(beginX) + xDelta) + " " +
+          (Number(beginY) - yDelta) + " " +
           "Q" + " " +
-          beginX + " " +
-          beginY + " " +
-          endX + " " +
-          endY
-        );
-        //this.triangle.setAttributeNS(null, 'points', coords);
+          (Number(beginX) + xDelta) + " " +
+          (Number(beginY) - yDelta) + " " +
+          endX + " " + 
+          endY + " " +
+          "Q" + " " +
+          (Number(endX)) + " " + 
+          (Number(endY)) + " " +
+          (Number(beginX) - xDelta) + " " +
+          (Number(beginY) + yDelta) + " " +
+          "Z"); 
+          this.triangle.setAttributeNS(null, "d", coords);
+        }else{
+          var tgOfNearAngle = (beginY - this.bisieY) / 
+            (beginX - this.bisieX);
+          var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
+          var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
+          var yDelta = xDelta*tgOfAngle;
+          var coords = ("M" + " " +
+          (Number(beginX) + xDelta) + " " +
+          (Number(beginY) - yDelta) + " " +
+          "Q" + " " +
+          this.bisieX + " " +
+          this.bisieY + " " +
+          endX + " " + 
+          endY + " " +
+          "Q" + " " +
+          this.bisieX + " " + 
+          this.bisieY + " " +
+          (Number(beginX) - xDelta) + " " +
+          (Number(beginY) + yDelta) + " " +
+          "Z"); 
+          this.triangle.setAttributeNS(null, "d", coords);
+        }
       }
-    };  
+    };
   }
 
 
