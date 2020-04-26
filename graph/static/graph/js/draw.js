@@ -9,12 +9,16 @@ window.onload = function(){
   function Node(coordX, coordY){
     this.edgesIn = [];
     this.edgesOut = [];
+    
     this.ball = document.createElementNS(ns, 'circle');
     this.ball.setAttributeNS(null, 'cx', coordX);
     this.ball.setAttributeNS(null, 'cy', coordY);
     this.ball.setAttributeNS(null, 'r', 10);
     this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
     
+    this.degreeOfNode = document.createElement("p");
+    this.degreeOfNode.innerHTML = 0;
+    names.append(this.degreeOfNode);
     
     this.information = document.createElement('p');
     this.text = document.createElement('p');
@@ -22,24 +26,39 @@ window.onload = function(){
     this.text.innerHTML = this.name;
     this.text.setAttributeNS(null, "contenteditable", "true");
     this.text.setAttributeNS(null, "style", 
-      "position: fixed; top:"
-      + (coordY + 10) + "; left: " 
-      + (coordX + 25) + "; color: #F5A9A9;" 
+    "position: fixed; top:"
+    + (coordY + 10) + "; left: " 
+    + (coordX + 25) + "; color: #FA5858;" 
     );
     names.append(this.text);
     
     draw.append(this.ball);
-
-
+    
     var rightButton = false;
     var mouseDown = false;
     var mouseUp = false;
     var mouseMove = false;
-
-    this.showInformation = function(){
-      this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
-      + "out: " + this.edgesOut.length;
-     this.information.setAttributeNS(
+    
+    this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
+      console.log(radius);
+      this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
+      this.degreeOfNode.setAttributeNS(
+        null,
+        "style",
+        ("position: fixed; " +
+        "top: " + (Number(coordYOfNode) - (15 + Number(radius))) + ";" +
+        "left: " + (Number(coordXOfNode) + 30) + ";" +
+        "color: #00FA9A;" +
+        "font-size: small;"+ 
+        "background-color: #2F4F4F;") 
+        );
+      }
+      this.showDegreeOfNode(coordX, coordY, this.ball.getAttribute("r"));
+      
+      this.showInformation = function(){
+        this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
+        + "out: " + this.edgesOut.length;
+      this.information.setAttributeNS(
        null,
        "style",
        ("position: fixed; " +
@@ -48,7 +67,7 @@ window.onload = function(){
        "color: #EEF7A4;" + 
        "wigth: 100; " +
        "height: 50" +
-       "font-size: small;" +
+       "font-size: xx-small;" +
        "border: 1px solid #F5A9A9;" +
        "background-color: #35414A;") 
        );
@@ -90,6 +109,11 @@ window.onload = function(){
       this.edgesIn.forEach(element=>{
         element.triangle.setAttributeNS(null, "fill", "#F84040");
       });
+      this.showDegreeOfNode(
+        this.ball.getAttribute("cx"), 
+        this.ball.getAttribute("cy"),
+        this.ball.getAttribute("r")
+      );
     });
   
     this.ball.addEventListener("mouseout", (e) => {
@@ -116,6 +140,11 @@ window.onload = function(){
       this.edgesIn.forEach(element=>{
         element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
       });
+      this.showDegreeOfNode(
+        this.ball.getAttribute("cx"), 
+        this.ball.getAttribute("cy"),
+        this.ball.getAttribute("r")
+      );
     });
     this.ball.oncontextmenu = (e)=>  { 
         rightButton = true;
@@ -129,6 +158,7 @@ window.onload = function(){
             edges.splice(edges.indexOf(element), edges.indexOf(element));
             delete element;
         });
+        this.degreeOfNode.remove();
         this.text.remove();
         this.information.remove();
         this.ball.remove();
@@ -170,10 +200,15 @@ window.onload = function(){
           );
           element.changeEdge = false;
         });
+      this.showDegreeOfNode(
+        this.ball.getAttribute("cx"), 
+        this.ball.getAttribute("cy"),
+        this.ball.getAttribute("r")
+      );
       }
     });
     this.ball.addEventListener("mouseup", (e)=>{
-        if(!rightButton){
+      if(!rightButton){
       mouseUp = true;
       if(!mouseMove){
         if(isCreatingEdges){  
@@ -206,6 +241,11 @@ window.onload = function(){
       mouseDown = false;
       mouseUp = false;
       mouseMove = false;
+      this.showDegreeOfNode(
+        this.ball.getAttribute("cx"), 
+        this.ball.getAttribute("cy"),
+        this.ball.getAttribute("r")
+      );
     });
   }
 
@@ -221,6 +261,7 @@ window.onload = function(){
     this.triangle.setAttributeNS(null, "stroke", "#F79F81");
     draw.prepend(this.triangle);
     this.changeEdge = true;
+    this.triangle.setAttributeNS(null, "stroke-width", "2");
     this.triangle.addEventListener("mouseover", (e)=>{
       this.triangle.setAttributeNS(null, "fill", "#CEECF5");
     });
