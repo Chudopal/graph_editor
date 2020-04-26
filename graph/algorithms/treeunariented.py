@@ -23,7 +23,6 @@ def is_tree(incedent_matrix):
 
 
 def dfs(next_vertex, incedent_matrix):
-    print("used is", USED)
     USED[next_vertex] = 1
     global CHECK_VERTEX
     CHECK_VERTEX += 1
