@@ -23,6 +23,7 @@ def is_tree(incedent_matrix):
 
 
 def dfs(next_vertex, incedent_matrix):
+    global USED
     USED[next_vertex] = 1
     global CHECK_VERTEX
     CHECK_VERTEX += 1
@@ -60,15 +61,15 @@ if __name__ == "__main__":
         [1, 0, 1, 0, 0],
     ]
     if is_tree(incedent_matrix):
-        print("no")
-    else:
         print("ok")
+    else:
+        print("no")
     incedent_matrix = [
         [0, 1, 1],
         [1, 0, 1],
         [1, 1, 0],
     ];
     if is_tree(incedent_matrix):
-        print("no")
-    else:
         print("ok")
+    else:
+        print("no")
