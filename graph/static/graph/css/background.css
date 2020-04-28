@@ -1,9 +1,9 @@
 .show {
-    background-color: rgb(24, 58, 68);
+    background-color: #1a252a;
 }
 
 #draw{
-    background-color: #0B2F3A;
+    background-color: #212f35;
     width: 1100;
     height: 900;
     border: 1px solid #F5A9A9;
@@ -13,7 +13,7 @@
 
 
 .layer {
-    background-color: #0B2F3A;
+    background-color:  #212f35;
     right: 50px;
     border: 1px solid #F5A9A9;
     position: fixed;
@@ -23,7 +23,7 @@
 }
 
 .buttons{
-    background-color: #0B2F3A;
+    background-color: #212f35;
     top: 508px;
     right: 50px;
     border: 1px solid #F5A9A9;
@@ -35,7 +35,7 @@
 }
 
 .record{
-    background-color: #0B2F3A;
+    background-color:  #212f35;
     border: 1px solid rgb(255, 203, 203);
     position: relative;
     left: 25;
