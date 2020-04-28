@@ -5,7 +5,7 @@ def new_matrix():
     global USED
     USED = []
 
-def make_tree(incedent_matrix, current_vertex):
+def delete_vertex(incedent_matrix, current_vertex):
     global USED
     numb_of_edges = 0;
     if not current_vertex:
@@ -27,13 +27,13 @@ def create_vertex(incedent_matrix):
     return incedent_matrix
 
 
-def tree(incedent_matrix):
+def make(incedent_matrix):
     new_matrix()
 
-    incedent_matrix = make_tree(incedent_matrix, 0)
+    incedent_matrix = delete_vertex(incedent_matrix, 0)
     incedent_matrix = create_vertex(incedent_matrix)
     new_matrix()
-    incedent_matrix = make_tree(incedent_matrix, 0)
+    incedent_matrix = delete_vertex(incedent_matrix, 0)
     return incedent_matrix
 
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
     ]
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         [0, 0, 1],
         [0, 0, 0],
     ]
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         [0, 0, 0, 0],
     ]
 
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         [0, 0, 0, 0, 0],
     ]
 
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         [0, 0, 1],
         [0, 0, 0],
     ]
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")

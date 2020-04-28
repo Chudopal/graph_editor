@@ -46,7 +46,7 @@ def make_tree(incedent_matrix, current_vertex):
             incedent_matrix[lonely_vertex][LEAVES[0]] = 1
     return incedent_matrix
 
-def tree(incedent_matrix):
+def make(incedent_matrix):
     new_matrix()
     incedent_matrix = make_tree(incedent_matrix, 0)
     for vertex in range(len(USED)):
@@ -55,7 +55,7 @@ def tree(incedent_matrix):
     return incedent_matrix
 
 if __name__ == "__main__":
-    
+
     incedent_matrix = [
         [0, 1, 0, 1, 1],
         [1, 0, 1, 1, 0],
@@ -70,29 +70,24 @@ if __name__ == "__main__":
         [0, 1, 0, 0, 0],
         [1, 0, 0, 0, 0],
     ]
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
-        print(tree(incedent_matrix))
-    new_matrix()
     incedent_matrix = [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
     ]
-    #print(make_tree(incedent_matrix, 0))
     right_matrix = [
         [0, 1, 0],
         [1, 0, 1],
         [0, 1, 0],
     ]
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
-        print(tree(incedent_matrix))
-    new_matrix()
     incedent_matrix = [
         [0, 1, 1, 1],
         [1, 0, 1, 1],
@@ -106,12 +101,10 @@ if __name__ == "__main__":
         [0, 0, 1, 0],
     ]
 
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
-        print(tree(incedent_matrix))
-    new_matrix()
     incedent_matrix = [
         [0, 1, 1, 1, 1],
         [1, 0, 1, 1, 1],
@@ -127,10 +120,8 @@ if __name__ == "__main__":
         [0, 0, 1, 0, 1],
         [0, 0, 0, 1, 0],
     ]
-    #print(make_tree(incedent_matrix, 0))
-    if right_matrix == tree(incedent_matrix):
+    if right_matrix == make(incedent_matrix):
         print("ok")
     else:
         print("no")
-        print(tree(incedent_matrix))
     
