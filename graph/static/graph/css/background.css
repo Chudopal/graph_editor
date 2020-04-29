@@ -22,17 +22,6 @@
     height: 480px; /* Высота блока */
 }
 
-.buttons{
-    background-color: #212f35;
-    top: 508px;
-    right: 50px;
-    border: 1px solid #F5A9A9;
-    position: fixed;
-    /*overflow: scroll; /* Добавляем полосы прокрутки */
-    width: 700px; /* Ширина блока */
-    height: 400px; /* Высота блока */
-    
-}
 
 .record{
     background-color:  #212f35;
@@ -59,38 +48,89 @@
     left: 50;
 }
 
-#unoriented{
-
+.informations{
+    background-color: #212f35;
+    top: 508px;
+    right: 370px;
+    border: 1px solid #F5A9A9;
+    position: fixed;
+    /*overflow: scroll; /* Добавляем полосы прокрутки */
+    width: 380px; /* Ширина блока */
+    height: 400px; /* Высота блока */
 }
 
-#oriented{
 
-}
-
-#make_tree{
-
-}
-
-#hamiltonian{
-
-}
-
-#diametor{
-
-}
-
-#radius{
-
-}
-
-#centre{
-
-}
-
-#vector{
-
-}
-
-#cartesian{
+#about{
     
+    color: rgb(255, 227, 227);
+    font-size: xx-large;
+    font-family: "Courier New", Courier, monospace;
+    position: relative;
+    width: 300px;
+
+    left: 20px;
+}
+
+.names_of_parameters{
+    position: relative;
+    top: 20px;
+    left: 20px;
+    height: 400px;
+    width: 120px;
+
+    color: rgb(207, 181, 181);
+    font-size: x-large;
+    font-family: "Courier New", Courier, monospace;
+    position: relative;
+    
+}
+
+.parameters{
+    position: relative;
+    top: -400px;
+    left: 200px;
+    width: 120px;
+    height: 400px;
+
+    color: rgb(255, 233, 162);
+    font-size: x-large;
+    font-family: "Courier New", Courier, monospace;
+    position: relative;
+    
+}
+
+
+.buttons{
+    background-color: #212f35;
+    top: 508px;
+    right: 50px;
+    border: 1px solid #F5A9A9;
+    position: fixed;
+    /*overflow: scroll; /* Добавляем полосы прокрутки */
+    width: 300px; /* Ширина блока */
+    height: 400px; /* Высота блока */
+    
+}
+
+.button{
+    color: rgb(255, 227, 227);
+    font-size: medium;
+    font-family: "Courier New", Courier, monospace;
+    width: 250px;
+    height: 35px;
+    left: 25px;
+    position: relative;
+    background-color: #2e434d;
+    border: 5px solid #212f35;
+}
+
+.create{
+    color: rgb(255, 227, 227);
+    font-size: medium;
+    font-family: "Courier New", Courier, monospace;
+    width: 300px;
+    height: 60px;
+    position: relative;
+    background-color: #3e5a68;
+    border: 5px solid #212f35;
 }
