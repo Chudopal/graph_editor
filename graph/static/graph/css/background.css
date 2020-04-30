@@ -126,12 +126,12 @@
 }
 
 .create{
-    color: rgb(255, 227, 227);
+    color: rgb(28, 42, 47);
     font-size: medium;
     font-family: "Courier New", Courier, monospace;
     width: 300px;
     height: 60px;
     position: relative;
-    background-color: #3e5a68;
+    background-color: #eebebe;
     border: 5px solid #212f35;
 }

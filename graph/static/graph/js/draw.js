@@ -90,28 +90,37 @@ window.onload = function(){
     }
 
     this.ball.addEventListener("mouseover", (e)=>{
-      if(!mouseMove){
+      if(!mouseMove && isOriented){
         this.showInformation();
       }
       this.makeNameBigger();
       this.ball.setAttributeNS(null, "fill", "#FA5858");
       this.ball.setAttributeNS(null, "r", 20);
 
-      this.edgesOut.forEach(element=>{
-        element.changeEdge = true;
-        element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
-        element.setPosition(
-          this.ball.getAttribute("cx"),
-          this.ball.getAttribute("cy"),
-          element.secondNode.ball.getAttribute("cx"),
-          element.secondNode.ball.getAttribute("cy"),
-          this.ball.getAttribute("r")
-        );
-        element.changeEdge = false;
-      });
-      this.edgesIn.forEach(element=>{
-        element.triangle.setAttributeNS(null, "fill", "#F84040");
-      });
+      if (isOriented){
+        this.edgesOut.forEach(element=>{
+          element.changeEdge = true;
+          element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
+          element.setPosition(
+            this.ball.getAttribute("cx"),
+            this.ball.getAttribute("cy"),
+            element.secondNode.ball.getAttribute("cx"),
+            element.secondNode.ball.getAttribute("cy"),
+            this.ball.getAttribute("r")
+          );
+          element.changeEdge = false;
+        });
+        this.edgesIn.forEach(element=>{
+          element.triangle.setAttributeNS(null, "fill", "#F84040");
+        });
+      }else{
+        this.edgesOut.forEach(element=>{
+          element.triangle.setAttributeNS(null, "fill", "#AC58FA");
+        });
+        this.edgesIn.forEach(element=>{
+          element.triangle.setAttributeNS(null, "fill", "#AC58FA");
+        });
+      }
       this.showDegreeOfNode(
         this.ball.getAttribute("cx"),
         this.ball.getAttribute("cy"),
@@ -181,28 +190,58 @@ window.onload = function(){
         this.ball.setAttributeNS(null, 'cy', e.clientY -1);
         this.ball.setAttributeNS(null, 'r', 20);
         this.makeNameBigger();
-        this.edgesIn.forEach(element => {
-          element.changeEdge = true;
-          element.setPosition(
-            element.firstNode.ball.getAttribute("cx"),
-            element.firstNode.ball.getAttribute("cy"),
+        if(isOriented){
+          this.edgesIn.forEach(element => {
+            element.changeEdge = true;
+            element.setPosition(
+              element.firstNode.ball.getAttribute("cx"),
+              element.firstNode.ball.getAttribute("cy"),
+              this.ball.getAttribute("cx"),
+              this.ball.getAttribute("cy"),
+              element.firstNode.ball.getAttribute("r")
+            );
+            element.changeEdge = false;
+          });
+          this.edgesOut.forEach(element => {
+            element.changeEdge = true;
+            element.setPosition(
+              this.ball.getAttribute("cx"),
+              this.ball.getAttribute("cy"),
+              element.secondNode.ball.getAttribute("cx"),
+              element.secondNode.ball.getAttribute("cy"),
+              this.ball.getAttribute("r")
+            );
+            element.changeEdge = false;
+          });
+        }else{
+          this.edgesOut.forEach(element=>{
+            element.changeEdge = true;
+            element.setPosition(
+              this.ball.getAttribute("cx"),
+              this.ball.getAttribute("cy"),
+              element.secondNode.ball.getAttribute("cx"),
+              element.secondNode.ball.getAttribute("cy"),
+              this.ball.getAttribute(10)
+            );
+            element.changeEdge = false;
+          });
+          this.edgesIn.forEach(element=>{
+            element.changeEdge = true;
+            element.setPosition(
+              element.firstNode.ball.getAttribute("cx"),
+              element.firstNode.ball.getAttribute("cy"),
+              this.ball.getAttribute("cx"),
+              this.ball.getAttribute("cy"),
+              element.firstNode.ball.getAttribute("r")
+            );
+            element.changeEdge = false;
+          });
+          this.showDegreeOfNode(
             this.ball.getAttribute("cx"),
             this.ball.getAttribute("cy"),
-            element.firstNode.ball.getAttribute("r")
-          );
-          element.changeEdge = false;
-        });
-        this.edgesOut.forEach(element => {
-          element.changeEdge = true;
-          element.setPosition(
-            this.ball.getAttribute("cx"),
-            this.ball.getAttribute("cy"),
-            element.secondNode.ball.getAttribute("cx"),
-            element.secondNode.ball.getAttribute("cy"),
             this.ball.getAttribute("r")
-          );
-          element.changeEdge = false;
-        });
+        );
+      }
       this.showDegreeOfNode(
         this.ball.getAttribute("cx"),
         this.ball.getAttribute("cy"),
@@ -215,10 +254,17 @@ window.onload = function(){
       mouseUp = true;
       if(!mouseMove){
         if(isCreatingEdges){
-          isCreatingEdges = false;
-          var edge = new Edge(this);
-          this.edgesOut.push(edge);
-          edges.push(edge);
+          if (isOriented){
+            isCreatingEdges = false;
+            var edge = new Edge(this);
+            this.edgesOut.push(edge);
+            edges.push(edge);
+          }else{
+            isCreatingEdges = false;
+            var edge = new Arc(this);
+            this.edgesOut.push(edge);
+            edges.push(edge);
+          }
         }else{
           isCreatingEdges = true;
           this.edgesIn.push(edges[edges.length - 1]);
@@ -424,6 +470,7 @@ window.onload = function(){
         var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
         var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
         var yDelta = xDelta*tgOfAngle;
+        console.log("here");
         if(!this.isArc){
           var coords = ("M" + " " +
           (Number(beginX) + xDelta) + " " +
@@ -431,8 +478,11 @@ window.onload = function(){
           "Q" + " " +
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
-          endX + " " +
-          endY + " " +
+          (Number(endX) + xDelta) + " " +
+          (Number(endY) - yDelta) + " " +
+          "L" + " " +
+          (Number(endX) - xDelta) + " " +
+          (Number(endY) + yDelta) + " " +
           "Q" + " " +
           (Number(endX)) + " " +
           (Number(endY)) + " " +
@@ -452,11 +502,14 @@ window.onload = function(){
           "Q" + " " +
           this.bisieX + " " +
           this.bisieY + " " +
-          endX + " " +
-          endY + " " +
+          (Number(endX) + xDelta) + " " +
+          (Number(endY) - yDelta) + " " +
+          "L" + " " +
+          (Number(endX) - xDelta) + " " +
+          (Number(endY) + yDelta) + " " +
           "Q" + " " +
-          this.bisieX + " " +
-          this.bisieY + " " +
+          (this.bisieX) + " " +
+          (this.bisieY) + " " +
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
