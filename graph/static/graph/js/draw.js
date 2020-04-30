@@ -23,6 +23,10 @@ window.onload = function(){
     this.degreeOfNode.innerHTML = 0;
     names.append(this.degreeOfNode);
 
+    this.ball.addEventListener("dblclick", (e)=>{
+      console.log("efefefefef!!!!!");
+    });
+
     this.information = document.createElement('p');
     this.text = document.createElement('p');
     this.name = "vertex" + nodes.length;
@@ -43,7 +47,6 @@ window.onload = function(){
     var mouseMove = false;
 
     this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
-      console.log(radius);
       this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
       this.degreeOfNode.setAttributeNS(
         null,
@@ -502,11 +505,11 @@ window.onload = function(){
           "Q" + " " +
           this.bisieX + " " +
           this.bisieY + " " +
-          (Number(endX) + xDelta) + " " +
-          (Number(endY) - yDelta) + " " +
+          (Number(endX) + 5) + " " +
+          (Number(endY) - 5) + " " +
           "L" + " " +
-          (Number(endX) - xDelta) + " " +
-          (Number(endY) + yDelta) + " " +
+          (Number(endX) - 5) + " " +
+          (Number(endY) + 5) + " " +
           "Q" + " " +
           (this.bisieX) + " " +
           (this.bisieY) + " " +
