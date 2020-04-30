@@ -4,7 +4,10 @@ window.onload = function(){
   var edges = [];
   var draw = document.getElementById("draw");
   var names = document.getElementById("names");
+  var unorientedButton = document.getElementById("unoriented");
+  var orientedButton = document.getElementById("oriented");
   var isCreatingEdges = true;
+  var isOriented = true;
 
   function Node(coordX, coordY){
     this.edgesIn = [];
@@ -249,7 +252,6 @@ window.onload = function(){
     });
   }
 
-
   function Edge(node){
     this.firstNode = node;
     this.isArc = false;
@@ -464,10 +466,39 @@ window.onload = function(){
     };
   }
 
+  function clear(){
+    nodes.forEach(node =>{
+      node.ball.remove();
+      delete node.ball;
+      node.degreeOfNode.remove();
+      delete node.degreeOfNode;
+      node.information.remove();
+      delete node.information;
+      node.text.remove();
+      delete node.text;
+    });
+    nodes = [];
+    console.log(nodes);
+    edges.forEach(edge=>{
+      edge.triangle.remove();
+      delete edge.triangle;
+    });
+    edges = [];
+  }
+
+  unorientedButton.addEventListener("click", clear);
+  unorientedButton.addEventListener("click", (e)=>{
+    isOriented = false;
+  });
+
+  orientedButton.addEventListener("click", clear);
+  orientedButton.addEventListener("click", (e)=>{
+    isOriented = true;
+  });
 
 
   draw.addEventListener("dblclick", (e)=>{
-    var node = new Node(e.clientX -50, e.clientY-1);
-    nodes.push(node);
+      var node = new Node(e.clientX -50, e.clientY-1);
+      nodes.push(node);
   });
 }
