@@ -9,6 +9,9 @@ window.onload = function(){
   var isCreatingEdges = true;
   var isOriented = true;
   var isCreating = true;
+  var showNumbOfVertexes = document.getElementById("vertexes");
+  var showNumbOfEdges = document.getElementById("edges");
+  var showIsTree = document.getElementById("isTree");
 
   function Node(coordX, coordY){
     this.edgesIn = [];
@@ -26,7 +29,6 @@ window.onload = function(){
 
     this.ball.addEventListener("dblclick", (e)=>{
       isCreating = false;
-      console.log("efefefefef!!!!!");
     });
 
     this.information = document.createElement('p');
@@ -283,6 +285,7 @@ window.onload = function(){
           edges[edges.length - 1].secondNode = this;
           edges[edges.length - 1].changeEdge = false;
           mouseMove = true;
+          showNumbOfEdges.innerHTML = edges.length;
         }
       }else{
         this.ball.setAttributeNS(null, 'cx', e.clientX-50);
@@ -525,6 +528,8 @@ window.onload = function(){
   }
 
   function clear(){
+    showNumbOfEdges.innerHTML = 0;
+    showNumbOfVertexes.innerHTML = 0;
     nodes.forEach(node =>{
       node.ball.remove();
       delete node.ball;
@@ -557,6 +562,7 @@ window.onload = function(){
     if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
       nodes.push(node);
+      showNumbOfVertexes.innerHTML = nodes.length;
     }
     isCreating = true;
   });
