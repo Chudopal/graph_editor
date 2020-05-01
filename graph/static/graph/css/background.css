@@ -135,3 +135,9 @@
     background-color: #eebebe;
     border: 5px solid #212f35;
 }
+
+#colors{
+    fill:#2a3c46;
+    stroke:rgb(15, 15, 15);
+    stroke-width:1;
+}

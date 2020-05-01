@@ -527,6 +527,24 @@ window.onload = function(){
     };
   }
 
+  function ColorPanel(){
+    this.colors = document.getElementById("colors");
+    this.pink = document.getElementById("pink");
+    this.purple = document.getElementById("purple");
+    this.white = document.getElementById("white");
+    this.sky = document.getElementById("sky");
+    this.orange = document.getElementById("orange");
+
+    this.setPosition = (xPosition)=>{
+      this.colors.setAttributeNS(null, "x", xPosition);
+      this.pink.setAttributeNS(null, "cx", xPosition+70);
+      this.purple.setAttributeNS(null, "cx", xPosition+70);
+      this.white.setAttributeNS(null, "cx", xPosition+70);
+      this.sky.setAttributeNS(null, "cx", xPosition+70);
+      this.orange.setAttributeNS(null, "cx", xPosition+70);
+    };
+  }
+
   function clear(){
     showNumbOfEdges.innerHTML = 0;
     showNumbOfVertexes.innerHTML = 0;
@@ -558,7 +576,11 @@ window.onload = function(){
     isOriented = true;
   });
 
+  var a = 0;
+  var color = new ColorPanel();
   draw.addEventListener("dblclick", (e)=>{
+    color.setPosition(a);
+    a += 10;
     if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
       nodes.push(node);
