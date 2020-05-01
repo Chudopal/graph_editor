@@ -8,6 +8,7 @@ window.onload = function(){
   var orientedButton = document.getElementById("oriented");
   var isCreatingEdges = true;
   var isOriented = true;
+  var isCreating = true;
 
   function Node(coordX, coordY){
     this.edgesIn = [];
@@ -24,6 +25,7 @@ window.onload = function(){
     names.append(this.degreeOfNode);
 
     this.ball.addEventListener("dblclick", (e)=>{
+      isCreating = false;
       console.log("efefefefef!!!!!");
     });
 
@@ -534,7 +536,6 @@ window.onload = function(){
       delete node.text;
     });
     nodes = [];
-    console.log(nodes);
     edges.forEach(edge=>{
       edge.triangle.remove();
       delete edge.triangle;
@@ -552,9 +553,11 @@ window.onload = function(){
     isOriented = true;
   });
 
-
   draw.addEventListener("dblclick", (e)=>{
+    if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
       nodes.push(node);
+    }
+    isCreating = true;
   });
 }
