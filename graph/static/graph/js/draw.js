@@ -132,7 +132,6 @@ window.onload = function(){
           this.showInformation();
         }
         this.makeNameBigger();
-        console.log("DDDD - " +  this.biggerColor);
         this.ball.setAttributeNS(null, "fill", this.biggerColor);
         this.ball.setAttributeNS(null, "r", 20);
 
@@ -399,9 +398,7 @@ window.onload = function(){
     var mouseDown = false;
 
     this.triangle.addEventListener("mousedown", (e)=>{
-      this.isArc = true;
       mouseDown = true;
-      this.changeEdge = true;
     });
 
     draw.addEventListener("mouseup", (e)=>{
@@ -411,6 +408,8 @@ window.onload = function(){
 
     draw.addEventListener("mousemove", (e) => {
       if(mouseDown){
+        this.changeEdge = true;
+        this.isArc = true;
         this.bisieX = e.clientX;
         this.bisieY = e.clientY;
         this.setPosition(
@@ -514,6 +513,8 @@ window.onload = function(){
     draw.addEventListener("mouseup", (e)=>{
       mouseDown = false;
       this.changeEdge = false;
+      this.bisieX = 0;
+      this.bisieY = 0;
     });
 
     draw.addEventListener("mousemove", (e) => {
@@ -536,6 +537,7 @@ window.onload = function(){
           );
       }
     });
+
     this.triangle.oncontextmenu = (e)=>  {
         this.triangle.remove();
         edges.splice(edges.indexOf(this),edges.indexOf(this));
