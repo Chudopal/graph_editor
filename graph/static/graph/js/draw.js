@@ -14,6 +14,7 @@ window.onload = function(){
   var showNumbOfEdges = document.getElementById("edges");
   var showIsTree = document.getElementById("isTree");
 
+
   function Node(coordX, coordY){
     this.edgesIn = [];
     this.edgesOut = [];
@@ -22,21 +23,25 @@ window.onload = function(){
     this.ball.setAttributeNS(null, 'cx', coordX);
     this.ball.setAttributeNS(null, 'cy', coordY);
     this.ball.setAttributeNS(null, 'r', 10);
-    this.ball.setAttributeNS(null, 'fill', "#F5A9A9");
+    this.color = "#F5A9A9";
+    this.biggerColor = "#FA5858";
+    this.ball.setAttributeNS(null, 'fill', this.color);
 
     this.degreeOfNode = document.createElement("p");
     this.degreeOfNode.innerHTML = 0;
     names.append(this.degreeOfNode);
 
-    this.getObject = ()=>{
-      return this.ball;
+    this.setColor = (color, biggerColor)=>{
+      this.color = color;
+      this.biggerColor = biggerColor;
     }
 
     this.ball.addEventListener("dblclick", (e)=>{
       isCreating = false;
-      colorPanel.currentObject = this.ball;
+      colorPanel.currentObject = this;
       colorPanel.open = true;
       animateColorPanel(-140, -40);
+      this.ball.setAttributeNS(null, "r", 20);
     });
 
     this.information = document.createElement('p');
@@ -97,81 +102,88 @@ window.onload = function(){
         null,
         "style",
         "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) +
-        "; left: " + (Number(this.ball.getAttribute('cx')) + 15) +
+        "; left: " + (Number(this.ball.getAttribute('cx')) ) +
         "; color: #EEF7A4; font-size:x-large;" +
         "border: 1px solid rgb(255, 203, 203);" +
         "background-color: #424242;"
-      );
+      );  
     }
 
     this.ball.addEventListener("mouseover", (e)=>{
-      if(!mouseMove && isOriented){
-        this.showInformation();
-      }
-      this.makeNameBigger();
-      this.ball.setAttributeNS(null, "fill", "#FA5858");
-      this.ball.setAttributeNS(null, "r", 20);
+      if(!colorPanel.open){
+        if(!mouseMove && isOriented){
+          this.showInformation();
+        }
+        this.makeNameBigger();
+        console.log("DDDD - " +  this.biggerColor);
+        this.ball.setAttributeNS(null, "fill", this.biggerColor);
+        this.ball.setAttributeNS(null, "r", 20);
 
-      if (isOriented){
+        if (isOriented){
+          this.edgesOut.forEach(element=>{
+            element.changeEdge = true;
+            element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
+            element.setPosition(
+              this.ball.getAttribute("cx"),
+              this.ball.getAttribute("cy"),
+              element.secondNode.ball.getAttribute("cx"),
+              element.secondNode.ball.getAttribute("cy"),
+              this.ball.getAttribute("r")
+            );
+            element.changeEdge = false;
+          });
+          this.edgesIn.forEach(element=>{
+            element.triangle.setAttributeNS(null, "fill", "#F84040");
+          });
+        }else{
+          this.edgesOut.forEach(element=>{
+            element.triangle.setAttributeNS(null, "fill", "#AC58FA");
+          });
+          this.edgesIn.forEach(element=>{
+            element.triangle.setAttributeNS(null, "fill", "#AC58FA");
+          });
+        }
+        this.showDegreeOfNode(
+          this.ball.getAttribute("cx"),
+          this.ball.getAttribute("cy"),
+          this.ball.getAttribute("r")
+        );
+      }
+    });
+
+    this.ball.addEventListener("mouseout", (e) => {
+      if(!colorPanel.open){
+        this.ball.setAttributeNS(null, "r", 10);
+      }
+        this.text.setAttributeNS(null, "style",
+        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 15) +
+        "; left: " + (Number(this.ball.getAttribute('cx')) + 25) +
+        "; color: #FA5858; font-size: 0.9em;"
+        );  
+        this.information.remove();
+        this.ball.setAttributeNS(null, "fill", this.color);
+       
         this.edgesOut.forEach(element=>{
           element.changeEdge = true;
-          element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
+          element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
           element.setPosition(
             this.ball.getAttribute("cx"),
             this.ball.getAttribute("cy"),
             element.secondNode.ball.getAttribute("cx"),
             element.secondNode.ball.getAttribute("cy"),
-            this.ball.getAttribute("r")
+            10
           );
           element.changeEdge = false;
         });
         this.edgesIn.forEach(element=>{
-          element.triangle.setAttributeNS(null, "fill", "#F84040");
+          element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
         });
-      }else{
-        this.edgesOut.forEach(element=>{
-          element.triangle.setAttributeNS(null, "fill", "#AC58FA");
-        });
-        this.edgesIn.forEach(element=>{
-          element.triangle.setAttributeNS(null, "fill", "#AC58FA");
-        });
-      }
-      this.showDegreeOfNode(
-        this.ball.getAttribute("cx"),
-        this.ball.getAttribute("cy"),
-        this.ball.getAttribute("r")
-      );
-    });
-
-    this.ball.addEventListener("mouseout", (e) => {
-      this.information.remove();
-      this.ball.setAttributeNS(null, "fill", "#F5A9A9");
-      this.ball.setAttributeNS(null, "r", 10);
-      this.text.setAttributeNS(null, "style",
-        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) +
-        "; left: " + (Number(this.ball.getAttribute('cx')) + 25) +
-        "; color: #FA5858;"
-      );
-      this.edgesOut.forEach(element=>{
-        element.changeEdge = true;
-        element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
-        element.setPosition(
+        this.showDegreeOfNode(
           this.ball.getAttribute("cx"),
           this.ball.getAttribute("cy"),
-          element.secondNode.ball.getAttribute("cx"),
-          element.secondNode.ball.getAttribute("cy"),
           this.ball.getAttribute("r")
         );
-        element.changeEdge = false;
-      });
-      this.edgesIn.forEach(element=>{
-        element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
-      });
-      this.showDegreeOfNode(
-        this.ball.getAttribute("cx"),
-        this.ball.getAttribute("cy"),
-        this.ball.getAttribute("r")
-      );
+      
     });
     this.ball.oncontextmenu = (e)=>  {
         rightButton = true;
@@ -269,6 +281,8 @@ window.onload = function(){
       if(colorPanel.open){
         animateColorPanel(-40, -140);
         colorPanel.open = false;
+        this.ball.setAttributeNS(null, "r", 10);
+        this.ball.setAttributeNS(null, "fill", this.color);
       }
     });
 
@@ -544,38 +558,78 @@ window.onload = function(){
   }
 
   function ColorPanel(){
+    var isClick = false;
+    this.addListener = (obj)=>{
+      var prevColor;
+      obj.addEventListener("mouseover", (e)=>{
+        prevColor = this.currentObject.ball.getAttribute("fill");
+        obj.setAttributeNS(null, "stroke-width", "3");
+        this.currentObject.ball.setAttributeNS(
+          null, 
+          "fill", 
+          obj.getAttribute("fill")
+        ); 
+      });
+      obj.addEventListener("mouseout", (e)=>{
+        if(!isClick){
+          this.currentObject.ball.setAttributeNS(
+            null, 
+            "fill", 
+            prevColor
+          );
+        }
+        obj.setAttributeNS(null, "stroke-width", "0");
+        isClick = false;
+      });
+      obj.addEventListener("click", (e)=>{
+        isClick = true;
+        this.currentObject.color = obj.getAttribute("fill");
+        this.currentObject.ball.setAttributeNS(
+          null, 
+          "fill", 
+          obj.getAttribute("fill")
+          );
+        switch(obj.getAttribute("fill")){
+          case "#F5A9A9":
+            this.currentObject.setColor(obj.getAttribute("fill"), "#FA5858");
+            console.log(this.currentObject.color);
+            break;
+          case "#F6CEF5":
+            this.currentObject.setColor(obj.getAttribute("fill"), "#ff9dfd");
+            console.log(this.currentObject.color);
+            break;
+          case "#FAFAFA":
+            this.currentObject.setColor(obj.getAttribute("fill"), "#c5eeff");
+            console.log(this.currentObject.color);
+            break;
+          case "#96ffe5":
+            this.currentObject.setColor(obj.getAttribute("fill"), "#31ffcc");
+            console.log(this.currentObject.color);
+            break;
+          case "#F2F5A9":
+            this.currentObject.setColor(obj.getAttribute("fill"), "#ffca5b");
+            console.log(this.currentObject.color);
+            break;
+          }
+      });
+    }
+
     this.open = false;
     this.colors = document.getElementById("colors");
     this.currentObject;
     this.pink = document.getElementById("pink");
-    addListener(this.pink);
+    this.addListener(this.pink);
     this.purple = document.getElementById("purple");
-    addListener(this.purple);
+    this.addListener(this.purple);
     this.white = document.getElementById("white");
-    addListener(this.white);
+    this.addListener(this.white);
     this.sky = document.getElementById("sky");
-    addListener(this.sky);
+    this.addListener(this.sky);
     this.orange = document.getElementById("orange");
-    addListener(this.orange);
+    this.addListener(this.orange);
 
-    function addListener(obj){
-      obj.addEventListener("mouseover", (e)=>{
-        obj.setAttributeNS(null, "stroke-width", "3");
-        this.currentObject.setAttributeNS(
-          null, 
-          "fill", 
-          obj.getAttribute("fill")
-        );
-      });
-      obj.addEventListener("mouseout", (e)=>{
-  
-        obj.setAttributeNS(null, "stroke-width", "0");
-      });
-    }
 
     this.setPosition = (xPosition)=>{
-      console.log("hi there");
-      console.log(this.currentObject.getAttribute("fill"));
       this.colors.setAttributeNS(null, "x", xPosition);
       this.pink.setAttributeNS(null, "cx", xPosition+70);
       this.purple.setAttributeNS(null, "cx", xPosition+70);
@@ -589,7 +643,6 @@ window.onload = function(){
     var start = Date.now();
     var move = finalPosition - beginPosition;
     var position = beginPosition;
-    console.log(position);
     let timer = setInterval(function() {
       let timePassed = Date.now() - start;
       if (timePassed >= 320) {
