@@ -489,36 +489,60 @@ window.onload = function(){
     this.secondNode;
     this.bisieX = 0;
     this.bisieY = 0;
+    this.color = "#F2F5A9"
     this.triangle = document.createElementNS(ns ,"path");
-    this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+    this.triangle.setAttributeNS(null, 'fill', this.color);
     this.triangle.setAttributeNS(null, "stroke", "#F79F81");
     draw.prepend(this.triangle);
     this.changeEdge = true;
     this.triangle.setAttributeNS(null, "stroke-width", "2");
+    
+    
+    this.setColor = (color, biggerColor)=>{
+      this.triangle.setAttributeNS(
+        null, "fill", color
+      );
+      this.color = color;
+    }
+
+    this.setOlnyMainColor = (color)=>{
+      this.triangle.setAttributeNS(null, "fill", color);
+    }
+
+    this.getColor = ()=>{
+      return this.color;
+    }
+
+    this.triangle.addEventListener("dblclick", (e)=>{
+      isCreating = false;
+      colorPanel.currentObject = this;
+      colorPanel.open = true;
+      animateColorPanel(-140, -40);
+    }); 
+    
+
     this.triangle.addEventListener("mouseover", (e)=>{
       this.triangle.setAttributeNS(null, "fill", "#CEECF5");
     });
     this.triangle.addEventListener("mouseout", (e)=>{
-      this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+      this.triangle.setAttributeNS(null, 'fill', this.color);
     });
 
     var mouseDown = false;
 
     this.triangle.addEventListener("mousedown", (e)=>{
-      this.isArc = true;
       mouseDown = true;
-      this.changeEdge = true;
     });
-
+    
     draw.addEventListener("mouseup", (e)=>{
       mouseDown = false;
       this.changeEdge = false;
-      this.bisieX = 0;
-      this.bisieY = 0;
     });
-
+    
     draw.addEventListener("mousemove", (e) => {
       if(mouseDown){
+        this.changeEdge = true;
+        this.isArc = true;
         this.bisieX = e.clientX;
         this.bisieY = e.clientY;
         this.setPosition(
