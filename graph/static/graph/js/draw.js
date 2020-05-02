@@ -32,8 +32,19 @@ window.onload = function(){
     names.append(this.degreeOfNode);
 
     this.setColor = (color, biggerColor)=>{
+      this.ball.setAttributeNS(
+        null, "fill", color
+      );
       this.color = color;
       this.biggerColor = biggerColor;
+    }
+
+    this.setOlnyMainColor = (color)=>{
+      this.ball.setAttributeNS(null, "fill", color);
+    }
+
+    this.getColor = ()=>{
+      return this.color;
     }
 
     this.ball.addEventListener("dblclick", (e)=>{
@@ -562,19 +573,15 @@ window.onload = function(){
     this.addListener = (obj)=>{
       var prevColor;
       obj.addEventListener("mouseover", (e)=>{
-        prevColor = this.currentObject.ball.getAttribute("fill");
+        prevColor = this.currentObject.getColor();
         obj.setAttributeNS(null, "stroke-width", "3");
-        this.currentObject.ball.setAttributeNS(
-          null, 
-          "fill", 
+        this.currentObject.setOlnyMainColor(
           obj.getAttribute("fill")
         ); 
       });
       obj.addEventListener("mouseout", (e)=>{
         if(!isClick){
-          this.currentObject.ball.setAttributeNS(
-            null, 
-            "fill", 
+          this.currentObject.setOlnyMainColor(
             prevColor
           );
         }
@@ -583,32 +590,21 @@ window.onload = function(){
       });
       obj.addEventListener("click", (e)=>{
         isClick = true;
-        this.currentObject.color = obj.getAttribute("fill");
-        this.currentObject.ball.setAttributeNS(
-          null, 
-          "fill", 
-          obj.getAttribute("fill")
-          );
         switch(obj.getAttribute("fill")){
           case "#F5A9A9":
             this.currentObject.setColor(obj.getAttribute("fill"), "#FA5858");
-            console.log(this.currentObject.color);
             break;
           case "#F6CEF5":
             this.currentObject.setColor(obj.getAttribute("fill"), "#ff9dfd");
-            console.log(this.currentObject.color);
             break;
           case "#FAFAFA":
             this.currentObject.setColor(obj.getAttribute("fill"), "#c5eeff");
-            console.log(this.currentObject.color);
             break;
           case "#96ffe5":
             this.currentObject.setColor(obj.getAttribute("fill"), "#31ffcc");
-            console.log(this.currentObject.color);
             break;
           case "#F2F5A9":
             this.currentObject.setColor(obj.getAttribute("fill"), "#ffca5b");
-            console.log(this.currentObject.color);
             break;
           }
       });
