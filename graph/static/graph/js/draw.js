@@ -6,6 +6,7 @@ window.onload = function(){
   var names = document.getElementById("names");
   var unorientedButton = document.getElementById("unoriented");
   var orientedButton = document.getElementById("oriented");
+  var colorPanel = new ColorPanel();
   var isCreatingEdges = true;
   var isOriented = true;
   var isCreating = true;
@@ -27,8 +28,15 @@ window.onload = function(){
     this.degreeOfNode.innerHTML = 0;
     names.append(this.degreeOfNode);
 
+    this.getObject = ()=>{
+      return this.ball;
+    }
+
     this.ball.addEventListener("dblclick", (e)=>{
       isCreating = false;
+      colorPanel.currentObject = this.ball;
+      colorPanel.open = true;
+      animateColorPanel(-140, -40);
     });
 
     this.information = document.createElement('p');
@@ -256,6 +264,14 @@ window.onload = function(){
       );
       }
     });
+
+    draw.addEventListener("mouseup", (e)=>{
+      if(colorPanel.open){
+        animateColorPanel(-40, -140);
+        colorPanel.open = false;
+      }
+    });
+
     this.ball.addEventListener("mouseup", (e)=>{
       if(!rightButton){
       mouseUp = true;
@@ -528,14 +544,38 @@ window.onload = function(){
   }
 
   function ColorPanel(){
+    this.open = false;
     this.colors = document.getElementById("colors");
+    this.currentObject;
     this.pink = document.getElementById("pink");
+    addListener(this.pink);
     this.purple = document.getElementById("purple");
+    addListener(this.purple);
     this.white = document.getElementById("white");
+    addListener(this.white);
     this.sky = document.getElementById("sky");
+    addListener(this.sky);
     this.orange = document.getElementById("orange");
+    addListener(this.orange);
+
+    function addListener(obj){
+      obj.addEventListener("mouseover", (e)=>{
+        obj.setAttributeNS(null, "stroke-width", "3");
+        this.currentObject.setAttributeNS(
+          null, 
+          "fill", 
+          obj.getAttribute("fill")
+        );
+      });
+      obj.addEventListener("mouseout", (e)=>{
+  
+        obj.setAttributeNS(null, "stroke-width", "0");
+      });
+    }
 
     this.setPosition = (xPosition)=>{
+      console.log("hi there");
+      console.log(this.currentObject.getAttribute("fill"));
       this.colors.setAttributeNS(null, "x", xPosition);
       this.pink.setAttributeNS(null, "cx", xPosition+70);
       this.purple.setAttributeNS(null, "cx", xPosition+70);
@@ -543,6 +583,26 @@ window.onload = function(){
       this.sky.setAttributeNS(null, "cx", xPosition+70);
       this.orange.setAttributeNS(null, "cx", xPosition+70);
     };
+  }
+
+  function animateColorPanel(beginPosition, finalPosition){
+    var start = Date.now();
+    var move = finalPosition - beginPosition;
+    var position = beginPosition;
+    console.log(position);
+    let timer = setInterval(function() {
+      let timePassed = Date.now() - start;
+      if (timePassed >= 320) {
+        clearInterval(timer);
+        return;
+      }
+      draw(timePassed);
+    }, 20);
+
+    function draw() {
+      position += move/15;
+      colorPanel.setPosition(position);
+    }
   }
 
   function clear(){
@@ -576,11 +636,7 @@ window.onload = function(){
     isOriented = true;
   });
 
-  var a = 0;
-  var color = new ColorPanel();
   draw.addEventListener("dblclick", (e)=>{
-    color.setPosition(a);
-    a += 10;
     if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
       nodes.push(node);
