@@ -77,7 +77,7 @@ window.onload = function(){
       edges.pop(); 
       this.information.remove();
       showNumbOfVertexes.innerHTML = edges.length;
-      this.degreeOfNode.remove();
+      this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
     });    
 
     this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
@@ -182,7 +182,7 @@ window.onload = function(){
        
         this.edgesOut.forEach(element=>{
           element.changeEdge = true;
-          element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
+          element.triangle.setAttributeNS(null, "fill", element.color);
           element.setPosition(
             this.ball.getAttribute("cx"),
             this.ball.getAttribute("cy"),
@@ -193,7 +193,7 @@ window.onload = function(){
           element.changeEdge = false;
         });
         this.edgesIn.forEach(element=>{
-          element.triangle.setAttributeNS(null, "fill", "#F2F5A9");
+          element.triangle.setAttributeNS(null, "fill", element.color);
         });
         this.showDegreeOfNode(
           this.ball.getAttribute("cx"),
@@ -360,17 +360,40 @@ window.onload = function(){
     this.bisieX = 0;
     this.bisieY = 0;
     this.triangle = document.createElementNS(ns ,"path");
-    this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+    this.color = "#F2F5A9";
+    this.triangle.setAttributeNS(null, 'fill', this.color);
     this.triangle.setAttributeNS(null, "stroke", "#F79F81");
     draw.prepend(this.triangle);
     this.changeEdge = true;
     this.triangle.setAttributeNS(null, "stroke-width", "2");
+
+    this.setColor = (color, biggerColor)=>{
+      this.triangle.setAttributeNS(
+        null, "fill", color
+      );
+      this.color = color;
+    }
+
+    this.setOlnyMainColor = (color)=>{
+      this.triangle.setAttributeNS(null, "fill", color);
+    }
+
+    this.getColor = ()=>{
+      return this.color;
+    }
+
+    this.triangle.addEventListener("dblclick", (e)=>{
+      isCreating = false;
+      colorPanel.currentObject = this;
+      colorPanel.open = true;
+      animateColorPanel(-140, -40);
+    }); 
     
     this.triangle.addEventListener("mouseover", (e)=>{
       this.triangle.setAttributeNS(null, "fill", "#CEECF5");
     });
     this.triangle.addEventListener("mouseout", (e)=>{
-      this.triangle.setAttributeNS(null, 'fill', '#F2F5A9');
+      this.triangle.setAttributeNS(null, 'fill', this.color);
     });
 
     var mouseDown = false;
