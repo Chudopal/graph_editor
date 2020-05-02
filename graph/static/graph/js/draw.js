@@ -30,6 +30,25 @@ window.onload = function(){
     this.degreeOfNode = document.createElement("p");
     this.degreeOfNode.innerHTML = 0;
     names.append(this.degreeOfNode);
+    
+    this.information = document.createElement('p');
+    this.text = document.createElement('p');
+    this.name = "vertex" + nodes.length;
+    this.text.innerHTML = this.name;
+    this.text.setAttributeNS(null, "contenteditable", "true");
+    this.text.setAttributeNS(null, "style",
+    "position: fixed; top:"
+    + (coordY + 10) + "; left: "
+    + (coordX + 25) + "; color: #FA5858;"
+    );
+    names.append(this.text);
+
+    draw.append(this.ball);
+
+    var rightButton = false;
+    var mouseDown = false;
+    var mouseUp = false;
+    var mouseMove = false;
 
     this.setColor = (color, biggerColor)=>{
       this.ball.setAttributeNS(
@@ -53,26 +72,13 @@ window.onload = function(){
       colorPanel.open = true;
       animateColorPanel(-140, -40);
       this.ball.setAttributeNS(null, "r", 20);
-    });
-
-    this.information = document.createElement('p');
-    this.text = document.createElement('p');
-    this.name = "vertex" + nodes.length;
-    this.text.innerHTML = this.name;
-    this.text.setAttributeNS(null, "contenteditable", "true");
-    this.text.setAttributeNS(null, "style",
-    "position: fixed; top:"
-    + (coordY + 10) + "; left: "
-    + (coordX + 25) + "; color: #FA5858;"
-    );
-    names.append(this.text);
-
-    draw.append(this.ball);
-
-    var rightButton = false;
-    var mouseDown = false;
-    var mouseUp = false;
-    var mouseMove = false;
+      this.edgesIn.pop();
+      this.edgesOut.pop();
+      edges.pop(); 
+      this.information.remove();
+      showNumbOfVertexes.innerHTML = edges.length;
+      this.degreeOfNode.remove();
+    });    
 
     this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
       this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
@@ -359,6 +365,7 @@ window.onload = function(){
     draw.prepend(this.triangle);
     this.changeEdge = true;
     this.triangle.setAttributeNS(null, "stroke-width", "2");
+    
     this.triangle.addEventListener("mouseover", (e)=>{
       this.triangle.setAttributeNS(null, "fill", "#CEECF5");
     });
