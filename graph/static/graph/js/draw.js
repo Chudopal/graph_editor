@@ -13,6 +13,7 @@ window.onload = function(){
   var showNumbOfVertexes = document.getElementById("vertexes");
   var showNumbOfEdges = document.getElementById("edges");
   var showIsTree = document.getElementById("isTree");
+  var choseCycle = new ChoseCycle();
 
 
   function Node(coordX, coordY){
@@ -689,6 +690,18 @@ window.onload = function(){
       this.sky.setAttributeNS(null, "cx", xPosition+70);
       this.orange.setAttributeNS(null, "cx", xPosition+70);
     };
+  }
+
+  function ChoseCycle(){
+
+    this.choseCycle = document.createElementNS(ns, 'circle');
+    draw.append(this.choseCycle);
+
+    this.makeCycle = function(xPosition, yPosition, radius){
+      this.choseCycle.setAttributeNS(null, "cx", xPosition);
+      this.choseCycle.setAttributeNS(null, "cy", yPosition);
+      this.choseCycle.setAttributeNS(null, "r", radius);
+    }
   }
 
   function animateColorPanel(beginPosition, finalPosition){
