@@ -19,7 +19,7 @@ window.onload = function(){
   function Node(coordX, coordY){
     this.edgesIn = [];
     this.edgesOut = [];
-
+    this.colorPanelIsOpen = false;
     this.ball = document.createElementNS(ns, 'circle');
     this.ball.setAttributeNS(null, 'cx', coordX);
     this.ball.setAttributeNS(null, 'cy', coordY);
@@ -30,7 +30,6 @@ window.onload = function(){
 
     this.degreeOfNode = document.createElement("p");
     this.degreeOfNode.innerHTML = 0;
-    names.append(this.degreeOfNode);
     
     this.information = document.createElement('p');
     this.text = document.createElement('p');
@@ -43,7 +42,7 @@ window.onload = function(){
     + (coordX + 25) + "; color: #FA5858;"
     );
     names.append(this.text);
-
+    names.append(this.degreeOfNode);
     draw.append(this.ball);
 
     var rightButton = false;
@@ -58,19 +57,19 @@ window.onload = function(){
       this.color = color;
       this.biggerColor = biggerColor;
     }
-
+    
     this.setOlnyMainColor = (color)=>{
       this.ball.setAttributeNS(null, "fill", color);
     }
-
+    
     this.getColor = ()=>{
       return this.color;
     }
-
+    
     this.ball.addEventListener("dblclick", (e)=>{
       isCreating = false;
       colorPanel.currentObject = this;
-      colorPanel.open = true;
+      this.colorPanelIsOpen = true;
       animateColorPanel(-140, -40);
       this.ball.setAttributeNS(null, "r", 20);
       this.edgesIn.pop();
@@ -78,8 +77,25 @@ window.onload = function(){
       edges.pop(); 
       this.information.remove();
       showNumbOfVertexes.innerHTML = edges.length;
-      this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
+      this.degreeOfNode.remove();
+      this.text.remove();
     });    
+    
+    draw.addEventListener("mouseup", (e)=>{
+      if(this.colorPanelIsOpen){
+        console.log("In if" + this);
+        animateColorPanel(-40, -140);
+        this.colorPanelIsOpen = false;
+        this.ball.setAttributeNS(null, "r", 10);
+        this.ball.setAttributeNS(null, "fill", this.color);
+        this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
+        names.append(this.text);
+        names.append(this.degreeOfNode);
+      }
+      else{
+        console.log("out if" + this);
+      }
+    });
 
     this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
       this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
@@ -95,7 +111,7 @@ window.onload = function(){
         );
       }
       this.showDegreeOfNode(coordX, coordY, this.ball.getAttribute("r"));
-
+      
       this.showInformation = function(){
         this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
         + "out: " + this.edgesOut.length;
@@ -114,21 +130,21 @@ window.onload = function(){
        );
        names.append(this.information);
       }
-
-    this.makeNameBigger = function(){
-      this.text.setAttributeNS(
-        null,
-        "style",
-        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) +
-        "; left: " + (Number(this.ball.getAttribute('cx')) ) +
-        "; color: #EEF7A4; font-size:x-large;" +
-        "border: 1px solid rgb(255, 203, 203);" +
+      
+      this.makeNameBigger = function(){
+        this.text.setAttributeNS(
+          null,
+          "style",
+          "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) +
+          "; left: " + (Number(this.ball.getAttribute('cx')) ) +
+          "; color: #EEF7A4; font-size:x-large;" +
+          "border: 1px solid rgb(255, 203, 203);" +
         "background-color: #424242;"
       );  
     }
 
     this.ball.addEventListener("mouseover", (e)=>{
-      if(!colorPanel.open){
+      if(!this.colorPanelIsOpen){
         if(!mouseMove && isOriented){
           this.showInformation();
         }
@@ -164,12 +180,12 @@ window.onload = function(){
           this.ball.getAttribute("cx"),
           this.ball.getAttribute("cy"),
           this.ball.getAttribute("r")
-        );
-      }
-    });
-
+          );
+        }
+      });
+      
     this.ball.addEventListener("mouseout", (e) => {
-      if(!colorPanel.open){
+      if(!this.colorPanelIsOpen){
         this.ball.setAttributeNS(null, "r", 10);
       }
         this.text.setAttributeNS(null, "style",
@@ -294,14 +310,6 @@ window.onload = function(){
       }
     });
 
-    draw.addEventListener("mouseup", (e)=>{
-      if(colorPanel.open){
-        animateColorPanel(-40, -140);
-        colorPanel.open = false;
-        this.ball.setAttributeNS(null, "r", 10);
-        this.ball.setAttributeNS(null, "fill", this.color);
-      }
-    });
 
     this.ball.addEventListener("mouseup", (e)=>{
       if(!rightButton){
@@ -354,6 +362,7 @@ window.onload = function(){
   }
 
   function Edge(node){
+    this.colorPanelIsOpen = false;
     this.firstNode = node;
     this.isArc = false;
     this.secondNode;
@@ -385,7 +394,7 @@ window.onload = function(){
     this.triangle.addEventListener("dblclick", (e)=>{
       isCreating = false;
       colorPanel.currentObject = this;
-      colorPanel.open = true;
+      this.colorPanelIsOpen = true;
       animateColorPanel(-140, -40);
     }); 
     
@@ -405,6 +414,11 @@ window.onload = function(){
     draw.addEventListener("mouseup", (e)=>{
       mouseDown = false;
       this.changeEdge = false;
+      if(this.colorPanelIsOpen){
+        animateColorPanel(-40, -140);
+        this.colorPanelIsOpen = false;
+        this.triangle.setAttributeNS(null, "fill", this.color);
+      }
     });
 
     draw.addEventListener("mousemove", (e) => {
@@ -485,6 +499,7 @@ window.onload = function(){
   }
 
   function Arc(node){
+    this.colorPanelIsOpen = false;
     this.firstNode = node;
     this.isArc = false;
     this.secondNode;
@@ -517,7 +532,7 @@ window.onload = function(){
     this.triangle.addEventListener("dblclick", (e)=>{
       isCreating = false;
       colorPanel.currentObject = this;
-      colorPanel.open = true;
+      this.colorPanelIsOpen = true;
       animateColorPanel(-140, -40);
     }); 
     
@@ -538,6 +553,15 @@ window.onload = function(){
     draw.addEventListener("mouseup", (e)=>{
       mouseDown = false;
       this.changeEdge = false;
+      draw.addEventListener("mouseup", (e)=>{
+        mouseDown = false;
+        this.changeEdge = false;
+        if(this.colorPanelIsOpen){
+          animateColorPanel(-40, -140);
+          this.colorPanelIsOpen = false;
+          this.triangle.setAttributeNS(null, "fill", this.color);
+        }
+      });
     });
     
     draw.addEventListener("mousemove", (e) => {
@@ -667,7 +691,6 @@ window.onload = function(){
       });
     }
 
-    this.open = false;
     this.colors = document.getElementById("colors");
     this.currentObject;
     this.pink = document.getElementById("pink");
