@@ -13,7 +13,7 @@ window.onload = function(){
   var showNumbOfVertexes = document.getElementById("vertexes");
   var showNumbOfEdges = document.getElementById("edges");
   var showIsTree = document.getElementById("isTree");
-  var choseCycle = new ChoseCycle();
+  var choseCircle = new ChoseCircle();
 
 
   function Node(coordX, coordY){
@@ -70,7 +70,6 @@ window.onload = function(){
       isCreating = false;
       colorPanel.currentObject = this;
       this.colorPanelIsOpen = true;
-      animateColorPanel(-140, -40);
       this.ball.setAttributeNS(null, "r", 20);
       this.edgesIn.pop();
       this.edgesOut.pop();
@@ -79,21 +78,35 @@ window.onload = function(){
       showNumbOfVertexes.innerHTML = edges.length;
       this.degreeOfNode.remove();
       this.text.remove();
+      draw.append(choseCircle.choseCircle);
+      draw.append(choseCircle.ball);
+      draw.append(choseCircle.circle);
+      draw.append(choseCircle.rectangle);
+      draw.append(choseCircle.polygon);
+      draw.append(this.ball);
+      animateColorPanel(
+        -140, -40, false,
+        this.ball.getAttribute("cx"),
+        this.ball.getAttribute("cy"),
+        0, 80
+      );
     });    
     
     draw.addEventListener("mouseup", (e)=>{
       if(this.colorPanelIsOpen){
-        console.log("In if" + this);
-        animateColorPanel(-40, -140);
+        animateColorPanel(
+          -40, -140, false,
+          this.ball.getAttribute("cx"),
+          this.ball.getAttribute("cy"),
+          80, 0
+        );
         this.colorPanelIsOpen = false;
         this.ball.setAttributeNS(null, "r", 10);
         this.ball.setAttributeNS(null, "fill", this.color);
         this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
         names.append(this.text);
         names.append(this.degreeOfNode);
-      }
-      else{
-        console.log("out if" + this);
+        //choseCircle.choseCircle.remove();
       }
     });
 
@@ -395,7 +408,7 @@ window.onload = function(){
       isCreating = false;
       colorPanel.currentObject = this;
       this.colorPanelIsOpen = true;
-      animateColorPanel(-140, -40);
+      animateColorPanel(-140, -40, true);
     }); 
     
     this.triangle.addEventListener("mouseover", (e)=>{
@@ -533,7 +546,7 @@ window.onload = function(){
       isCreating = false;
       colorPanel.currentObject = this;
       this.colorPanelIsOpen = true;
-      animateColorPanel(-140, -40);
+      animateColorPanel(-140, -40, true);
     }); 
     
 
@@ -715,34 +728,89 @@ window.onload = function(){
     };
   }
 
-  function ChoseCycle(){
+  function ChoseCircle(){
 
-    this.choseCycle = document.createElementNS(ns, 'circle');
-    draw.append(this.choseCycle);
+    this.choseCircle = document.createElementNS(ns, 'circle');
+    
+    this.ball = document.createElementNS(ns, "circle");
+    this.circle = document.createElementNS(ns, "circle");
+    this.rectangle = document.createElementNS(ns, 'rect');
+    this.polygon = document.createElementNS(ns, 'polygon');
 
-    this.makeCycle = function(xPosition, yPosition, radius){
-      this.choseCycle.setAttributeNS(null, "cx", xPosition);
-      this.choseCycle.setAttributeNS(null, "cy", yPosition);
-      this.choseCycle.setAttributeNS(null, "r", radius);
+    this.choseCircle.setAttributeNS(null, "fill", "#2a3c46"); 
+    this.choseCircle.setAttributeNS(null, "stroke", "rgb(15, 15, 15)");
+    this.ball.setAttributeNS(null, "fill", "#FCB84D");
+    this.circle.setAttributeNS(null, "stroke", "#FCB84D");
+    this.circle.setAttributeNS(null, "fill", "none");
+    this.circle.setAttributeNS(null, "r", 18);
+    this.rectangle.setAttributeNS(null, "fill", "#FCB84D");
+    this.polygon.setAttributeNS(null, "stroke", "#FCB84D");
+    this.polygon.setAttributeNS(null, "fill", "none");
+
+
+    this.makeCircle = function(xPosition, yPosition, radius){
+      this.choseCircle.setAttributeNS(null, "cx", xPosition);
+      this.choseCircle.setAttributeNS(null, "cy", yPosition);
+      this.choseCircle.setAttributeNS(null, "r", radius);
+
+      this.ball.setAttributeNS(null, "cx", Number(xPosition) );
+      this.ball.setAttributeNS(null, "cy", Number(yPosition) - 50);
+      this.ball.setAttributeNS(null, "r", radius*0.22);
+
+      this.circle.setAttributeNS(null, "cx",  Number(xPosition) + 50);
+      this.circle.setAttributeNS(null, "cy", yPosition);
+      this.circle.setAttributeNS(null, "stroke-width", radius*0.05);
+
+      this.rectangle.setAttributeNS(null, "x",  Number(xPosition) - 16);
+      this.rectangle.setAttributeNS(null, "y",  Number(yPosition) + 30);
+      this.rectangle.setAttributeNS(null, "width", radius * 0.40);
+      this.rectangle.setAttributeNS(null, "height", radius * 0.40);
+
+      this.polygon.setAttributeNS(null, "cx",  Number(xPosition) - 30);
+      this.polygon.setAttributeNS(null, "cy", yPosition);
+      this.polygon.setAttributeNS(
+        null,
+        "points",
+        ( Number(xPosition) - 35) + "," +
+        ( Number(yPosition) + 15) + " " +
+        ( Number(xPosition) - 65) + "," +
+        ( Number(yPosition) + 15) + " " +
+        ( Number(xPosition) - 50) + "," +
+        ( Number(yPosition) - 15)
+      );
+      this.polygon.setAttributeNS(null, "stroke-width", radius*0.05);
+      
     }
   }
 
-  function animateColorPanel(beginPosition, finalPosition){
+  function animateColorPanel(beginPosition, finalPosition, isEdge, xPosition, yPosition, beginRadius, endRadius){
     var start = Date.now();
     var move = finalPosition - beginPosition;
     var position = beginPosition;
+    var currentRadius = beginRadius;
     let timer = setInterval(function() {
       let timePassed = Date.now() - start;
       if (timePassed >= 320) {
         clearInterval(timer);
         return;
       }
-      draw(timePassed);
+      drawColorPanel(timePassed);
+      if(!isEdge){
+        drawCircle();
+      }
     }, 20);
 
-    function draw() {
+    function drawColorPanel() {
       position += move/15;
       colorPanel.setPosition(position);
+    }
+
+    function drawCircle(){
+      currentRadius += (endRadius - beginRadius)/14;
+      if(currentRadius < 0){
+        currentRadius = 0;
+      }
+      choseCircle.makeCircle(xPosition, yPosition, currentRadius);
     }
   }
 
