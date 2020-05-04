@@ -17,17 +17,19 @@ window.onload = function(){
 
 
   function Node(coordX, coordY){
+    this.coordX = coordX;
+    this.coordY = coordY;
     this.edgesIn = [];
     this.edgesOut = [];
     this.colorPanelIsOpen = false;
-    this.ball = document.createElementNS(ns, 'circle');
-    this.ball.setAttributeNS(null, 'cx', coordX);
-    this.ball.setAttributeNS(null, 'cy', coordY);
-    this.ball.setAttributeNS(null, 'r', 10);
     this.color = "#F5A9A9";
     this.biggerColor = "#FA5858";
+    this.ball = document.createElementNS(ns, 'circle');
+    this.ball.setAttributeNS(null, 'cx', this.coordX);
+    this.ball.setAttributeNS(null, 'cy', this.coordY);
+    this.ball.setAttributeNS(null, 'r', 10);
     this.ball.setAttributeNS(null, 'fill', this.color);
-
+    
     this.degreeOfNode = document.createElement("p");
     this.degreeOfNode.innerHTML = 0;
     
@@ -38,17 +40,118 @@ window.onload = function(){
     this.text.setAttributeNS(null, "contenteditable", "true");
     this.text.setAttributeNS(null, "style",
     "position: fixed; top:"
-    + (coordY + 10) + "; left: "
-    + (coordX + 25) + "; color: #FA5858;"
+    + (this.coordY + 10) + "; left: "
+    + (this.coordX + 25) + "; color: #FA5858;"
     );
     names.append(this.text);
     names.append(this.degreeOfNode);
     draw.append(this.ball);
 
+    this.isBall = true;
+    this.isCircle = false;
+    this.isRectangle = false;
+    this.isPolygon = false;
+
     var rightButton = false;
     var mouseDown = false;
     var mouseUp = false;
     var mouseMove = false;
+
+    this.setFigure = ()=>{
+      if(this.isBall){
+        this.ball.remove();
+        this.ball = document.createElementNS(ns, 'circle');
+        this.ball.setAttributeNS(null, 'cx', this.coordX);
+        this.ball.setAttributeNS(null, 'cy', this.coordY);
+        this.ball.setAttributeNS(null, 'r', 10);
+        this.ball.setAttributeNS(null, 'fill', this.color);
+        draw.append(this.ball);
+      }
+      if(this.isCircle){
+        this.ball.remove();
+        this.ball = document.createElementNS(ns, 'circle');
+        this.ball.setAttributeNS(null, 'cx', this.coordX);
+        this.ball.setAttributeNS(null, 'cy', this.coordY);
+        this.ball.setAttributeNS(null, 'r', 10);
+        this.ball.setAttributeNS(null, "stroke-width", 4);
+        this.ball.setAttributeNS(null, 'fill', "#212f35");
+        draw.append(this.ball);
+      }
+      if(this.isRectangle){
+        this.ball.remove();
+        this.ball = document.createElementNS(ns, 'rect');
+        this.ball.setAttributeNS(null, 'x', this.coordX - 10);
+        this.ball.setAttributeNS(null, 'y', this.coordY - 10);
+        this.ball.setAttributeNS(null, 'width', 20);
+        this.ball.setAttributeNS(null, 'heigth', 20);
+        this.ball.setAttributeNS(null, 'fill', this.color);
+        draw.append(this.ball);
+      }
+      if(this.isPolygon){
+        console.log("here");
+        this.ball.remove();
+        this.ball = document.createElementNS(ns, 'polygon');
+        this.ball.setAttributeNS(
+          null,
+          "points",
+          this.coordX + "," +
+          (Number(this.coordY) - 40/3) + " " +
+          (Number(this.coordX) + 10) + "," +
+          (Number(this.coordY) + 20/3 ) + " " + 
+          (Number(this.coordX) - 10) + "," +
+          (Number(this.coordY) + 20/3 )
+        )
+        this.ball.setAttributeNS(null, "stroke-width", 4);
+        this.ball.setAttributeNS(null, 'fill', "#212f35");
+        this.ball.setAttributeNS(null, 'stroke', this.color);
+        draw.append(this.ball);
+      }
+    }
+
+    this.setPosition = function(){
+      if(isBall){
+
+      }
+      if(isCircle){
+
+      }
+      if(isRectangle){
+
+      }
+      if(isPolygon){
+
+      }
+    }
+
+    this.changeColor = function(){
+      if(isBall){
+
+      }
+      if(isCircle){
+
+      }
+      if(isRectangle){
+
+      }
+      if(isPolygon){
+
+      }
+    }
+
+    this.makeBigger = function(){
+      if(isBall){
+
+      }
+      if(isCircle){
+
+      }
+      if(isRectangle){
+
+      }
+      if(isPolygon){
+
+      }
+    }
 
     this.setColor = (color, biggerColor)=>{
       this.ball.setAttributeNS(
@@ -78,12 +181,14 @@ window.onload = function(){
       showNumbOfVertexes.innerHTML = edges.length;
       this.degreeOfNode.remove();
       this.text.remove();
+      choseCircle.currentObject = this;
       draw.append(choseCircle.choseCircle);
       draw.append(choseCircle.ball);
       draw.append(choseCircle.circle);
       draw.append(choseCircle.rectangle);
       draw.append(choseCircle.polygon);
       draw.append(this.ball);
+      choseCircle.setListeners();
       animateColorPanel(
         -140, -40, false,
         this.ball.getAttribute("cx"),
@@ -258,6 +363,8 @@ window.onload = function(){
     });
     draw.addEventListener("mousemove", (e)=>{
       if(mouseDown && !rightButton){
+        this.coordX = e.clientX;
+        this.coordY = e.clientY;
         mouseMove = true;
         this.ball.setAttributeNS(null, 'cx', e.clientX -50);
         this.ball.setAttributeNS(null, 'cy', e.clientY -1);
@@ -730,6 +837,39 @@ window.onload = function(){
 
   function ChoseCircle(){
 
+    this.currentObject;
+
+    this.setListeners = ()=>{
+      this.ball.addEventListener("mouseover", (e)=>{
+        this.currentObject.isBall       = true;
+        this.currentObject.isCircle     = false;
+        this.currentObject.isPolygon    = false;
+        this.currentObject.isRectangle  = false;
+        this.currentObject.setFigure();
+      });
+      this.circle.addEventListener("mouseover", (e)=>{
+        this.currentObject.isBall       = false;
+        this.currentObject.isCircle     = true;
+        this.currentObject.isPolygon    = false;
+        this.currentObject.isRectangle  = false;
+        this.currentObject.setFigure();
+      });
+      this.rectangle.addEventListener("mouseover", (e)=>{
+        this.currentObject.isBall       = false;
+        this.currentObject.isCircle     = false;
+        this.currentObject.isPolygon    = false;
+        this.currentObject.isRectangle  = true;
+        this.currentObject.setFigure();
+      });
+      this.polygon.addEventListener("mouseover", (e)=>{
+        this.currentObject.isBall       = false;
+        this.currentObject.isCircle     = false;
+        this.currentObject.isPolygon    = true;
+        this.currentObject.isRectangle  = false;
+        this.currentObject.setFigure();
+      });
+    }
+
     this.choseCircle = document.createElementNS(ns, 'circle');
     
     this.ball = document.createElementNS(ns, "circle");
@@ -746,6 +886,7 @@ window.onload = function(){
     this.rectangle.setAttributeNS(null, "fill", "#FCB84D");
     this.polygon.setAttributeNS(null, "stroke", "#FCB84D");
     this.polygon.setAttributeNS(null, "fill", "none");
+
 
 
     this.makeCircle = function(xPosition, yPosition, radius){
@@ -766,8 +907,6 @@ window.onload = function(){
       this.rectangle.setAttributeNS(null, "width", radius * 0.40);
       this.rectangle.setAttributeNS(null, "height", radius * 0.40);
 
-      this.polygon.setAttributeNS(null, "cx",  Number(xPosition) - 30);
-      this.polygon.setAttributeNS(null, "cy", yPosition);
       this.polygon.setAttributeNS(
         null,
         "points",
