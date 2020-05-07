@@ -24,11 +24,11 @@ window.onload = function(){
     this.colorPanelIsOpen = false;
     this.color = "#F5A9A9";
     this.biggerColor = "#FA5858";
-    this.ball = document.createElementNS(ns, 'circle');
-    this.ball.setAttributeNS(null, 'cx', this.coordX);
-    this.ball.setAttributeNS(null, 'cy', this.coordY);
-    this.ball.setAttributeNS(null, 'r', 10);
-    this.ball.setAttributeNS(null, 'fill', this.color);
+    this.figure = document.createElementNS(ns, 'circle');
+    this.figure.setAttributeNS(null, 'cx', this.coordX);
+    this.figure.setAttributeNS(null, 'cy', this.coordY);
+    this.figure.setAttributeNS(null, 'r', 10);
+    this.figure.setAttributeNS(null, 'fill', this.color);
     
     this.degreeOfNode = document.createElement("p");
     this.degreeOfNode.innerHTML = 0;
@@ -45,9 +45,9 @@ window.onload = function(){
     );
     names.append(this.text);
     names.append(this.degreeOfNode);
-    draw.append(this.ball);
+    draw.append(this.figure);
 
-    this.isBall = true;
+    this.isfigure = true;
     this.isCircle = false;
     this.isRectangle = false;
     this.isPolygon = false;
@@ -57,104 +57,425 @@ window.onload = function(){
     var mouseUp = false;
     var mouseMove = false;
 
+    this.setListeners = ()=>{
+      this.figure.addEventListener("dblclick", (e)=>{
+        isCreating = false;
+        colorPanel.currentObject = this;
+        this.colorPanelIsOpen = true;
+        this.figure.setAttributeNS(null, "r", 20);
+        this.edgesIn.pop();
+        this.edgesOut.pop();
+        edges.pop(); 
+        this.information.remove();
+        showNumbOfVertexes.innerHTML = edges.length;
+        this.degreeOfNode.remove();
+        this.text.remove();
+        choseCircle.currentObject = this;
+        draw.append(choseCircle.choseCircle);
+        draw.append(choseCircle.ball);
+        draw.append(choseCircle.circle);
+        draw.append(choseCircle.rectangle);
+        draw.append(choseCircle.polygon);
+        draw.append(this.figure);
+        choseCircle.setListeners();
+        animateColorPanel(
+          -140, -40, false,
+          this.figure.getAttribute("cx"),
+          this.figure.getAttribute("cy"),
+          0, 80
+        );
+      });    
+
+      draw.addEventListener("mouseup", (e)=>{
+        if(this.colorPanelIsOpen){
+          animateColorPanel(
+            -40, -140, false,
+            this.coordX,
+            this.coordY,
+            80, 0
+          );
+          this.colorPanelIsOpen = false;
+          this.figure.setAttributeNS(null, "r", 10);
+          this.figure.setAttributeNS(null, "fill", this.color);
+          this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
+          names.append(this.text);
+          names.append(this.degreeOfNode);
+          //choseCircle.choseCircle.remove();
+        }
+      });
+
+      this.figure.addEventListener("mouseover", (e)=>{
+        if(!this.colorPanelIsOpen){
+          if(!mouseMove && isOriented){
+            this.showInformation();
+          }
+          this.makeNameBigger();
+          this.makeBigger();
+  
+          /*if (isOriented){
+            this.edgesOut.forEach(element=>{
+              element.changeEdge = true;
+              element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
+              element.setPosition(
+                this.coordX,
+                this.coordY,
+                element.secondNode.coordX,
+                element.secondNode.coordY,
+                this.figure.getAttribute("r")
+              );
+              element.changeEdge = false;
+            });
+            this.edgesIn.forEach(element=>{
+              element.triangle.setAttributeNS(null, "fill", "#F84040");
+            });
+          }else{
+            this.edgesOut.forEach(element=>{
+              element.triangle.setAttributeNS(null, "fill", "#AC58FA");
+            });
+            this.edgesIn.forEach(element=>{
+              element.triangle.setAttributeNS(null, "fill", "#AC58FA");
+            });
+          }
+          this.showDegreeOfNode(
+            this.figure.getAttribute("cx"),
+            this.figure.getAttribute("cy"),
+            this.figure.getAttribute("r")
+            );*/
+          }
+        });
+        
+      this.figure.addEventListener("mouseout", (e) => {
+        if(!this.colorPanelIsOpen){
+          this.makeSmaller();
+        }
+          this.text.setAttributeNS(null, "style",
+          "position: fixed; top:" + (Number(this.figure.getAttribute('cy')) + 15) +
+          "; left: " + (Number(this.figure.getAttribute('cx')) + 25) +
+          "; color: #FA5858; font-size: 0.9em;"
+          );  
+          this.information.remove();
+          this.makeSmaller();
+         
+          /*this.edgesOut.forEach(element=>{
+            element.changeEdge = true;
+            element.triangle.setAttributeNS(null, "fill", element.color);
+            element.setPosition(
+              this.coordX,
+              this.coordY,
+              element.secondNode.coordX,
+              element.secondNode.coordY,
+              10
+            );
+            element.changeEdge = false;
+          });
+          this.edgesIn.forEach(element=>{
+            element.triangle.setAttributeNS(null, "fill", element.color);
+          });
+          this.showDegreeOfNode(
+            this.figure.getAttribute("cx"),
+            this.figure.getAttribute("cy"),
+            this.figure.getAttribute("r")
+          );*/
+        
+      });
+      this.figure.oncontextmenu = (e)=>  {
+          rightButton = true;
+          this.edgesIn.forEach(element=>{
+              element.triangle.remove();
+              edges.splice(edges.indexOf(element),edges.indexOf(element));
+              delete element;
+          });
+          this.edgesOut.forEach(element=>{
+              element.triangle.remove();
+              edges.splice(edges.indexOf(element), edges.indexOf(element));
+              delete element;
+          });
+          this.degreeOfNode.remove();
+          this.text.remove();
+          this.information.remove();
+          this.figure.remove();
+          nodes.splice(nodes.indexOf(this), nodes.indexOf(this));
+          delete this;
+          return false;
+      };
+      this.figure.addEventListener("mousedown", (e)=>{
+        console.log("lll");
+        if(!rightButton){
+          mouseDown = true;
+        }
+      });
+      draw.addEventListener("mousemove", (e)=>{
+        if(mouseDown && !rightButton){
+          this.coordX = e.clientX - 50;
+          this.coordY = e.clientY - 1;
+          mouseMove = true;
+          console.log("bbb");
+          this.setPosition();
+          //this.figure.setAttributeNS(null, 'r', 20);
+          this.makeNameBigger();
+          /*if(isOriented){
+            this.edgesIn.forEach(element => {
+              element.changeEdge = true;
+              element.setPosition(
+                element.firstNode.coordX,
+                element.firstNode.coordY,
+                this.coordX,
+                this.coordY,
+                element.firstNode.figure.getAttribute("r")
+              );
+              element.changeEdge = false;
+            });
+            this.edgesOut.forEach(element => {
+              element.changeEdge = true;
+              element.setPosition(
+                this.coordX,
+                this.coordY,
+                element.secondNode.coordX,
+                element.secondNode.coordY,
+                this.figure.getAttribute("r")
+              );
+              element.changeEdge = false;
+            });
+          }else{
+            this.edgesOut.forEach(element=>{
+              element.changeEdge = true;
+              element.setPosition(
+                this.coordX,
+                this.coordY,
+                element.secondNode.coordX,
+                element.secondNode.coordY,
+                this.figure.getAttribute(10)
+              );
+              element.changeEdge = false;
+            });
+            this.edgesIn.forEach(element=>{
+              element.changeEdge = true;
+              element.setPosition(
+                element.firstNode.coordX,
+                element.firstNode.coordY,
+                this.coordX,
+                this.coordY,
+                element.firstNode.figure.getAttribute("r")
+              );
+              element.changeEdge = false;
+            });
+            this.showDegreeOfNode(
+              this.coordX,
+              this.coordY,
+              this.figure.getAttribute("r")
+          );
+        }*/
+        this.showDegreeOfNode(
+          this.coordX,
+          this.coordY,
+          this.figure.getAttribute("r")
+        );
+        }
+      });
+  
+  
+      this.figure.addEventListener("mouseup", (e)=>{
+        if(!rightButton){
+        mouseUp = true;
+        if(!mouseMove){
+          if(isCreatingEdges){
+            if (isOriented){
+              isCreatingEdges = false;
+              var edge = new Edge(this);
+              this.edgesOut.push(edge);
+              edges.push(edge);
+            }else{
+              isCreatingEdges = false;
+              var edge = new Arc(this);
+              this.edgesOut.push(edge);
+              edges.push(edge);
+            }
+          }else{
+            isCreatingEdges = true;
+            this.edgesIn.push(edges[edges.length - 1]);
+            edges[edges.length - 1].setPosition(
+              edges[edges.length - 1].firstNode.figure.getAttribute("cx"),
+              edges[edges.length - 1].firstNode.figure.getAttribute("cy"),
+              this.figure.getAttribute("cx"),
+              this.figure.getAttribute("cy"),
+              10
+            );
+            edges[edges.length - 1].secondNode = this;
+            edges[edges.length - 1].changeEdge = false;
+            mouseMove = true;
+            showNumbOfEdges.innerHTML = edges.length;
+          }
+        }else{
+          this.figure.setAttributeNS(null, 'cx', e.clientX-50);
+          this.figure.setAttributeNS(null, 'cy', e.clientY-1);
+          this.makeNameBigger();
+          mouseMove = false;
+        }
+      }
+        rightButton = false;
+        mouseDown = false;
+        mouseUp = false;
+        mouseMove = false;
+        this.showDegreeOfNode(
+          this.figure.getAttribute("cx"),
+          this.figure.getAttribute("cy"),
+          this.figure.getAttribute("r")
+        );
+      });
+      
+    }
+
+    this.setListeners();
+
     this.setFigure = ()=>{
-      if(this.isBall){
-        this.ball.remove();
-        this.ball = document.createElementNS(ns, 'circle');
-        this.ball.setAttributeNS(null, 'cx', this.coordX);
-        this.ball.setAttributeNS(null, 'cy', this.coordY);
-        this.ball.setAttributeNS(null, 'r', 10);
-        this.ball.setAttributeNS(null, 'fill', this.color);
-        draw.append(this.ball);
+      if(this.isfigure){
+        this.figure.remove();
+        this.figure = document.createElementNS(ns, 'circle');
+        this.figure.setAttributeNS(null, 'cx', this.coordX);
+        this.figure.setAttributeNS(null, 'cy', this.coordY);
+        this.figure.setAttributeNS(null, 'r', 20);
+        this.figure.setAttributeNS(null, 'fill', this.color);
+        draw.append(this.figure);
+        this.setListeners();
       }
       if(this.isCircle){
-        this.ball.remove();
-        this.ball = document.createElementNS(ns, 'circle');
-        this.ball.setAttributeNS(null, 'cx', this.coordX);
-        this.ball.setAttributeNS(null, 'cy', this.coordY);
-        this.ball.setAttributeNS(null, 'r', 10);
-        this.ball.setAttributeNS(null, "stroke-width", 4);
-        this.ball.setAttributeNS(null, 'fill', "#212f35");
-        draw.append(this.ball);
+        this.figure.remove();
+        this.figure = document.createElementNS(ns, 'circle');
+        this.figure.setAttributeNS(null, 'cx', this.coordX);
+        this.figure.setAttributeNS(null, 'cy', this.coordY);
+        this.figure.setAttributeNS(null, 'r', 20);
+        this.figure.setAttributeNS(null, "stroke-width", 4);
+        this.figure.setAttributeNS(null, "stroke", this.color);
+        this.figure.setAttributeNS(null, 'fill', "#212f35");
+        draw.append(this.figure);
+        this.setListeners();
       }
       if(this.isRectangle){
-        this.ball.remove();
-        this.ball = document.createElementNS(ns, 'rect');
-        this.ball.setAttributeNS(null, 'x', this.coordX - 10);
-        this.ball.setAttributeNS(null, 'y', this.coordY - 10);
-        this.ball.setAttributeNS(null, 'width', 20);
-        this.ball.setAttributeNS(null, 'heigth', 20);
-        this.ball.setAttributeNS(null, 'fill', this.color);
-        draw.append(this.ball);
+        //console.log("here");
+        this.figure.remove();
+        this.figure = document.createElementNS(ns, 'rect');
+        this.figure.setAttributeNS(null, 'fill', this.color);
+        this.figure.setAttributeNS(null, 'x', Number(this.coordX) - 20);
+        this.figure.setAttributeNS(null, 'y', Number(this.coordY) - 20);
+        this.figure.setAttributeNS(null, 'width', 40);
+        this.figure.setAttributeNS(null, 'height', 40);
+        draw.append(this.figure);
+        this.setListeners();
       }
-      if(this.isPolygon){
-        console.log("here");
-        this.ball.remove();
-        this.ball = document.createElementNS(ns, 'polygon');
-        this.ball.setAttributeNS(
+      if(this.isPolygon){ 
+        console.log("ggg");
+        this.figure.remove();
+        this.figure = document.createElementNS(ns, 'polygon');
+        this.figure.setAttributeNS(
           null,
           "points",
           this.coordX + "," +
-          (Number(this.coordY) - 40/3) + " " +
-          (Number(this.coordX) + 10) + "," +
-          (Number(this.coordY) + 20/3 ) + " " + 
-          (Number(this.coordX) - 10) + "," +
-          (Number(this.coordY) + 20/3 )
+          (Number(this.coordY) - 40/3 - 7 ) + " " +
+          (Number(this.coordX) + 10 + 7) + "," +
+          (Number(this.coordY) + 20/3 + 7) + " " + 
+          (Number(this.coordX) - 10 - 7) + "," +
+          (Number(this.coordY) + 20/3 + 7)
         )
-        this.ball.setAttributeNS(null, "stroke-width", 4);
-        this.ball.setAttributeNS(null, 'fill', "#212f35");
-        this.ball.setAttributeNS(null, 'stroke', this.color);
-        draw.append(this.ball);
+        this.figure.setAttributeNS(null, "stroke-width", 4);
+        this.figure.setAttributeNS(null, 'fill', "#212f35");
+        this.figure.setAttributeNS(null, 'stroke', this.color);
+        draw.append(this.figure);
+        this.setListeners();
       }
     }
 
     this.setPosition = function(){
-      if(isBall){
-
+      if(this.isfigure){
+        console.log("here");
+        this.figure.setAttributeNS(null, "cx", this.coordX);
+        this.figure.setAttributeNS(null, "cy", this.coordY);
+      } 
+      if(this.isCircle){
+        this.figure.setAttributeNS(null, "cx", this.coordX);
+        this.figure.setAttributeNS(null, "cy", this.coordY);
       }
-      if(isCircle){
-
+      if(this.isRectangle){
+        this.figure.setAttributeNS(null, 'x', Number(this.coordX) - 10);
+        this.figure.setAttributeNS(null, 'y', Number(this.coordY) - 10);
+        this.figure.setAttributeNS(null, 'width', 20);
+        this.figure.setAttributeNS(null, 'height', 20);
       }
-      if(isRectangle){
-
-      }
-      if(isPolygon){
-
+      console.log("here");
+      if(this.isPolygon){
+        this.figure.setAttributeNS(
+          null,
+          "points",
+          this.coordX + "," +
+          (Number(this.coordY) - 40/3 - 7 ) + " " +
+          (Number(this.coordX) + 10 + 7) + "," +
+          (Number(this.coordY) + 20/3 + 7) + " " + 
+          (Number(this.coordX) - 10 - 7) + "," +
+          (Number(this.coordY) + 20/3 + 7)
+        )
       }
     }
 
-    this.changeColor = function(){
-      if(isBall){
-
+    this.changeColor = function(color){
+      if(isfigure){
+        this.figure.setAttributeNS(null, "fill", color);
       }
       if(isCircle){
-
+        this.figure.setAttributeNS(null, "stroke", color);
       }
       if(isRectangle){
-
+        this.figure.setAttributeNS(null, "fill", color);
       }
       if(isPolygon){
-
+        this.figure.setAttributeNS(null, "stroke", color);
       }
     }
 
     this.makeBigger = function(){
-      if(isBall){
-
+      if(this.isfigure){
+        this.figure.setAttributeNS(null, "r", 20);
+        this.figure.setAttributeNS(null, "fill", this.biggerColor);
       }
-      if(isCircle){
-
+      if(this.isCircle){
+        this.figure.setAttributeNS(null, "stroke-width", "8");
+        this.figure.setAttributeNS(null, "stroke", this.biggerColor);
       }
-      if(isRectangle){
-
+      if(this.isRectangle){
+        this.figure.setAttributeNS(null, 'x', Number(this.coordX) - 20);
+        this.figure.setAttributeNS(null, 'y', Number(this.coordY) - 20);
+        this.figure.setAttributeNS(null, 'width', 40);
+        this.figure.setAttributeNS(null, 'height', 40);
+        this.figure.setAttributeNS(null, "fill", this.biggerColor);
       }
-      if(isPolygon){
+      if(this.isPolygon){
+        this.figure.setAttributeNS(null, "stroke-width", "8");
+        this.figure.setAttributeNS(null, "stroke", this.biggerColor);
+      }
+    }
 
+    this.makeSmaller = function(){
+      if(this.isfigure){
+        this.figure.setAttributeNS(null, "r", 10);
+        this.figure.setAttributeNS(null, "fill", this.color);
+      }
+      if(this.isCircle){
+        this.figure.setAttributeNS(null, "stroke-width", "4");
+        this.figure.setAttributeNS(null, "stroke", this.color);
+      }
+      if(this.isRectangle){
+        this.figure.setAttributeNS(null, 'x', Number(this.coordX) - 10);
+        this.figure.setAttributeNS(null, 'y', Number(this.coordY) - 10);
+        this.figure.setAttributeNS(null, 'width', 20);
+        this.figure.setAttributeNS(null, 'height', 20);
+        this.figure.setAttributeNS(null, "fill", this.color);
+      }
+      if(this.isPolygon){
+        this.figure.setAttributeNS(null, "stroke-width", "4");
+        this.figure.setAttributeNS(null, "stroke", this.color);
       }
     }
 
     this.setColor = (color, biggerColor)=>{
-      this.ball.setAttributeNS(
+      this.figure.setAttributeNS(
         null, "fill", color
       );
       this.color = color;
@@ -162,58 +483,12 @@ window.onload = function(){
     }
     
     this.setOlnyMainColor = (color)=>{
-      this.ball.setAttributeNS(null, "fill", color);
+      this.figure.setAttributeNS(null, "fill", color);
     }
     
     this.getColor = ()=>{
       return this.color;
     }
-    
-    this.ball.addEventListener("dblclick", (e)=>{
-      isCreating = false;
-      colorPanel.currentObject = this;
-      this.colorPanelIsOpen = true;
-      this.ball.setAttributeNS(null, "r", 20);
-      this.edgesIn.pop();
-      this.edgesOut.pop();
-      edges.pop(); 
-      this.information.remove();
-      showNumbOfVertexes.innerHTML = edges.length;
-      this.degreeOfNode.remove();
-      this.text.remove();
-      choseCircle.currentObject = this;
-      draw.append(choseCircle.choseCircle);
-      draw.append(choseCircle.ball);
-      draw.append(choseCircle.circle);
-      draw.append(choseCircle.rectangle);
-      draw.append(choseCircle.polygon);
-      draw.append(this.ball);
-      choseCircle.setListeners();
-      animateColorPanel(
-        -140, -40, false,
-        this.ball.getAttribute("cx"),
-        this.ball.getAttribute("cy"),
-        0, 80
-      );
-    });    
-    
-    draw.addEventListener("mouseup", (e)=>{
-      if(this.colorPanelIsOpen){
-        animateColorPanel(
-          -40, -140, false,
-          this.ball.getAttribute("cx"),
-          this.ball.getAttribute("cy"),
-          80, 0
-        );
-        this.colorPanelIsOpen = false;
-        this.ball.setAttributeNS(null, "r", 10);
-        this.ball.setAttributeNS(null, "fill", this.color);
-        this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
-        names.append(this.text);
-        names.append(this.degreeOfNode);
-        //choseCircle.choseCircle.remove();
-      }
-    });
 
     this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
       this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
@@ -228,7 +503,7 @@ window.onload = function(){
         "background-color: #2F4F4F;")
         );
       }
-      this.showDegreeOfNode(coordX, coordY, this.ball.getAttribute("r"));
+      this.showDegreeOfNode(coordX, coordY, this.figure.getAttribute("r"));
       
       this.showInformation = function(){
         this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
@@ -237,8 +512,8 @@ window.onload = function(){
        null,
        "style",
        ("position: fixed; " +
-       "top: " + (Number(this.ball.getAttribute('cy')) - 60) + ";" +
-       "left: " + (Number(this.ball.getAttribute('cx')) + 70) + ";" +
+       "top: " + (Number(this.figure.getAttribute('cy')) - 60) + ";" +
+       "left: " + (Number(this.figure.getAttribute('cx')) + 70) + ";" +
        "color: #EEF7A4;" +
        "wigth: 100; " +
        "height: 50" +
@@ -253,232 +528,13 @@ window.onload = function(){
         this.text.setAttributeNS(
           null,
           "style",
-          "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 10) +
-          "; left: " + (Number(this.ball.getAttribute('cx')) ) +
+          "position: fixed; top:" + (Number(this.figure.getAttribute('cy')) + 10) +
+          "; left: " + (Number(this.figure.getAttribute('cx')) ) +
           "; color: #EEF7A4; font-size:x-large;" +
           "border: 1px solid rgb(255, 203, 203);" +
         "background-color: #424242;"
       );  
     }
-
-    this.ball.addEventListener("mouseover", (e)=>{
-      if(!this.colorPanelIsOpen){
-        if(!mouseMove && isOriented){
-          this.showInformation();
-        }
-        this.makeNameBigger();
-        this.ball.setAttributeNS(null, "fill", this.biggerColor);
-        this.ball.setAttributeNS(null, "r", 20);
-
-        if (isOriented){
-          this.edgesOut.forEach(element=>{
-            element.changeEdge = true;
-            element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
-            element.setPosition(
-              this.ball.getAttribute("cx"),
-              this.ball.getAttribute("cy"),
-              element.secondNode.ball.getAttribute("cx"),
-              element.secondNode.ball.getAttribute("cy"),
-              this.ball.getAttribute("r")
-            );
-            element.changeEdge = false;
-          });
-          this.edgesIn.forEach(element=>{
-            element.triangle.setAttributeNS(null, "fill", "#F84040");
-          });
-        }else{
-          this.edgesOut.forEach(element=>{
-            element.triangle.setAttributeNS(null, "fill", "#AC58FA");
-          });
-          this.edgesIn.forEach(element=>{
-            element.triangle.setAttributeNS(null, "fill", "#AC58FA");
-          });
-        }
-        this.showDegreeOfNode(
-          this.ball.getAttribute("cx"),
-          this.ball.getAttribute("cy"),
-          this.ball.getAttribute("r")
-          );
-        }
-      });
-      
-    this.ball.addEventListener("mouseout", (e) => {
-      if(!this.colorPanelIsOpen){
-        this.ball.setAttributeNS(null, "r", 10);
-      }
-        this.text.setAttributeNS(null, "style",
-        "position: fixed; top:" + (Number(this.ball.getAttribute('cy')) + 15) +
-        "; left: " + (Number(this.ball.getAttribute('cx')) + 25) +
-        "; color: #FA5858; font-size: 0.9em;"
-        );  
-        this.information.remove();
-        this.ball.setAttributeNS(null, "fill", this.color);
-       
-        this.edgesOut.forEach(element=>{
-          element.changeEdge = true;
-          element.triangle.setAttributeNS(null, "fill", element.color);
-          element.setPosition(
-            this.ball.getAttribute("cx"),
-            this.ball.getAttribute("cy"),
-            element.secondNode.ball.getAttribute("cx"),
-            element.secondNode.ball.getAttribute("cy"),
-            10
-          );
-          element.changeEdge = false;
-        });
-        this.edgesIn.forEach(element=>{
-          element.triangle.setAttributeNS(null, "fill", element.color);
-        });
-        this.showDegreeOfNode(
-          this.ball.getAttribute("cx"),
-          this.ball.getAttribute("cy"),
-          this.ball.getAttribute("r")
-        );
-      
-    });
-    this.ball.oncontextmenu = (e)=>  {
-        rightButton = true;
-        this.edgesIn.forEach(element=>{
-            element.triangle.remove();
-            edges.splice(edges.indexOf(element),edges.indexOf(element));
-            delete element;
-        });
-        this.edgesOut.forEach(element=>{
-            element.triangle.remove();
-            edges.splice(edges.indexOf(element), edges.indexOf(element));
-            delete element;
-        });
-        this.degreeOfNode.remove();
-        this.text.remove();
-        this.information.remove();
-        this.ball.remove();
-        nodes.splice(nodes.indexOf(this), nodes.indexOf(this));
-        delete this;
-        return false;
-    };
-    this.ball.addEventListener("mousedown", (e)=>{
-      if(!rightButton){
-        mouseDown = true;
-      }
-    });
-    draw.addEventListener("mousemove", (e)=>{
-      if(mouseDown && !rightButton){
-        this.coordX = e.clientX;
-        this.coordY = e.clientY;
-        mouseMove = true;
-        this.ball.setAttributeNS(null, 'cx', e.clientX -50);
-        this.ball.setAttributeNS(null, 'cy', e.clientY -1);
-        this.ball.setAttributeNS(null, 'r', 20);
-        this.makeNameBigger();
-        if(isOriented){
-          this.edgesIn.forEach(element => {
-            element.changeEdge = true;
-            element.setPosition(
-              element.firstNode.ball.getAttribute("cx"),
-              element.firstNode.ball.getAttribute("cy"),
-              this.ball.getAttribute("cx"),
-              this.ball.getAttribute("cy"),
-              element.firstNode.ball.getAttribute("r")
-            );
-            element.changeEdge = false;
-          });
-          this.edgesOut.forEach(element => {
-            element.changeEdge = true;
-            element.setPosition(
-              this.ball.getAttribute("cx"),
-              this.ball.getAttribute("cy"),
-              element.secondNode.ball.getAttribute("cx"),
-              element.secondNode.ball.getAttribute("cy"),
-              this.ball.getAttribute("r")
-            );
-            element.changeEdge = false;
-          });
-        }else{
-          this.edgesOut.forEach(element=>{
-            element.changeEdge = true;
-            element.setPosition(
-              this.ball.getAttribute("cx"),
-              this.ball.getAttribute("cy"),
-              element.secondNode.ball.getAttribute("cx"),
-              element.secondNode.ball.getAttribute("cy"),
-              this.ball.getAttribute(10)
-            );
-            element.changeEdge = false;
-          });
-          this.edgesIn.forEach(element=>{
-            element.changeEdge = true;
-            element.setPosition(
-              element.firstNode.ball.getAttribute("cx"),
-              element.firstNode.ball.getAttribute("cy"),
-              this.ball.getAttribute("cx"),
-              this.ball.getAttribute("cy"),
-              element.firstNode.ball.getAttribute("r")
-            );
-            element.changeEdge = false;
-          });
-          this.showDegreeOfNode(
-            this.ball.getAttribute("cx"),
-            this.ball.getAttribute("cy"),
-            this.ball.getAttribute("r")
-        );
-      }
-      this.showDegreeOfNode(
-        this.ball.getAttribute("cx"),
-        this.ball.getAttribute("cy"),
-        this.ball.getAttribute("r")
-      );
-      }
-    });
-
-
-    this.ball.addEventListener("mouseup", (e)=>{
-      if(!rightButton){
-      mouseUp = true;
-      if(!mouseMove){
-        if(isCreatingEdges){
-          if (isOriented){
-            isCreatingEdges = false;
-            var edge = new Edge(this);
-            this.edgesOut.push(edge);
-            edges.push(edge);
-          }else{
-            isCreatingEdges = false;
-            var edge = new Arc(this);
-            this.edgesOut.push(edge);
-            edges.push(edge);
-          }
-        }else{
-          isCreatingEdges = true;
-          this.edgesIn.push(edges[edges.length - 1]);
-          edges[edges.length - 1].setPosition(
-            edges[edges.length - 1].firstNode.ball.getAttribute("cx"),
-            edges[edges.length - 1].firstNode.ball.getAttribute("cy"),
-            this.ball.getAttribute("cx"),
-            this.ball.getAttribute("cy"),
-            10
-          );
-          edges[edges.length - 1].secondNode = this;
-          edges[edges.length - 1].changeEdge = false;
-          mouseMove = true;
-          showNumbOfEdges.innerHTML = edges.length;
-        }
-      }else{
-        this.ball.setAttributeNS(null, 'cx', e.clientX-50);
-        this.ball.setAttributeNS(null, 'cy', e.clientY-1);
-        this.makeNameBigger();
-        mouseMove = false;
-      }
-    }
-      rightButton = false;
-      mouseDown = false;
-      mouseUp = false;
-      mouseMove = false;
-      this.showDegreeOfNode(
-        this.ball.getAttribute("cx"),
-        this.ball.getAttribute("cy"),
-        this.ball.getAttribute("r")
-      );
-    });
   }
 
   function Edge(node){
@@ -548,18 +604,18 @@ window.onload = function(){
         this.bisieX = e.clientX;
         this.bisieY = e.clientY;
         this.setPosition(
-          this.firstNode.ball.getAttribute("cx"),
-          this.firstNode.ball.getAttribute("cy"),
-          this.secondNode.ball.getAttribute("cx"),
-          this.secondNode.ball.getAttribute("cy"),
-          this.firstNode.ball.getAttribute("r"));
+          this.firstNode.figure.getAttribute("cx"),
+          this.firstNode.figure.getAttribute("cy"),
+          this.secondNode.figure.getAttribute("cx"),
+          this.secondNode.figure.getAttribute("cy"),
+          this.firstNode.figure.getAttribute("r"));
       } else {
         this.setPosition(
-          this.firstNode.ball.getAttribute("cx"),
-          this.firstNode.ball.getAttribute("cy"),
+          this.firstNode.figure.getAttribute("cx"),
+          this.firstNode.figure.getAttribute("cy"),
           e.clientX-50,
           e.clientY-1,
-          this.firstNode.ball.getAttribute("r")
+          this.firstNode.figure.getAttribute("r")
           );
       }
     });
@@ -691,18 +747,18 @@ window.onload = function(){
         this.bisieX = e.clientX;
         this.bisieY = e.clientY;
         this.setPosition(
-          this.firstNode.ball.getAttribute("cx"),
-          this.firstNode.ball.getAttribute("cy"),
-          this.secondNode.ball.getAttribute("cx"),
-          this.secondNode.ball.getAttribute("cy"),
-          this.firstNode.ball.getAttribute("r"));
+          this.firstNode.figure.getAttribute("cx"),
+          this.firstNode.figure.getAttribute("cy"),
+          this.secondNode.figure.getAttribute("cx"),
+          this.secondNode.figure.getAttribute("cy"),
+          this.firstNode.figure.getAttribute("r"));
       } else {
         this.setPosition(
-          this.firstNode.ball.getAttribute("cx"),
-          this.firstNode.ball.getAttribute("cy"),
+          this.firstNode.figure.getAttribute("cx"),
+          this.firstNode.figure.getAttribute("cy"),
           e.clientX-50,
           e.clientY-1,
-          this.firstNode.ball.getAttribute("r")
+          this.firstNode.figure.getAttribute("r")
           );
       }
     });
@@ -841,28 +897,59 @@ window.onload = function(){
 
     this.setListeners = ()=>{
       this.ball.addEventListener("mouseover", (e)=>{
-        this.currentObject.isBall       = true;
+        this.currentObject.isfigure     = true;
+        this.currentObject.isCircle     = false;
+        this.currentObject.isPolygon    = false;
+        this.currentObject.isRectangle  = false;
+        this.currentObject.setFigure();
+      });
+      this.ball.addEventListener("click", (e)=>{
+        this.currentObject.isfigure     = true;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = false;
         this.currentObject.setFigure();
       });
       this.circle.addEventListener("mouseover", (e)=>{
-        this.currentObject.isBall       = false;
+        this.currentObject.isfigure     = false;
         this.currentObject.isCircle     = true;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = false;
         this.currentObject.setFigure();
       });
+      this.circle.addEventListener("click", (e)=>{
+        this.currentObject.isfigure     = false;
+        this.currentObject.isCircle     = true;
+        this.currentObject.isPolygon    = false;
+        this.currentObject.isRectangle  = false;
+        this.currentObject.setFigure();
+      });
+
       this.rectangle.addEventListener("mouseover", (e)=>{
-        this.currentObject.isBall       = false;
+        
+        this.currentObject.isfigure     = false;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = true;
         this.currentObject.setFigure();
       });
+      this.rectangle.addEventListener("click", (e)=>{
+        this.currentObject.isfigure     = false;
+        this.currentObject.isCircle     = false;
+        this.currentObject.isPolygon    = false;
+        this.currentObject.isRectangle  = true;
+        this.currentObject.setFigure();
+      });
+
       this.polygon.addEventListener("mouseover", (e)=>{
-        this.currentObject.isBall       = false;
+        this.currentObject.isfigure       = false;
+        this.currentObject.isCircle     = false;
+        this.currentObject.isPolygon    = true;
+        this.currentObject.isRectangle  = false;
+        this.currentObject.setFigure();
+      });
+      this.polygon.addEventListener("click", (e)=>{
+        this.currentObject.isfigure     = false;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = true;
         this.currentObject.isRectangle  = false;
@@ -887,8 +974,6 @@ window.onload = function(){
     this.polygon.setAttributeNS(null, "stroke", "#FCB84D");
     this.polygon.setAttributeNS(null, "fill", "none");
 
-
-
     this.makeCircle = function(xPosition, yPosition, radius){
       this.choseCircle.setAttributeNS(null, "cx", xPosition);
       this.choseCircle.setAttributeNS(null, "cy", yPosition);
@@ -902,7 +987,7 @@ window.onload = function(){
       this.circle.setAttributeNS(null, "cy", yPosition);
       this.circle.setAttributeNS(null, "stroke-width", radius*0.05);
 
-      this.rectangle.setAttributeNS(null, "x",  Number(xPosition) - 16);
+      this.rectangle.setAttributeNS(null, "x",  Number(xPosition) - 17);
       this.rectangle.setAttributeNS(null, "y",  Number(yPosition) + 30);
       this.rectangle.setAttributeNS(null, "width", radius * 0.40);
       this.rectangle.setAttributeNS(null, "height", radius * 0.40);
@@ -957,8 +1042,8 @@ window.onload = function(){
     showNumbOfEdges.innerHTML = 0;
     showNumbOfVertexes.innerHTML = 0;
     nodes.forEach(node =>{
-      node.ball.remove();
-      delete node.ball;
+      node.figure.remove();
+      delete node.figure;
       node.degreeOfNode.remove();
       delete node.degreeOfNode;
       node.information.remove();
@@ -985,6 +1070,7 @@ window.onload = function(){
   });
 
   draw.addEventListener("dblclick", (e)=>{
+    console.log("GGG");
     if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
       nodes.push(node);
