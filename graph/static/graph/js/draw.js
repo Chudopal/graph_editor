@@ -19,6 +19,7 @@ window.onload = function(){
   function Node(coordX, coordY){
     this.coordX = coordX;
     this.coordY = coordY;
+    this.radius = 10;
     this.edgesIn = [];
     this.edgesOut = [];
     this.colorPanelIsOpen = false;
@@ -27,7 +28,7 @@ window.onload = function(){
     this.figure = document.createElementNS(ns, 'circle');
     this.figure.setAttributeNS(null, 'cx', this.coordX);
     this.figure.setAttributeNS(null, 'cy', this.coordY);
-    this.figure.setAttributeNS(null, 'r', 10);
+    this.figure.setAttributeNS(null, 'r', this.radius);
     this.figure.setAttributeNS(null, 'fill', this.color);
     
     this.degreeOfNode = document.createElement("p");
@@ -62,7 +63,7 @@ window.onload = function(){
         isCreating = false;
         colorPanel.currentObject = this;
         this.colorPanelIsOpen = true;
-        this.figure.setAttributeNS(null, "r", 20);
+        this.makeBigger();
         this.edgesIn.pop();
         this.edgesOut.pop();
         edges.pop(); 
@@ -80,8 +81,8 @@ window.onload = function(){
         choseCircle.setListeners();
         animateColorPanel(
           -140, -40, false,
-          this.figure.getAttribute("cx"),
-          this.figure.getAttribute("cy"),
+          this.coordX,
+          this.coordY,
           0, 80
         );
       });    
@@ -95,12 +96,11 @@ window.onload = function(){
             80, 0
           );
           this.colorPanelIsOpen = false;
-          this.figure.setAttributeNS(null, "r", 10);
-          this.figure.setAttributeNS(null, "fill", this.color);
+          this.makeSmaller();
           this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
           names.append(this.text);
           names.append(this.degreeOfNode);
-          //choseCircle.choseCircle.remove();
+          
         }
       });
 
@@ -112,7 +112,7 @@ window.onload = function(){
           this.makeNameBigger();
           this.makeBigger();
   
-          /*if (isOriented){
+          if (isOriented){
             this.edgesOut.forEach(element=>{
               element.changeEdge = true;
               element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
@@ -121,7 +121,7 @@ window.onload = function(){
                 this.coordY,
                 element.secondNode.coordX,
                 element.secondNode.coordY,
-                this.figure.getAttribute("r")
+                this.radius
               );
               element.changeEdge = false;
             });
@@ -137,10 +137,10 @@ window.onload = function(){
             });
           }
           this.showDegreeOfNode(
-            this.figure.getAttribute("cx"),
-            this.figure.getAttribute("cy"),
-            this.figure.getAttribute("r")
-            );*/
+            this.coordX,
+            this.coordY,
+            this.radius
+            );
           }
         });
         
@@ -149,14 +149,14 @@ window.onload = function(){
           this.makeSmaller();
         }
           this.text.setAttributeNS(null, "style",
-          "position: fixed; top:" + (Number(this.figure.getAttribute('cy')) + 15) +
-          "; left: " + (Number(this.figure.getAttribute('cx')) + 25) +
+          "position: fixed; top:" + (Number(this.coordY) + 15) +
+          "; left: " + (Number(this.coordX) + 25) +
           "; color: #FA5858; font-size: 0.9em;"
           );  
           this.information.remove();
           this.makeSmaller();
          
-          /*this.edgesOut.forEach(element=>{
+          this.edgesOut.forEach(element=>{
             element.changeEdge = true;
             element.triangle.setAttributeNS(null, "fill", element.color);
             element.setPosition(
@@ -172,10 +172,10 @@ window.onload = function(){
             element.triangle.setAttributeNS(null, "fill", element.color);
           });
           this.showDegreeOfNode(
-            this.figure.getAttribute("cx"),
-            this.figure.getAttribute("cy"),
-            this.figure.getAttribute("r")
-          );*/
+            this.coordX,
+            this.coordY,
+            this.radius
+          );
         
       });
       this.figure.oncontextmenu = (e)=>  {
@@ -199,7 +199,6 @@ window.onload = function(){
           return false;
       };
       this.figure.addEventListener("mousedown", (e)=>{
-        console.log("lll");
         if(!rightButton){
           mouseDown = true;
         }
@@ -209,11 +208,9 @@ window.onload = function(){
           this.coordX = e.clientX - 50;
           this.coordY = e.clientY - 1;
           mouseMove = true;
-          console.log("bbb");
           this.setPosition();
-          //this.figure.setAttributeNS(null, 'r', 20);
           this.makeNameBigger();
-          /*if(isOriented){
+          if(isOriented){
             this.edgesIn.forEach(element => {
               element.changeEdge = true;
               element.setPosition(
@@ -221,7 +218,7 @@ window.onload = function(){
                 element.firstNode.coordY,
                 this.coordX,
                 this.coordY,
-                element.firstNode.figure.getAttribute("r")
+                element.firstNode.radius
               );
               element.changeEdge = false;
             });
@@ -232,7 +229,7 @@ window.onload = function(){
                 this.coordY,
                 element.secondNode.coordX,
                 element.secondNode.coordY,
-                this.figure.getAttribute("r")
+                this.radius
               );
               element.changeEdge = false;
             });
@@ -244,7 +241,7 @@ window.onload = function(){
                 this.coordY,
                 element.secondNode.coordX,
                 element.secondNode.coordY,
-                this.figure.getAttribute(10)
+                this.radius
               );
               element.changeEdge = false;
             });
@@ -255,20 +252,20 @@ window.onload = function(){
                 element.firstNode.coordY,
                 this.coordX,
                 this.coordY,
-                element.firstNode.figure.getAttribute("r")
+                element.firstNode.radius
               );
               element.changeEdge = false;
             });
             this.showDegreeOfNode(
               this.coordX,
               this.coordY,
-              this.figure.getAttribute("r")
+              this.radius
           );
-        }*/
+        }
         this.showDegreeOfNode(
           this.coordX,
           this.coordY,
-          this.figure.getAttribute("r")
+          this.radius
         );
         }
       });
@@ -294,10 +291,10 @@ window.onload = function(){
             isCreatingEdges = true;
             this.edgesIn.push(edges[edges.length - 1]);
             edges[edges.length - 1].setPosition(
-              edges[edges.length - 1].firstNode.figure.getAttribute("cx"),
-              edges[edges.length - 1].firstNode.figure.getAttribute("cy"),
-              this.figure.getAttribute("cx"),
-              this.figure.getAttribute("cy"),
+              edges[edges.length - 1].firstNode.coordX,
+              edges[edges.length - 1].firstNode.coordY,
+              this.coordX,
+              this.coordY,
               10
             );
             edges[edges.length - 1].secondNode = this;
@@ -306,8 +303,9 @@ window.onload = function(){
             showNumbOfEdges.innerHTML = edges.length;
           }
         }else{
-          this.figure.setAttributeNS(null, 'cx', e.clientX-50);
-          this.figure.setAttributeNS(null, 'cy', e.clientY-1);
+          this.coordX = e.clientX - 50;
+          this.coordY = e.clientY -1;
+          this.setPosition();
           this.makeNameBigger();
           mouseMove = false;
         }
@@ -317,9 +315,9 @@ window.onload = function(){
         mouseUp = false;
         mouseMove = false;
         this.showDegreeOfNode(
-          this.figure.getAttribute("cx"),
-          this.figure.getAttribute("cy"),
-          this.figure.getAttribute("r")
+          this.coordX,
+          this.coordY,
+          this.radius
         );
       });
       
@@ -328,12 +326,13 @@ window.onload = function(){
     this.setListeners();
 
     this.setFigure = ()=>{
+      this.radius = 20
       if(this.isfigure){
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'circle');
         this.figure.setAttributeNS(null, 'cx', this.coordX);
         this.figure.setAttributeNS(null, 'cy', this.coordY);
-        this.figure.setAttributeNS(null, 'r', 20);
+        this.figure.setAttributeNS(null, 'r', this.radius);
         this.figure.setAttributeNS(null, 'fill', this.color);
         draw.append(this.figure);
         this.setListeners();
@@ -343,7 +342,7 @@ window.onload = function(){
         this.figure = document.createElementNS(ns, 'circle');
         this.figure.setAttributeNS(null, 'cx', this.coordX);
         this.figure.setAttributeNS(null, 'cy', this.coordY);
-        this.figure.setAttributeNS(null, 'r', 20);
+        this.figure.setAttributeNS(null, 'r', this.radius);
         this.figure.setAttributeNS(null, "stroke-width", 4);
         this.figure.setAttributeNS(null, "stroke", this.color);
         this.figure.setAttributeNS(null, 'fill', "#212f35");
@@ -351,19 +350,17 @@ window.onload = function(){
         this.setListeners();
       }
       if(this.isRectangle){
-        //console.log("here");
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'rect');
         this.figure.setAttributeNS(null, 'fill', this.color);
-        this.figure.setAttributeNS(null, 'x', Number(this.coordX) - 20);
-        this.figure.setAttributeNS(null, 'y', Number(this.coordY) - 20);
-        this.figure.setAttributeNS(null, 'width', 40);
-        this.figure.setAttributeNS(null, 'height', 40);
+        this.figure.setAttributeNS(null, 'x', Number(this.coordX) - this.radius);
+        this.figure.setAttributeNS(null, 'y', Number(this.coordY) - this.radius);
+        this.figure.setAttributeNS(null, 'width', 2*this.radius);
+        this.figure.setAttributeNS(null, 'height', 2*this.radius);
         draw.append(this.figure);
         this.setListeners();
       }
       if(this.isPolygon){ 
-        console.log("ggg");
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'polygon');
         this.figure.setAttributeNS(
@@ -415,22 +412,34 @@ window.onload = function(){
       }
     }
 
+    
     this.changeColor = function(color){
-      if(isfigure){
-        this.figure.setAttributeNS(null, "fill", color);
+      if(this.isfigure){
+        console.log("here");
+        this.figure.setAttributeNS(null, "fill", this.color);
       }
-      if(isCircle){
-        this.figure.setAttributeNS(null, "stroke", color);
+      if(this.isCircle){
+        this.figure.setAttributeNS(null, "stroke", this.color);
+        this.figure.setAttributeNS(null, "fill", "#212f35");
       }
-      if(isRectangle){
-        this.figure.setAttributeNS(null, "fill", color);
+      if(this.isRectangle){
+        this.figure.setAttributeNS(null, "fill", this.color);
       }
-      if(isPolygon){
-        this.figure.setAttributeNS(null, "stroke", color);
+      if(this.isPolygon){
+        this.figure.setAttributeNS(null, "stroke", this.color);
+        this.figure.setAttributeNS(null, "fill", "#212f35");
       }
     }
+    
+    this.setColor = (color, biggerColor)=>{
+      this.color = color;
+      this.biggerColor = biggerColor;
+      this.changeColor();
+    }
+
 
     this.makeBigger = function(){
+      this.radius = 20;
       if(this.isfigure){
         this.figure.setAttributeNS(null, "r", 20);
         this.figure.setAttributeNS(null, "fill", this.biggerColor);
@@ -453,6 +462,7 @@ window.onload = function(){
     }
 
     this.makeSmaller = function(){
+      this.radius = 10
       if(this.isfigure){
         this.figure.setAttributeNS(null, "r", 10);
         this.figure.setAttributeNS(null, "fill", this.color);
@@ -473,18 +483,6 @@ window.onload = function(){
         this.figure.setAttributeNS(null, "stroke", this.color);
       }
     }
-
-    this.setColor = (color, biggerColor)=>{
-      this.figure.setAttributeNS(
-        null, "fill", color
-      );
-      this.color = color;
-      this.biggerColor = biggerColor;
-    }
-    
-    this.setOlnyMainColor = (color)=>{
-      this.figure.setAttributeNS(null, "fill", color);
-    }
     
     this.getColor = ()=>{
       return this.color;
@@ -503,17 +501,18 @@ window.onload = function(){
         "background-color: #2F4F4F;")
         );
       }
-      this.showDegreeOfNode(coordX, coordY, this.figure.getAttribute("r"));
+
+    this.showDegreeOfNode(coordX, coordY, this.radius);
       
-      this.showInformation = function(){
-        this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
+    this.showInformation = function(){
+      this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
         + "out: " + this.edgesOut.length;
       this.information.setAttributeNS(
        null,
        "style",
        ("position: fixed; " +
-       "top: " + (Number(this.figure.getAttribute('cy')) - 60) + ";" +
-       "left: " + (Number(this.figure.getAttribute('cx')) + 70) + ";" +
+       "top: " + (Number(this.coordY) - 60) + ";" +
+       "left: " + (Number(this.coordX) + 70) + ";" +
        "color: #EEF7A4;" +
        "wigth: 100; " +
        "height: 50" +
@@ -522,14 +521,14 @@ window.onload = function(){
        "background-color: #35414A;")
        );
        names.append(this.information);
-      }
+    }
       
-      this.makeNameBigger = function(){
-        this.text.setAttributeNS(
+    this.makeNameBigger = function(){
+      this.text.setAttributeNS(
           null,
           "style",
-          "position: fixed; top:" + (Number(this.figure.getAttribute('cy')) + 10) +
-          "; left: " + (Number(this.figure.getAttribute('cx')) ) +
+          "position: fixed; top:" + (Number(this.coordY) + 10) +
+          "; left: " + (Number(this.coordX) ) +
           "; color: #EEF7A4; font-size:x-large;" +
           "border: 1px solid rgb(255, 203, 203);" +
         "background-color: #424242;"
@@ -604,18 +603,18 @@ window.onload = function(){
         this.bisieX = e.clientX;
         this.bisieY = e.clientY;
         this.setPosition(
-          this.firstNode.figure.getAttribute("cx"),
-          this.firstNode.figure.getAttribute("cy"),
-          this.secondNode.figure.getAttribute("cx"),
-          this.secondNode.figure.getAttribute("cy"),
-          this.firstNode.figure.getAttribute("r"));
+          this.firstNode.coordX,
+          this.firstNode.coordY,
+          this.secondNode.coordX,
+          this.secondNode.coordY,
+          this.firstNode.radius);
       } else {
         this.setPosition(
-          this.firstNode.figure.getAttribute("cx"),
-          this.firstNode.figure.getAttribute("cy"),
+          this.firstNode.coordX,
+          this.firstNode.coordY,
           e.clientX-50,
           e.clientY-1,
-          this.firstNode.figure.getAttribute("r")
+          this.firstNode.radius
           );
       }
     });
@@ -747,18 +746,18 @@ window.onload = function(){
         this.bisieX = e.clientX;
         this.bisieY = e.clientY;
         this.setPosition(
-          this.firstNode.figure.getAttribute("cx"),
-          this.firstNode.figure.getAttribute("cy"),
-          this.secondNode.figure.getAttribute("cx"),
-          this.secondNode.figure.getAttribute("cy"),
-          this.firstNode.figure.getAttribute("r"));
+          this.firstNode.coordX,
+          this.firstNode.coordY,
+          this.secondNode.coordX,
+          this.secondNode.coordY,
+          this.firstNode.radius);
       } else {
         this.setPosition(
-          this.firstNode.figure.getAttribute("cx"),
-          this.firstNode.figure.getAttribute("cy"),
+          this.firstNode.coordX,
+          this.firstNode.coordY,
           e.clientX-50,
           e.clientY-1,
-          this.firstNode.figure.getAttribute("r")
+          this.firstNode.radius
           );
       }
     });
@@ -832,13 +831,13 @@ window.onload = function(){
       obj.addEventListener("mouseover", (e)=>{
         prevColor = this.currentObject.getColor();
         obj.setAttributeNS(null, "stroke-width", "3");
-        this.currentObject.setOlnyMainColor(
+        this.currentObject.setColor(
           obj.getAttribute("fill")
         ); 
       });
       obj.addEventListener("mouseout", (e)=>{
         if(!isClick){
-          this.currentObject.setOlnyMainColor(
+          this.currentObject.setColor(
             prevColor
           );
         }
