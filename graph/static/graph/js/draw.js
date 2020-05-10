@@ -22,37 +22,44 @@ window.onload = function(){
     this.radius = 10;
     this.edgesIn = [];
     this.edgesOut = [];
-    this.colorPanelIsOpen = false;
     this.color = "#F5A9A9";
     this.biggerColor = "#FA5858";
-    this.figure = document.createElementNS(ns, 'circle');
-    this.figure.setAttributeNS(null, 'cx', this.coordX);
-    this.figure.setAttributeNS(null, 'cy', this.coordY);
-    this.figure.setAttributeNS(null, 'r', this.radius);
-    this.figure.setAttributeNS(null, 'fill', this.color);
+    this.name;
     
-    this.degreeOfNode = document.createElement("p");
-    this.degreeOfNode.innerHTML = 0;
-    
-    this.information = document.createElement('p');
-    this.text = document.createElement('p');
-    this.name = "vertex" + nodes.length;
-    this.text.innerHTML = this.name;
-    this.text.setAttributeNS(null, "contenteditable", "true");
-    this.text.setAttributeNS(null, "style",
-    "position: fixed; top:"
-    + (this.coordY + 10) + "; left: "
-    + (this.coordX + 25) + "; color: #FA5858;"
-    );
-    names.append(this.text);
-    names.append(this.degreeOfNode);
-    draw.append(this.figure);
-
     this.isfigure = true;
     this.isCircle = false;
     this.isRectangle = false;
     this.isPolygon = false;
 
+    this.initialyse = ()=>{
+      this.figure = document.createElementNS(ns, 'circle');
+      this.figure.setAttributeNS(null, 'cx', this.coordX);
+      this.figure.setAttributeNS(null, 'cy', this.coordY);
+      this.figure.setAttributeNS(null, 'r', this.radius);
+      this.figure.setAttributeNS(null, 'fill', this.color);
+      this.degreeOfNode = document.createElement("p");
+      this.degreeOfNode.innerHTML = 0;
+      
+      this.information = document.createElement('p');
+      this.text = document.createElement('p');
+      this.name = "vertex" + nodes.length;
+      this.text.innerHTML = this.name;
+      this.text.setAttributeNS(null, "contenteditable", "true");
+      this.text.setAttributeNS(null, "style",
+      "position: fixed; top:"
+      + (this.coordY + 10) + "; left: "
+      + (this.coordX + 25) + "; color: #FA5858;"
+      );
+      names.append(this.text);
+      names.append(this.degreeOfNode);
+      draw.append(this.figure);
+    
+    }
+
+    this.initialyse();
+
+
+    var colorPanelIsOpen = false;
     var rightButton = false;
     var mouseDown = false;
     var mouseUp = false;
@@ -62,7 +69,7 @@ window.onload = function(){
       this.figure.addEventListener("dblclick", (e)=>{
         isCreating = false;
         colorPanel.currentObject = this;
-        this.colorPanelIsOpen = true;
+        colorPanelIsOpen = true;
         this.makeBigger();
         this.edgesIn.pop();
         this.edgesOut.pop();
@@ -88,14 +95,14 @@ window.onload = function(){
       });    
 
       draw.addEventListener("mouseup", (e)=>{
-        if(this.colorPanelIsOpen){
+        if(colorPanelIsOpen){
           animateColorPanel(
             -40, -140, false,
             this.coordX,
             this.coordY,
             80, 0
           );
-          this.colorPanelIsOpen = false;
+          colorPanelIsOpen = false;
           this.makeSmaller();
           this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
           names.append(this.text);
@@ -105,7 +112,7 @@ window.onload = function(){
       });
 
       this.figure.addEventListener("mouseover", (e)=>{
-        if(!this.colorPanelIsOpen){
+        if(!colorPanelIsOpen){
           if(!mouseMove && isOriented){
             this.showInformation();
           }
@@ -145,7 +152,7 @@ window.onload = function(){
         });
         
       this.figure.addEventListener("mouseout", (e) => {
-        if(!this.colorPanelIsOpen){
+        if(!colorPanelIsOpen){
           this.makeSmaller();
         }
           this.text.setAttributeNS(null, "style",
@@ -537,7 +544,7 @@ window.onload = function(){
   }
 
   function Edge(node){
-    this.colorPanelIsOpen = false;
+    var colorPanelIsOpen = false;
     this.firstNode = node;
     this.isArc = false;
     this.secondNode;
@@ -569,7 +576,7 @@ window.onload = function(){
     this.triangle.addEventListener("dblclick", (e)=>{
       isCreating = false;
       colorPanel.currentObject = this;
-      this.colorPanelIsOpen = true;
+      colorPanelIsOpen = true;
       animateColorPanel(-140, -40, true);
     }); 
     
@@ -589,9 +596,9 @@ window.onload = function(){
     draw.addEventListener("mouseup", (e)=>{
       mouseDown = false;
       this.changeEdge = false;
-      if(this.colorPanelIsOpen){
+      if(colorPanelIsOpen){
         animateColorPanel(-40, -140);
-        this.colorPanelIsOpen = false;
+        colorPanelIsOpen = false;
         this.triangle.setAttributeNS(null, "fill", this.color);
       }
     });
@@ -674,7 +681,7 @@ window.onload = function(){
   }
 
   function Arc(node){
-    this.colorPanelIsOpen = false;
+    colorPanelIsOpen = false;
     this.firstNode = node;
     this.isArc = false;
     this.secondNode;
@@ -707,7 +714,7 @@ window.onload = function(){
     this.triangle.addEventListener("dblclick", (e)=>{
       isCreating = false;
       colorPanel.currentObject = this;
-      this.colorPanelIsOpen = true;
+      colorPanelIsOpen = true;
       animateColorPanel(-140, -40, true);
     }); 
     
@@ -731,9 +738,9 @@ window.onload = function(){
       draw.addEventListener("mouseup", (e)=>{
         mouseDown = false;
         this.changeEdge = false;
-        if(this.colorPanelIsOpen){
+        if(colorPanelIsOpen){
           animateColorPanel(-40, -140);
-          this.colorPanelIsOpen = false;
+          colorPanelIsOpen = false;
           this.triangle.setAttributeNS(null, "fill", this.color);
         }
       });
