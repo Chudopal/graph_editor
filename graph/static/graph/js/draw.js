@@ -1,30 +1,36 @@
 window.onload = function(){
   ns = 'http://www.w3.org/2000/svg';
-  var nodes = [];
-  var edges = [];
   var draw = document.getElementById("draw");
   var names = document.getElementById("names");
   var unorientedButton = document.getElementById("unoriented");
   var orientedButton = document.getElementById("oriented");
   var colorPanel = new ColorPanel();
-  var isCreatingEdges = true;
-  var isOriented = true;
+  var isCreatinedges = true;
   var isCreating = true;
   var showNumbOfVertexes = document.getElementById("vertexes");
-  var showNumbOfEdges = document.getElementById("edges");
+  var showNumbOfedges = document.getElementById("edges");
   var showIsTree = document.getElementById("isTree");
   var choseCircle = new ChoseCircle();
+  var graphsInformation = document.getElementById("layer");
+  var graph = new Graph();
 
+
+  function Graph(){
+    this.nodes = [];
+    this.edges = [];
+    this.oriented = false;
+    this.name = new NameOfGraph();
+  }
 
   function Node(coordX, coordY){
     this.coordX = coordX;
     this.coordY = coordY;
+    this.name;
     this.radius = 10;
     this.edgesIn = [];
     this.edgesOut = [];
     this.color = "#F5A9A9";
     this.biggerColor = "#FA5858";
-    this.name;
     
     this.isfigure = true;
     this.isCircle = false;
@@ -42,7 +48,7 @@ window.onload = function(){
       
       this.information = document.createElement('p');
       this.text = document.createElement('p');
-      this.name = "vertex" + nodes.length;
+      this.name = "vertex" + graph.nodes.length;
       this.text.innerHTML = this.name;
       this.text.setAttributeNS(null, "contenteditable", "true");
       this.text.setAttributeNS(null, "style",
@@ -73,9 +79,9 @@ window.onload = function(){
         this.makeBigger();
         this.edgesIn.pop();
         this.edgesOut.pop();
-        edges.pop(); 
+        graph.edges.pop(); 
         this.information.remove();
-        showNumbOfVertexes.innerHTML = edges.length;
+        showNumbOfVertexes.innerHTML = graph.edges.length;
         this.degreeOfNode.remove();
         this.text.remove();
         choseCircle.currentObject = this;
@@ -113,13 +119,13 @@ window.onload = function(){
 
       this.figure.addEventListener("mouseover", (e)=>{
         if(!colorPanelIsOpen){
-          if(!mouseMove && isOriented){
+          if(!mouseMove && graph.oriented){
             this.showInformation();
           }
           this.makeNameBigger();
           this.makeBigger();
   
-          if (isOriented){
+          if (graph.oriented){
             this.edgesOut.forEach(element=>{
               element.changeEdge = true;
               element.triangle.setAttributeNS(null, "fill", "#2EFEC8");
@@ -189,19 +195,19 @@ window.onload = function(){
           rightButton = true;
           this.edgesIn.forEach(element=>{
               element.triangle.remove();
-              edges.splice(edges.indexOf(element),edges.indexOf(element));
+              graph.edges.splice(graph.edges.indexOf(element),graph.edges.indexOf(element));
               delete element;
           });
           this.edgesOut.forEach(element=>{
               element.triangle.remove();
-              edges.splice(edges.indexOf(element), edges.indexOf(element));
+              graph.edges.splice(graph.edges.indexOf(element), graph.edges.indexOf(element));
               delete element;
           });
           this.degreeOfNode.remove();
           this.text.remove();
           this.information.remove();
           this.figure.remove();
-          nodes.splice(nodes.indexOf(this), nodes.indexOf(this));
+          graph.nodes.splice(graph.nodes.indexOf(this), graph.nodes.indexOf(this));
           delete this;
           return false;
       };
@@ -217,7 +223,7 @@ window.onload = function(){
           mouseMove = true;
           this.setPosition();
           this.makeNameBigger();
-          if(isOriented){
+          if(graph.oriented){
             this.edgesIn.forEach(element => {
               element.changeEdge = true;
               element.setPosition(
@@ -282,32 +288,32 @@ window.onload = function(){
         if(!rightButton){
         mouseUp = true;
         if(!mouseMove){
-          if(isCreatingEdges){
-            if (isOriented){
-              isCreatingEdges = false;
+          if(isCreatinedges){
+            if (graph.oriented){
+              isCreatinedges = false;
               var edge = new Edge(this);
               this.edgesOut.push(edge);
-              edges.push(edge);
+              graph.edges.push(edge);
             }else{
-              isCreatingEdges = false;
+              isCreatinedges = false;
               var edge = new Arc(this);
               this.edgesOut.push(edge);
-              edges.push(edge);
+              graph.edges.push(edge);
             }
           }else{
-            isCreatingEdges = true;
-            this.edgesIn.push(edges[edges.length - 1]);
-            edges[edges.length - 1].setPosition(
-              edges[edges.length - 1].firstNode.coordX,
-              edges[edges.length - 1].firstNode.coordY,
+            isCreatinedges = true;
+            this.edgesIn.push(graph.edges[graph.edges.length - 1]);
+            graph.edges[graph.edges.length - 1].setPosition(
+              graph.edges[graph.edges.length - 1].firstNode.coordX,
+              graph.edges[graph.edges.length - 1].firstNode.coordY,
               this.coordX,
               this.coordY,
               10
             );
-            edges[edges.length - 1].secondNode = this;
-            edges[edges.length - 1].changeEdge = false;
+            graph.edges[graph.edges.length - 1].secondNode = this;
+            graph.edges[graph.edges.length - 1].changeEdge = false;
             mouseMove = true;
-            showNumbOfEdges.innerHTML = edges.length;
+            showNumbOfedges.innerHTML = graph.edges.length;
           }
         }else{
           this.coordX = e.clientX - 50;
@@ -627,7 +633,7 @@ window.onload = function(){
     });
     this.triangle.oncontextmenu = (e)=>  {
         this.triangle.remove();
-        edges.splice(edges.indexOf(this),edges.indexOf(this));
+        graph.edges.splice(graph.edges.indexOf(this),graph.edges.indexOf(this));
         delete this;
         return false;
     };
@@ -771,7 +777,7 @@ window.onload = function(){
 
     this.triangle.oncontextmenu = (e)=>  {
         this.triangle.remove();
-        edges.splice(edges.indexOf(this),edges.indexOf(this));
+        graph.edges.splice(graph.edges.indexOf(this),graph.edges.indexOf(this));
         delete this;
         return false;
     };
@@ -1044,10 +1050,14 @@ window.onload = function(){
     }
   }
 
+  function showGraph(graph){
+
+  }
+
   function clear(){
-    showNumbOfEdges.innerHTML = 0;
+    showNumbOfedges.innerHTML = 0;
     showNumbOfVertexes.innerHTML = 0;
-    nodes.forEach(node =>{
+    graph.nodes.forEach(node =>{
       node.figure.remove();
       delete node.figure;
       node.degreeOfNode.remove();
@@ -1057,30 +1067,42 @@ window.onload = function(){
       node.text.remove();
       delete node.text;
     });
-    nodes = [];
-    edges.forEach(edge=>{
+    graph.nodes = [];
+    graph.edges.forEach(edge=>{
       edge.triangle.remove();
       delete edge.triangle;
     });
-    edges = [];
+    graph.edges = [];
   }
+
+  function NameOfGraph(){
+    this.text = document.createElement('div');
+    graphsInformation.append(this.text);
+    this.text.setAttributeNS(null, "class", "record");
+    this.text.innerHTML = "HHHH";
+  }
+
 
   unorientedButton.addEventListener("click", clear);
   unorientedButton.addEventListener("click", (e)=>{
-    isOriented = false;
+
+    graph = new Graph();
+    graph.oriented = false;
   });
 
   orientedButton.addEventListener("click", clear);
   orientedButton.addEventListener("click", (e)=>{
-    isOriented = true;
+
+    graph = new Graph();
+    graph.oriented = true;
   });
 
   draw.addEventListener("dblclick", (e)=>{
     console.log("GGG");
     if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
-      nodes.push(node);
-      showNumbOfVertexes.innerHTML = nodes.length;
+      graph.nodes.push(node);
+      showNumbOfVertexes.innerHTML = graph.nodes.length;
     }
     isCreating = true;
   });

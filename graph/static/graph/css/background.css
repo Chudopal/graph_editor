@@ -13,7 +13,7 @@
 }
 
 
-.layer {
+#layer {
     background-color:  #212f35;
     right: 50px;
     border: 1px solid #F5A9A9;
@@ -25,15 +25,17 @@
 
 
 .record{
-    background-color:  #212f35;
-    border: 1px solid rgb(255, 203, 203);
+
+    color:#eebebe ;
+    font-size: xx-large;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+    width: 620px;
     position: relative;
     left: 25;
-    top: 25;
-    background-color: rgb(17, 57, 70);
-    /*overflow: scroll; /* Добавляем полосы прокрутки */
-    width: 650px; /* Ширина блока */
-    height: 100px; /* Высота блока */
+    top: 25; 
+    background-color: #212f35;
+    border: 5px solid rgb(28, 42, 47);
 }
 
 .text{
