@@ -8,4 +8,8 @@ def canvas_view(request):
 
 
 def current_graph(request):
-    return HttpResponse("hello")
+    print("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    a = request.GET.dict()
+    print("HERE", a)
+    return HttpResponse("helssssslo")
+    

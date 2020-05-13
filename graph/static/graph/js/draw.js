@@ -15,11 +15,52 @@ $(document).ready(function(){
   var graph = new Graph();
 
   $("#here").on("click", function(){
-    makeRequest("localhost:8989/edit-graph/graph")
+    //makeRequest("/edit-graph/graph")
+
+
+    /*$.ajax({
+      url: "/edit-graph/graph",
+      type: "POST",
+      data:"ddddddddaaaaaaa",
+      success: function(data){
+        console.log( "Прибыли данные: " + data );
+      }
+    });*/
+
+
+    $.ajax({
+      //type: "POST",
+      url: "/edit-graph/graph/",
+      data: {
+        "a":"AAAAAAAAAAAAAAAAA",
+        "b":"AAAAAAAAAAAAAAAAA"// from form
+      },
+      success: function(data){
+        console.log( "Прибыли данные: " + data );
+      }
+    });
+
+    /*$.post(
+      "/graph-editor/graph/",
+      {
+        param1: "param1",
+        param2: 2
+      },
+      onAjaxSuccess
+    );
+     
+    function onAjaxSuccess(data)
+    {
+      // Здесь мы получаем данные, отправленные сервером и выводим их на экран.
+      alert(data);
+    }*/
+
   })
 
 
-  function makeRequest(url) {
+
+
+  /*function makeRequest(url) {
     var httpRequest = false;
 
     if (window.XMLHttpRequest) { // Mozilla, Safari, ...
@@ -44,22 +85,13 @@ $(document).ready(function(){
     }
     httpRequest.onreadystatechange = function() { alertContents(httpRequest); };
     httpRequest.open('GET', url, true);
-    httpRequest.send(null);
+    httpRequest.send("");
+    
   }
-
-
 
   function alertContents(httpRequest) {
-
-     if (httpRequest.readyState == 4) {
-         if (httpRequest.status == 200) {
-             alert(httpRequest.responseText);
-         } else {
-             alert('С запросом возникла проблема.');
-         }
-      }
-
-  }
+    console.log(httpRequest.responseText);
+  }*/
 
 
 

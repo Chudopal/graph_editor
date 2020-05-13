@@ -19,6 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #my urls
+    #my urls 
     path('edit-graph/', include("graph.urls", namespace="blog")),
 ] 
