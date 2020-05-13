@@ -16,7 +16,7 @@
 #layer {
     background-color:  #212f35;
     right: 50px;
-    border: 1px solid #F5A9A9;
+    border: 1px solid #f5a9a9;
     position: fixed;
     overflow: scroll; /* Добавляем полосы прокрутки */
     width: 700px; /* Ширина блока */
@@ -25,7 +25,6 @@
 
 
 .record{
-
     color:#eebebe ;
     font-size: xx-large;
     text-align: center;
@@ -35,6 +34,20 @@
     left: 25;
     top: 25; 
     background-color: #212f35;
+    border: 5px solid rgb(28, 42, 47);
+}
+
+.active_record{
+
+    color:#eebebe ;
+    font-size: xx-large;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+    width: 620px;
+    position: relative;
+    left: 25;
+    top: 25; 
+    background-color: #304650;
     border: 5px solid rgb(28, 42, 47);
 }
 

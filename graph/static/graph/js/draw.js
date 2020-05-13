@@ -1078,8 +1078,23 @@ window.onload = function(){
   function NameOfGraph(){
     this.text = document.createElement('div');
     graphsInformation.append(this.text);
+
+
+
     this.text.setAttributeNS(null, "class", "record");
     this.text.innerHTML = "HHHH";
+
+
+    this.text.addEventListener("click", (e)=>{
+      console.log("kkk");
+    });
+
+    this.text.addEventListener("mouseover", (e)=>{
+      this.text.setAttributeNS(null, "class", "active_record");
+    });
+    this.text.addEventListener("mouseout", (e)=>{
+      this.text.setAttributeNS(null, "class", "record");
+    });
   }
 
 
