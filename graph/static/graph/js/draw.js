@@ -15,19 +15,6 @@ $(document).ready(function(){
   var graph = new Graph();
 
   $("#here").on("click", function(){
-    //makeRequest("/edit-graph/graph")
-
-
-    /*$.ajax({
-      url: "/edit-graph/graph",
-      type: "POST",
-      data:"ddddddddaaaaaaa",
-      success: function(data){
-        console.log( "Прибыли данные: " + data );
-      }
-    });*/
-
-
     $.ajax({
       //type: "POST",
       url: "/edit-graph/API/",
@@ -39,22 +26,6 @@ $(document).ready(function(){
         console.log( "Прибыли данные: " + data.name.first_name.name);
       }
     });
-
-    /*$.post(
-      "/graph-editor/graph/",
-      {
-        param1: "param1",
-        param2: 2
-      },
-      onAjaxSuccess
-    );
-     
-    function onAjaxSuccess(data)
-    {
-      // Здесь мы получаем данные, отправленные сервером и выводим их на экран.
-      alert(data);
-    }*/
-
   })
 
 
@@ -1178,7 +1149,35 @@ $(document).ready(function(){
     });
   }
 
+  function detNames(){
+    $.ajax({
+      url: "/edit-graph/API/",
+      data: {
+        "request":"getName",
+        "data":""
+      },
+      success: function(data){
+        console.log( "Прибыли данные: " + data.name.first_name.name);
+      }
+    });
+  }
 
+  function getCurrentGraph(){
+
+  }
+  
+  function sendDraph(data){
+
+  }
+
+  function createGraphs(data){
+
+  }
+
+  function graphToJson(currentGrah){
+    var obj;
+    
+  }
 
   unorientedButton.addEventListener("click", clear);
   unorientedButton.addEventListener("click", (e)=>{
