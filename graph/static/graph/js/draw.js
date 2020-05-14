@@ -30,13 +30,13 @@ $(document).ready(function(){
 
     $.ajax({
       //type: "POST",
-      url: "/edit-graph/graph/",
+      url: "/edit-graph/API/",
       data: {
-        "a":"AAAAAAAAAAAAAAAAA",
-        "b":"AAAAAAAAAAAAAAAAA"// from form
+        "a":"A",
+        "b":"B"// from form
       },
       success: function(data){
-        console.log( "Прибыли данные: " + data );
+        console.log( "Прибыли данные: " + data.name.first_name.name);
       }
     });
 
@@ -1182,7 +1182,6 @@ $(document).ready(function(){
 
   unorientedButton.addEventListener("click", clear);
   unorientedButton.addEventListener("click", (e)=>{
-
     graph = new Graph();
     graph.oriented = false;
   });
