@@ -9,7 +9,7 @@ class OrientedGraph():
     description = ""
     graph_structure = {
 
-        "vertexes":[
+        "nodes":[
             {
                 "name":"vertex1",
                 "color" : "#qwer",
@@ -27,16 +27,18 @@ class OrientedGraph():
         ],
         "edges":[
             {
-                "vertex1":"vertex2",
+                "firstNode": "vertex1",
+                "secondNode":"vertex2",
                 "color": "#bruh",
-                "besie":"d12 23 m23 34"
+                "coords":"d12 23 m23 34"
             },
             {
                 "vertex2":"vertex1",
                 "color": "#bruh",
-                "besie":"d12 23 m23 34"
+                "coords":"d12 23 m23 34"
             },
         ],
+        "oriented": False,
     }
 
     def __init__(self, description, name):

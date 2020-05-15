@@ -35,7 +35,6 @@ $(document).ready(function(){
 
   /*function makeRequest(url) {
     var httpRequest = false;
-
     if (window.XMLHttpRequest) { // Mozilla, Safari, ...
         httpRequest = new XMLHttpRequest();
         if (httpRequest.overrideMimeType) {
@@ -51,7 +50,6 @@ $(document).ready(function(){
             } catch (e) {}
         }
     }
-
     if (!httpRequest) {
         alert('Не вышло :( Невозможно создать экземпляр класса XMLHTTP ');
         return false;
@@ -61,7 +59,6 @@ $(document).ready(function(){
     httpRequest.send("");
     
   }
-
   function alertContents(httpRequest) {
     console.log(httpRequest.responseText);
   }*/
@@ -84,6 +81,7 @@ $(document).ready(function(){
     this.edgesOut = [];
     this.color = "#F5A9A9";
     this.biggerColor = "#FA5858";
+    this.nameOfFigure = "ball";
     
     this.isBall = true;
     this.isCircle = false;
@@ -92,6 +90,7 @@ $(document).ready(function(){
 
     this.createFromJson = (json_node)=>{
       this.name = json_node.name;
+      console.log(json_node);
       this.text.innerHTML = this.name;
       switch(json_node.color){
         case "#F5A9A9":
@@ -110,7 +109,7 @@ $(document).ready(function(){
           this.setColor("#F2F5A9", "#ffca5b");
           break;
         }
-
+        this.changeColor();
       switch (json_node.figure){
         case "ball":
           this.isBall       = true;
@@ -137,6 +136,7 @@ $(document).ready(function(){
           this.isPolygon    = true;
           break;
       }
+      this.radius = 10; 
       this.setFigure();
     }
 
@@ -441,8 +441,9 @@ $(document).ready(function(){
     this.setListeners();
 
     this.setFigure = ()=>{
-      this.radius = 20
+      console.log(this.radius);
       if(this.isBall){
+        this.nameOfFigure = "ball";
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'circle');
         this.figure.setAttributeNS(null, 'cx', this.coordX);
@@ -453,6 +454,7 @@ $(document).ready(function(){
         this.setListeners();
       }
       if(this.isCircle){
+        this.nameOfFigure = "circle";
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'circle');
         this.figure.setAttributeNS(null, 'cx', this.coordX);
@@ -465,6 +467,7 @@ $(document).ready(function(){
         this.setListeners();
       }
       if(this.isRectangle){
+        this.nameOfFigure = "rectangle";
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'rect');
         this.figure.setAttributeNS(null, 'fill', this.color);
@@ -476,6 +479,7 @@ $(document).ready(function(){
         this.setListeners();
       }
       if(this.isPolygon){ 
+        this.nameOfFigure = "polygon";
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'polygon');
         this.figure.setAttributeNS(
@@ -1007,63 +1011,73 @@ $(document).ready(function(){
     this.currentObject;
 
     this.setListeners = ()=>{
+
+      
       this.ball.addEventListener("mouseover", (e)=>{
-        this.currentObject.isfigure     = true;
+        this.currentObject.isBall     = true;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = false;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
       this.ball.addEventListener("click", (e)=>{
-        this.currentObject.isfigure     = true;
+        this.currentObject.isBall     = true;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = false;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
       this.circle.addEventListener("mouseover", (e)=>{
-        this.currentObject.isfigure     = false;
+        this.currentObject.isBall     = false;
         this.currentObject.isCircle     = true;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = false;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
       this.circle.addEventListener("click", (e)=>{
-        this.currentObject.isfigure     = false;
+        this.currentObject.isBall     = false;
         this.currentObject.isCircle     = true;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = false;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
 
       this.rectangle.addEventListener("mouseover", (e)=>{
         
-        this.currentObject.isfigure     = false;
+        this.currentObject.isBall     = false;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = true;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
       this.rectangle.addEventListener("click", (e)=>{
-        this.currentObject.isfigure     = false;
+        this.currentObject.isBall     = false;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = false;
         this.currentObject.isRectangle  = true;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
 
       this.polygon.addEventListener("mouseover", (e)=>{
-        this.currentObject.isfigure       = false;
+        this.currentObject.isBall       = false;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = true;
         this.currentObject.isRectangle  = false;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
       this.polygon.addEventListener("click", (e)=>{
-        this.currentObject.isfigure     = false;
+        this.currentObject.isBall     = false;
         this.currentObject.isCircle     = false;
         this.currentObject.isPolygon    = true;
         this.currentObject.isRectangle  = false;
+        this.currentObject.radius = 20;
         this.currentObject.setFigure();
       });
     }
@@ -1223,7 +1237,7 @@ $(document).ready(function(){
     graph.oriented = data.oriented;
     data.nodes.forEach(dataNode=>{
       var node = new Node(dataNode.x, dataNode.y);
-      node.createFromJson(data);
+      node.createFromJson(dataNode);
     });
   }
 
@@ -1238,7 +1252,7 @@ $(document).ready(function(){
       this.obj.nodes.push({
         name: node.name,
         color: node.color,
-        figure: node.figure,
+        figure: node.nameOfFigure,
         x: node.coordX,
         y: node.coordY,
       });
@@ -1251,6 +1265,7 @@ $(document).ready(function(){
         coords: edge.coords,
       });
     });
+    console.log(obj);
     return this.obj;
   }
   
