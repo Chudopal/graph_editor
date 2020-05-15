@@ -11,7 +11,8 @@ def canvas_view(request):
 def current_graph(request):
     
     print("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    a = request.GET.dict()
+    #a = request.GET.dict()
+    #print(a["a"])
     #print(a['a'])
     data = {
         "name": {

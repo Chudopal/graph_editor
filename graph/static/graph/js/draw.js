@@ -13,11 +13,12 @@ $(document).ready(function(){
   var choseCircle = new ChoseCircle();
   var graphsInformation = document.getElementById("layer");
   var graph = new Graph();
+  var buffer;
 
   $("#here").on("click", function(){
     $.ajax({
       //type: "POST",
-      url: "/edit-graph/API/",
+      url: "/edit-graph/API_FOR_GETTING_GRAPH/",
       data: {
         "a":"A",
         "b":"B"// from form
@@ -26,6 +27,7 @@ $(document).ready(function(){
         console.log( "Прибыли данные: " + data.name.first_name.name);
       }
     });
+    createGraphs(buffer);
   })
 
 
@@ -83,10 +85,60 @@ $(document).ready(function(){
     this.color = "#F5A9A9";
     this.biggerColor = "#FA5858";
     
-    this.isfigure = true;
+    this.isBall = true;
     this.isCircle = false;
     this.isRectangle = false;
     this.isPolygon = false;
+
+    this.createFromJson = (json_node)=>{
+      this.name = json_node.name;
+      this.text.innerHTML = this.name;
+      switch(json_node.color){
+        case "#F5A9A9":
+          this.setColor("#F5A9A9", "#FA5858");
+          break;
+        case "#F6CEF5":
+          this.setColor("#F6CEF5", "#ff9dfd");
+          break;
+        case "#FAFAFA":
+          this.setColor("#FAFAFA", "#c5eeff");
+          break;
+        case "#96ffe5":
+          this.setColor("#96ffe5", "#31ffcc");
+          break;
+        case "#F2F5A9":
+          this.setColor("#F2F5A9", "#ffca5b");
+          break;
+        }
+
+      switch (json_node.figure){
+        case "ball":
+          this.isBall       = true;
+          this.isCircle     = false;
+          this.isRectangle  = false;
+          this.isPolygon    = false;
+          break;
+        case "circle":
+          this.isBall       = false;
+          this.isCircle     = true;
+          this.isRectangle  = false;
+          this.isPolygon    = false;
+          break;
+        case "rectangle":
+          this.isBall       = false;
+          this.isCircle     = false;
+          this.isRectangle  = true;
+          this.isPolygon    = false;
+          break;
+        case "polygon":
+          this.isBall       = false;
+          this.isCircle     = false;
+          this.isRectangle  = false;
+          this.isPolygon    = true;
+          break;
+      }
+      this.setFigure();
+    }
 
     this.initialyse = ()=>{
       this.figure = document.createElementNS(ns, 'circle');
@@ -110,7 +162,6 @@ $(document).ready(function(){
       names.append(this.text);
       names.append(this.degreeOfNode);
       draw.append(this.figure);
-    
     }
 
     this.initialyse();
@@ -391,7 +442,7 @@ $(document).ready(function(){
 
     this.setFigure = ()=>{
       this.radius = 20
-      if(this.isfigure){
+      if(this.isBall){
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'circle');
         this.figure.setAttributeNS(null, 'cx', this.coordX);
@@ -446,8 +497,7 @@ $(document).ready(function(){
     }
 
     this.setPosition = function(){
-      if(this.isfigure){
-        console.log("here");
+      if(this.isBall){
         this.figure.setAttributeNS(null, "cx", this.coordX);
         this.figure.setAttributeNS(null, "cy", this.coordY);
       } 
@@ -461,7 +511,6 @@ $(document).ready(function(){
         this.figure.setAttributeNS(null, 'width', 20);
         this.figure.setAttributeNS(null, 'height', 20);
       }
-      console.log("here");
       if(this.isPolygon){
         this.figure.setAttributeNS(
           null,
@@ -477,9 +526,8 @@ $(document).ready(function(){
     }
 
     
-    this.changeColor = function(color){
-      if(this.isfigure){
-        console.log("here");
+    this.changeColor = function(){
+      if(this.isBall){
         this.figure.setAttributeNS(null, "fill", this.color);
       }
       if(this.isCircle){
@@ -504,7 +552,7 @@ $(document).ready(function(){
 
     this.makeBigger = function(){
       this.radius = 20;
-      if(this.isfigure){
+      if(this.isBall){
         this.figure.setAttributeNS(null, "r", 20);
         this.figure.setAttributeNS(null, "fill", this.biggerColor);
       }
@@ -527,7 +575,7 @@ $(document).ready(function(){
 
     this.makeSmaller = function(){
       this.radius = 10
-      if(this.isfigure){
+      if(this.isBall){
         this.figure.setAttributeNS(null, "r", 10);
         this.figure.setAttributeNS(null, "fill", this.color);
       }
@@ -614,6 +662,7 @@ $(document).ready(function(){
     draw.prepend(this.triangle);
     this.changeEdge = true;
     this.triangle.setAttributeNS(null, "stroke-width", "2");
+    this.coords;
 
     this.setColor = (color, biggerColor)=>{
       this.triangle.setAttributeNS(
@@ -696,7 +745,7 @@ $(document).ready(function(){
         var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
         var yDelta = xDelta*tgOfAngle;
         if(!this.isArc){
-          var coords = ("M" + " " +
+          this.coords = ("M" + " " +
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
           "Q" + " " +
@@ -710,14 +759,14 @@ $(document).ready(function(){
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
-          this.triangle.setAttributeNS(null, "d", coords);
+          this.triangle.setAttributeNS(null, "d", this.coords);
         }else{
           var tgOfNearAngle = (beginY - this.bisieY) /
             (beginX - this.bisieX);
           var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
           var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
           var yDelta = xDelta*tgOfAngle;
-          var coords = ("M" + " " +
+          this.coords = ("M" + " " +
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
           "Q" + " " +
@@ -731,7 +780,7 @@ $(document).ready(function(){
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
-          this.triangle.setAttributeNS(null, "d", coords);
+          this.triangle.setAttributeNS(null, "d", this.coords);
         }
       }
     };
@@ -751,7 +800,7 @@ $(document).ready(function(){
     draw.prepend(this.triangle);
     this.changeEdge = true;
     this.triangle.setAttributeNS(null, "stroke-width", "2");
-    
+    this.coords;
     
     this.setColor = (color, biggerColor)=>{
       this.triangle.setAttributeNS(
@@ -839,9 +888,8 @@ $(document).ready(function(){
         var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
         var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
         var yDelta = xDelta*tgOfAngle;
-        console.log("here");
         if(!this.isArc){
-          var coords = ("M" + " " +
+          this.coords = ("M" + " " +
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
           "Q" + " " +
@@ -858,14 +906,14 @@ $(document).ready(function(){
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
-          this.triangle.setAttributeNS(null, "d", coords);
+          this.triangle.setAttributeNS(null, "d", this.coords);
         }else{
           var tgOfNearAngle = (beginY - this.bisieY) /
             (beginX - this.bisieX);
           var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
           var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
           var yDelta = xDelta*tgOfAngle;
-          var coords = ("M" + " " +
+          this.coords = ("M" + " " +
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
           "Q" + " " +
@@ -882,7 +930,7 @@ $(document).ready(function(){
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
-          this.triangle.setAttributeNS(null, "d", coords);
+          this.triangle.setAttributeNS(null, "d", this.coords);
         }
       }
     };
@@ -1107,6 +1155,7 @@ $(document).ready(function(){
   }
 
   function clear(){
+    buffer = graphToJson(graph);
     showNumbOfedges.innerHTML = 0;
     showNumbOfVertexes.innerHTML = 0;
     graph.nodes.forEach(node =>{
@@ -1131,14 +1180,12 @@ $(document).ready(function(){
     this.text = document.createElement('div');
     graphsInformation.append(this.text);
 
-
-
     this.text.setAttributeNS(null, "class", "record");
     this.text.innerHTML = "HHHH";
 
 
     this.text.addEventListener("click", (e)=>{
-      console.log("kkk");
+      
     });
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -1171,14 +1218,42 @@ $(document).ready(function(){
   }
 
   function createGraphs(data){
-
+    graph = new Graph();
+    console.log(data.oriented);
+    graph.oriented = data.oriented;
+    data.nodes.forEach(dataNode=>{
+      var node = new Node(dataNode.x, dataNode.y);
+      node.createFromJson(data);
+    });
   }
+
 
   function graphToJson(currentGrah){
-    var obj;
-    
+    this.obj = {
+      nodes: [],
+      edges: [],
+      oriented: currentGrah.oriented,
+    } 
+    currentGrah.nodes.forEach(node=>{
+      this.obj.nodes.push({
+        name: node.name,
+        color: node.color,
+        figure: node.figure,
+        x: node.coordX,
+        y: node.coordY,
+      });
+    });
+    currentGrah.edges.forEach(edge=>{
+      this.obj.edges.push({
+        firstNode: edge.firstNode.name,
+        secondNode: edge.secondNode.name,
+        color: edge.color,
+        coords: edge.coords,
+      });
+    });
+    return this.obj;
   }
-
+  
   unorientedButton.addEventListener("click", clear);
   unorientedButton.addEventListener("click", (e)=>{
     graph = new Graph();
@@ -1193,7 +1268,6 @@ $(document).ready(function(){
   });
 
   draw.addEventListener("dblclick", (e)=>{
-    console.log("GGG");
     if(isCreating){
       var node = new Node(e.clientX -50, e.clientY-1);
       graph.nodes.push(node);
