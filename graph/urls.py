@@ -9,5 +9,6 @@ app_name = "graph"
 
 urlpatterns = [
     path('', views.canvas_view, name="canvas_view"),
-    path('API_FOR_GETTING_GRAPH/', views.current_graph),
+    path('SAVE_GRAPH/', views.save_graph),
+    path('NEW_GRAPH/', views.new_graph),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)

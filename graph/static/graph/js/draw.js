@@ -16,7 +16,7 @@ $(document).ready(function(){
   var buffer;
 
   $("#save").on("click", function(){
-    $.ajax({
+    /*$.ajax({
       //type: "POST",
       url: "/edit-graph/API_FOR_GETTING_GRAPH/",
       data: {
@@ -27,15 +27,39 @@ $(document).ready(function(){
         console.log( "Прибыли данные: " + data.name.first_name.name);
       }
     });
-    createGraphs(buffer);
+    createGraphs(buffer);*/
+    save();
   })
 
   function Graph(){
     this.nodes = [];
     this.edges = [];
     this.oriented = false;
-    this.name = new NameOfGraph();
+    this.name = new NameOfGraph("new graph");
+    this.id;
   }
+
+  function NameOfGraph(text){
+    this.text = document.createElement('div');
+    graphsInformation.append(this.text);
+
+    this.text.setAttributeNS(null, "class", "record");
+    this.text.innerHTML = text;
+    this.text.setAttributeNS(null, "contenteditable", "true");
+
+
+    this.text.addEventListener("click", (e)=>{
+      console.log(this.text.textContent);
+    });
+
+    this.text.addEventListener("mouseover", (e)=>{
+      this.text.setAttributeNS(null, "class", "active_record");
+    });
+    this.text.addEventListener("mouseout", (e)=>{
+      this.text.setAttributeNS(null, "class", "record");
+    });
+  }
+
 
   function Node(coordX, coordY){
     this.coordX = coordX;
@@ -643,7 +667,7 @@ $(document).ready(function(){
       this.setColor(data.color);
       this.besieX = data.besieX;
       this.besieY = data.besieY;
-      this.isArc = true;
+      this.isArc = data.isArc;
     }
 
     this.setColor = (color, biggerColor)=>{
@@ -790,7 +814,7 @@ $(document).ready(function(){
       this.setColor(data.color);
       this.besieX = data.besieX;
       this.besieY = data.besieY;
-      this.isArc = true;
+      this.isArc = data.isArc;
     }
 
     this.setColor = (color, biggerColor)=>{
@@ -1120,7 +1144,15 @@ $(document).ready(function(){
   }
 
   
-  function animateColorPanel(beginPosition, finalPosition, isEdge, xPosition, yPosition, beginRadius, endRadius){
+  function animateColorPanel(
+    beginPosition, 
+    finalPosition, 
+    isEdge, 
+    xPosition, 
+    yPosition, 
+    beginRadius, 
+    endRadius)
+    {
     var start = Date.now();
     var move = finalPosition - beginPosition;
     var position = beginPosition;
@@ -1177,37 +1209,21 @@ $(document).ready(function(){
     graph.edges = [];
   }
 
-  function NameOfGraph(){
-    this.text = document.createElement('div');
-    graphsInformation.append(this.text);
-
-    this.text.setAttributeNS(null, "class", "record");
-    this.text.innerHTML = "HHHH";
-
-
-    this.text.addEventListener("click", (e)=>{
-      
-    });
-
-    this.text.addEventListener("mouseover", (e)=>{
-      this.text.setAttributeNS(null, "class", "active_record");
-    });
-    this.text.addEventListener("mouseout", (e)=>{
-      this.text.setAttributeNS(null, "class", "record");
-    });
-  }
-
-  function detNames(){
+  function save(){
+    json_data = graphToJson(graph);
     $.ajax({
-      url: "/edit-graph/API/",
+      url: "/edit-graph/SAVE_GRAPH/",
       data: {
-        "request":"getName",
-        "data":""
+        "name": graph.name.text.textContent,
+        "graph": json_data,   
+        "id": graph.id,
       },
       success: function(data){
-        console.log( "Прибыли данные: " + data.name.first_name.name);
+        console.log( "Прибыли данные: " + data);
+        console.log(typeof(data));
       }
     });
+
   }
 
   function getCurrentGraph(){
@@ -1278,22 +1294,22 @@ $(document).ready(function(){
     } 
     currentGrah.nodes.forEach(node=>{
       this.obj.nodes.push({
-        name: node.name,
+        name: node.text.textContent,
         color: node.color,
         figure: node.nameOfFigure,
         x: node.coordX,
         y: node.coordY,
       });
     });
-    console.log(currentGrah.edges[0].besieX)
     currentGrah.edges.forEach(edge=>{
       this.obj.edges.push({
-        firstNode: edge.firstNode.name,
-        secondNode: edge.secondNode.name,
+        firstNode: edge.firstNode.text.textContent,
+        secondNode: edge.secondNode.text.textContent,
         color: edge.color,
         coords: edge.coords,
         besieX: edge.besieX,
         besieY: edge.besieY,
+        isArc: edge.isArc,
       });
     });
     console.log(obj);
@@ -1302,16 +1318,25 @@ $(document).ready(function(){
   
   unorientedButton.addEventListener("click", clear);
   unorientedButton.addEventListener("click", (e)=>{
-    graph = new Graph();
-    graph.oriented = false;
+    createNewGraph(false);
   });
 
   orientedButton.addEventListener("click", clear);
   orientedButton.addEventListener("click", (e)=>{
-
-    graph = new Graph();
-    graph.oriented = true;
+    createNewGraph(true);
   });
+
+  function createNewGraph(oriented){
+    graph = new Graph();
+    graph.oriented = oriented;
+    $.ajax({
+      url: "/edit-graph/NEW_GRAPH/",
+      success: function(data){
+        graph.id = data;
+        console.log(graph.id);
+      }
+    });
+  }
 
   draw.addEventListener("dblclick", (e)=>{
     if(isCreating){

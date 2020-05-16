@@ -3,7 +3,13 @@ import json
 
 # Create your models here.
 
-class OrientedGraph():
+
+class Graph(models.Model):
+    name = models.CharField(max_length=250)
+    path_to_graph = models.CharField(max_length=250)
+
+
+"""class OrientedGraph():
     
     name = ""
     description = ""
@@ -29,11 +35,6 @@ class OrientedGraph():
             {
                 "firstNode": "vertex1",
                 "secondNode":"vertex2",
-                "color": "#bruh",
-                "coords":"d12 23 m23 34"
-            },
-            {
-                "vertex2":"vertex1",
                 "color": "#bruh",
                 "coords":"d12 23 m23 34"
             },
@@ -64,3 +65,4 @@ if __name__ == "__main__":
     with open('sw_templates.json', 'w') as f:
         print("here")
         json.dump(graph1.getGraph(), f)
+"""
