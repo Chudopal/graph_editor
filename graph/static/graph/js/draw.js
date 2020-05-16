@@ -15,7 +15,7 @@ $(document).ready(function(){
   var graph = new Graph();
   var buffer;
 
-  $("#here").on("click", function(){
+  $("#save").on("click", function(){
     $.ajax({
       //type: "POST",
       url: "/edit-graph/API_FOR_GETTING_GRAPH/",
@@ -29,41 +29,6 @@ $(document).ready(function(){
     });
     createGraphs(buffer);
   })
-
-
-
-
-  /*function makeRequest(url) {
-    var httpRequest = false;
-    if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-        httpRequest = new XMLHttpRequest();
-        if (httpRequest.overrideMimeType) {
-            httpRequest.overrideMimeType('text/xml');
-            // Читайте ниже об этой строке
-        }
-    } else if (window.ActiveXObject) { // IE
-        try {
-            httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-        } catch (e) {
-            try {
-                httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {}
-        }
-    }
-    if (!httpRequest) {
-        alert('Не вышло :( Невозможно создать экземпляр класса XMLHTTP ');
-        return false;
-    }
-    httpRequest.onreadystatechange = function() { alertContents(httpRequest); };
-    httpRequest.open('GET', url, true);
-    httpRequest.send("");
-    
-  }
-  function alertContents(httpRequest) {
-    console.log(httpRequest.responseText);
-  }*/
-
-
 
   function Graph(){
     this.nodes = [];
@@ -90,7 +55,6 @@ $(document).ready(function(){
 
     this.createFromJson = (json_node)=>{
       this.name = json_node.name;
-      console.log(json_node);
       this.text.innerHTML = this.name;
       switch(json_node.color){
         case "#F5A9A9":
@@ -603,9 +567,13 @@ $(document).ready(function(){
     this.getColor = ()=>{
       return this.color;
     }
+    
+    this.calculateDegree = ()=>{
+      this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
+    }
 
     this.showDegreeOfNode = function(coordXOfNode, coordYOfNode, radius){
-      this.degreeOfNode.innerHTML = this.edgesIn.length + this.edgesOut.length;
+      this.calculateDegree();
       this.degreeOfNode.setAttributeNS(
         null,
         "style",
@@ -619,6 +587,7 @@ $(document).ready(function(){
       }
 
     this.showDegreeOfNode(coordX, coordY, this.radius);
+
       
     this.showInformation = function(){
       this.information.innerHTML = "in: " + this.edgesIn.length + "<br/>"
@@ -657,8 +626,8 @@ $(document).ready(function(){
     this.firstNode = node;
     this.isArc = false;
     this.secondNode;
-    this.bisieX = 0;
-    this.bisieY = 0;
+    this.besieX = 0;
+    this.besieY = 0;
     this.triangle = document.createElementNS(ns ,"path");
     this.color = "#F2F5A9";
     this.triangle.setAttributeNS(null, 'fill', this.color);
@@ -667,6 +636,15 @@ $(document).ready(function(){
     this.changeEdge = true;
     this.triangle.setAttributeNS(null, "stroke-width", "2");
     this.coords;
+
+    this.createFromJson = (data)=>{
+      this.coords = data.coords;
+      this.triangle.setAttributeNS(null, "d", this.coords);
+      this.setColor(data.color);
+      this.besieX = data.besieX;
+      this.besieY = data.besieY;
+      this.isArc = true;
+    }
 
     this.setColor = (color, biggerColor)=>{
       this.triangle.setAttributeNS(
@@ -717,8 +695,8 @@ $(document).ready(function(){
       if(mouseDown){
         this.changeEdge = true;
         this.isArc = true;
-        this.bisieX = e.clientX;
-        this.bisieY = e.clientY;
+        this.besieX = e.clientX;
+        this.besieY = e.clientY;
         this.setPosition(
           this.firstNode.coordX,
           this.firstNode.coordY,
@@ -765,8 +743,8 @@ $(document).ready(function(){
           "Z");
           this.triangle.setAttributeNS(null, "d", this.coords);
         }else{
-          var tgOfNearAngle = (beginY - this.bisieY) /
-            (beginX - this.bisieX);
+          var tgOfNearAngle = (beginY - this.besieY) /
+            (beginX - this.besieX);
           var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
           var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
           var yDelta = xDelta*tgOfAngle;
@@ -774,13 +752,13 @@ $(document).ready(function(){
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
           "Q" + " " +
-          this.bisieX + " " +
-          this.bisieY + " " +
+          this.besieX + " " +
+          this.besieY + " " +
           endX + " " +
           endY + " " +
           "Q" + " " +
-          this.bisieX + " " +
-          this.bisieY + " " +
+          this.besieX + " " +
+          this.besieY + " " +
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
@@ -795,8 +773,8 @@ $(document).ready(function(){
     this.firstNode = node;
     this.isArc = false;
     this.secondNode;
-    this.bisieX = 0;
-    this.bisieY = 0;
+    this.besieX = 0;
+    this.besieY = 0;
     this.color = "#F2F5A9"
     this.triangle = document.createElementNS(ns ,"path");
     this.triangle.setAttributeNS(null, 'fill', this.color);
@@ -806,6 +784,15 @@ $(document).ready(function(){
     this.triangle.setAttributeNS(null, "stroke-width", "2");
     this.coords;
     
+    this.createFromJson = (data)=>{
+      this.coords = data.coords;
+      this.triangle.setAttributeNS(null, "d", this.coords);
+      this.setColor(data.color);
+      this.besieX = data.besieX;
+      this.besieY = data.besieY;
+      this.isArc = true;
+    }
+
     this.setColor = (color, biggerColor)=>{
       this.triangle.setAttributeNS(
         null, "fill", color
@@ -860,8 +847,8 @@ $(document).ready(function(){
       if(mouseDown){
         this.changeEdge = true;
         this.isArc = true;
-        this.bisieX = e.clientX;
-        this.bisieY = e.clientY;
+        this.besieX = e.clientX;
+        this.besieY = e.clientY;
         this.setPosition(
           this.firstNode.coordX,
           this.firstNode.coordY,
@@ -912,8 +899,8 @@ $(document).ready(function(){
           "Z");
           this.triangle.setAttributeNS(null, "d", this.coords);
         }else{
-          var tgOfNearAngle = (beginY - this.bisieY) /
-            (beginX - this.bisieX);
+          var tgOfNearAngle = (beginY - this.besieY) /
+            (beginX - this.besieX);
           var tgOfAngle = Math.tan(Math.PI/2 - Math.atan(tgOfNearAngle));
           var xDelta = (r-5) / Math.sqrt(tgOfAngle*tgOfAngle + 1);
           var yDelta = xDelta*tgOfAngle;
@@ -921,16 +908,16 @@ $(document).ready(function(){
           (Number(beginX) + xDelta) + " " +
           (Number(beginY) - yDelta) + " " +
           "Q" + " " +
-          this.bisieX + " " +
-          this.bisieY + " " +
+          this.besieX + " " +
+          this.besieY + " " +
           (Number(endX) + 5) + " " +
           (Number(endY) - 5) + " " +
           "L" + " " +
           (Number(endX) - 5) + " " +
           (Number(endY) + 5) + " " +
           "Q" + " " +
-          (this.bisieX) + " " +
-          (this.bisieY) + " " +
+          (this.besieX) + " " +
+          (this.besieY) + " " +
           (Number(beginX) - xDelta) + " " +
           (Number(beginY) + yDelta) + " " +
           "Z");
@@ -1227,7 +1214,7 @@ $(document).ready(function(){
 
   }
   
-  function sendDraph(data){
+  function sendGraph(data){
 
   }
 
@@ -1238,7 +1225,48 @@ $(document).ready(function(){
     data.nodes.forEach(dataNode=>{
       var node = new Node(dataNode.x, dataNode.y);
       node.createFromJson(dataNode);
+      graph.nodes.push(node);
     });
+    data.edges.forEach(dataEdge=>{
+      var edge;
+      if(data.oriented){
+        graph.nodes.forEach(firstNode=>{
+          if(firstNode.name == dataEdge.firstNode){
+            edge = new Edge(firstNode);
+            edge.changeEdge = false;
+            firstNode.edgesOut.push(edge);
+            graph.nodes.forEach(secondNode=>{
+              if(secondNode.name == dataEdge.secondNode){
+                edge.secondNode = secondNode;
+                secondNode.edgesIn.push(edge);
+              }
+              firstNode.calculateDegree();
+              secondNode.calculateDegree();
+            });
+          }
+          
+        });
+      }else{
+        graph.nodes.forEach(firstNode=>{
+          if(firstNode.name == dataEdge.firstNode){
+            edge = new Arc(firstNode);
+            edge.changeEdge = false;
+            firstNode.edgesOut.push(edge);
+            graph.nodes.forEach(secondNode=>{
+              if(secondNode.name == dataEdge.secondNode){
+                edge.secondNode = secondNode;
+                secondNode.edgesIn.push(edge);
+              }
+              firstNode.calculateDegree();
+              secondNode.calculateDegree();
+            });
+          }
+        });
+      }
+      edge.createFromJson(dataEdge);
+      graph.edges.push(edge);
+    });
+
   }
 
 
@@ -1257,12 +1285,15 @@ $(document).ready(function(){
         y: node.coordY,
       });
     });
+    console.log(currentGrah.edges[0].besieX)
     currentGrah.edges.forEach(edge=>{
       this.obj.edges.push({
         firstNode: edge.firstNode.name,
         secondNode: edge.secondNode.name,
         color: edge.color,
         coords: edge.coords,
+        besieX: edge.besieX,
+        besieY: edge.besieY,
       });
     });
     console.log(obj);
