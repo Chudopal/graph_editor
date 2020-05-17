@@ -12,22 +12,21 @@ $(document).ready(function(){
   var showIsTree = document.getElementById("isTree");
   var choseCircle = new ChoseCircle();
   var graphsInformation = document.getElementById("layer");
-  var graph = new Graph();
+  var graph;
   var buffer;
+  var menuOfGraphs = [];
+  
+  
+  $.ajax({
+    url: "/edit-graph/GET_LIST_OF_GRAPHS/",
+    success: function(data){
+      console.log( "Прибыли данные: " + data.names);
+      createMenu(data.names)
+    }
+  });
+
 
   $("#save").on("click", function(){
-    /*$.ajax({
-      //type: "POST",
-      url: "/edit-graph/API_FOR_GETTING_GRAPH/",
-      data: {
-        "a":"A",
-        "b":"B"// from form
-      },
-      success: function(data){
-        console.log( "Прибыли данные: " + data.name.first_name.name);
-      }
-    });
-    createGraphs(buffer);*/
     save();
   })
 
@@ -42,6 +41,7 @@ $(document).ready(function(){
   function NameOfGraph(text){
     this.text = document.createElement('div');
     graphsInformation.append(this.text);
+    this.id;
 
     this.text.setAttributeNS(null, "class", "record");
     this.text.innerHTML = text;
@@ -49,7 +49,7 @@ $(document).ready(function(){
 
 
     this.text.addEventListener("click", (e)=>{
-      console.log(this.text.textContent);
+      console.log(this.id);
     });
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -1188,7 +1188,7 @@ $(document).ready(function(){
   }
 
   function clear(){
-    buffer = graphToJson(graph);
+    //buffer = graphToJson(graph);
     showNumbOfedges.innerHTML = 0;
     showNumbOfVertexes.innerHTML = 0;
     graph.nodes.forEach(node =>{
@@ -1210,13 +1210,14 @@ $(document).ready(function(){
   }
 
   function save(){
+    console.log("MMMMMMMMMMMMMMMMMMMMMMM");
     json_data = graphToJson(graph);
     $.ajax({
       url: "/edit-graph/SAVE_GRAPH/",
       data: {
-        "name": graph.name.text.textContent,
-        "graph": json_data,   
-        "id": graph.id,
+        name: graph.name.text.textContent,
+        id: graph.id,
+        graph: json_data,
       },
       success: function(data){
         console.log( "Прибыли данные: " + data);
@@ -1224,6 +1225,26 @@ $(document).ready(function(){
       }
     });
 
+  }
+
+  function createMenu(names){
+    names.forEach(name=>{
+      var nameOfGraph = new NameOfGraph(name.name);
+      nameOfGraph.id = name.id;
+      menuOfGraphs.push(nameOfGraph);
+    })
+  }
+
+  function createNewGraph(oriented){
+    graph = new Graph();
+    graph.oriented = oriented;
+    $.ajax({
+      url: "/edit-graph/NEW_GRAPH/",
+      success: function(data){
+        graph.id = data;
+        graph.name.id = data;
+      }
+    });
   }
 
   function getCurrentGraph(){
@@ -1312,7 +1333,6 @@ $(document).ready(function(){
         isArc: edge.isArc,
       });
     });
-    console.log(obj);
     return this.obj;
   }
   
@@ -1326,17 +1346,6 @@ $(document).ready(function(){
     createNewGraph(true);
   });
 
-  function createNewGraph(oriented){
-    graph = new Graph();
-    graph.oriented = oriented;
-    $.ajax({
-      url: "/edit-graph/NEW_GRAPH/",
-      success: function(data){
-        graph.id = data;
-        console.log(graph.id);
-      }
-    });
-  }
 
   draw.addEventListener("dblclick", (e)=>{
     if(isCreating){

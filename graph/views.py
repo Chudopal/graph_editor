@@ -14,30 +14,13 @@ def canvas_view(request):
     return render(request, "graph/background.xhtml")
 
 
-def save_graph(request):
-    """Function for saving graph
-
-    This function allows to save 
-    graph into server.
-    """
-    structure = request.GET.dict()
-    print(structure["id"])
-    graph = Graph.objects.get(id=int(structure["id"]))
-    graph.name = structure["name"]
-    with open(graph.path_to_graph, 'w') as f:
-        json.dump(structure, f)
-        f.close() 
-    graph.save()
-    return HttpResponse()
-
-
 def new_graph(request):
     """Function for creating new graph
 
     This function allows to ceating a new record
     in the database.
     """
-    graph = Graph()
+    graph = Graph(name="new graph")
     graph.save()
     path_to_graph = "graph/graphs/graph" + str(graph.id) + ".json" 
     to_json = {}
@@ -47,6 +30,25 @@ def new_graph(request):
     graph.path_to_graph = path_to_graph
     graph.save()
     return HttpResponse(graph.id)
+
+
+def save_graph(request):
+    """Function for saving graph
+
+    This function allows to save 
+    graph into server.
+    """
+    print(request)
+    structure = request.GET.dict()
+    print("IT IS ID", structure)
+    graph = Graph.objects.get(id=int(structure["id"]))
+    graph.name = structure["name"]
+    with open(graph.path_to_graph, 'w') as f:
+        json.dump(structure, f)
+        f.close() 
+    print(graph.name)
+    graph.save()
+    return HttpResponse()
 
 
 def get_graph(request):
@@ -63,7 +65,19 @@ def get_list_of_graphs(request):
 
     This function return list of graphs, which is in server.
     """
-    pass
+    graphs = list(Graph.objects.values())
+    names = []
+    for graph in graphs:
+        data_graph ={
+            "name": graph["name"],
+            "id": graph["id"],
+        }
+        names.append(data_graph)
+    print(names)
+    data ={
+        "names": names
+    }
+    return JsonResponse(data)
 
 
 def is_tree(request):
