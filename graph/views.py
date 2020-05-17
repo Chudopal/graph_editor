@@ -25,7 +25,7 @@ def new_graph(request):
     path_to_graph = "graph/graphs/graph" + str(graph.id) + ".json" 
     to_json = {}
     with open(path_to_graph, 'w') as f:
-        json.dump(to_json, f)
+        f.write(json.dumps(to_json))
         f.close()
     graph.path_to_graph = path_to_graph
     graph.save()
@@ -38,9 +38,8 @@ def save_graph(request):
     This function allows to save 
     graph into server.
     """
-    print(request)
     structure = request.GET.dict()
-    print("IT IS ID", structure)
+    print('THIS IS STRUCTURE', structure)
     graph = Graph.objects.get(id=int(structure["id"]))
     graph.name = structure["name"]
     with open(graph.path_to_graph, 'w') as f:
@@ -57,7 +56,14 @@ def get_graph(request):
     This function allows to get the 
     current graph from server.
     """
-    pass
+    id_of_graph = request.GET.dict()["id"]
+    graph = Graph.objects.get(id=int(id_of_graph))
+    path_to_graph = graph.path_to_graph
+    data = {}
+    with open(graph.path_to_graph) as file:
+        data = json.load(file)
+    print(data["graph"])
+    return JsonResponse(data)
 
 
 def get_list_of_graphs(request):

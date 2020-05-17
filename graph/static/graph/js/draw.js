@@ -20,7 +20,7 @@ $(document).ready(function(){
   $.ajax({
     url: "/edit-graph/GET_LIST_OF_GRAPHS/",
     success: function(data){
-      console.log( "Прибыли данные: " + data.names);
+      //console.log( "Прибыли данные: " + data.names);
       createMenu(data.names)
     }
   });
@@ -30,18 +30,19 @@ $(document).ready(function(){
     save();
   })
 
-  function Graph(){
+  function Graph(name){
     this.nodes = [];
     this.edges = [];
     this.oriented = false;
-    this.name = new NameOfGraph("new graph");
+    this.name = new NameOfGraph(name, this);
     this.id;
   }
 
-  function NameOfGraph(text){
+  function NameOfGraph(text, currentGraph){
     this.text = document.createElement('div');
     graphsInformation.append(this.text);
     this.id;
+    this.graph = currentGraph;
 
     this.text.setAttributeNS(null, "class", "record");
     this.text.innerHTML = text;
@@ -49,7 +50,8 @@ $(document).ready(function(){
 
 
     this.text.addEventListener("click", (e)=>{
-      console.log(this.id);
+      clear()
+      getCurrentGraph(this);
     });
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -429,7 +431,7 @@ $(document).ready(function(){
     this.setListeners();
 
     this.setFigure = ()=>{
-      console.log(this.radius);
+      //console.log(this.radius);
       if(this.isBall){
         this.nameOfFigure = "ball";
         this.figure.remove();
@@ -516,7 +518,6 @@ $(document).ready(function(){
         )
       }
     }
-
     
     this.changeColor = function(){
       if(this.isBall){
@@ -1188,7 +1189,6 @@ $(document).ready(function(){
   }
 
   function clear(){
-    //buffer = graphToJson(graph);
     showNumbOfedges.innerHTML = 0;
     showNumbOfVertexes.innerHTML = 0;
     graph.nodes.forEach(node =>{
@@ -1210,18 +1210,16 @@ $(document).ready(function(){
   }
 
   function save(){
-    console.log("MMMMMMMMMMMMMMMMMMMMMMM");
     json_data = graphToJson(graph);
     $.ajax({
       url: "/edit-graph/SAVE_GRAPH/",
       data: {
         name: graph.name.text.textContent,
-        id: graph.id,
-        graph: json_data,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
       },
       success: function(data){
         console.log( "Прибыли данные: " + data);
-        console.log(typeof(data));
       }
     });
 
@@ -1229,9 +1227,9 @@ $(document).ready(function(){
 
   function createMenu(names){
     names.forEach(name=>{
-      var nameOfGraph = new NameOfGraph(name.name);
-      nameOfGraph.id = name.id;
-      menuOfGraphs.push(nameOfGraph);
+      graph = new Graph(name.name);
+      graph.name.id = name.id;
+      menuOfGraphs.push(graph.name);
     })
   }
 
@@ -1247,17 +1245,28 @@ $(document).ready(function(){
     });
   }
 
-  function getCurrentGraph(){
-
+  function getCurrentGraph(name){
+    $.ajax({
+      url: "/edit-graph/GET_GRAPH/",
+      data: {
+        id: name.id
+      },
+      success: function(data){
+        //console.log( "Прибыли данные: " + (JSON.parse(data.graph)));
+        createGraphs(JSON.parse(data.graph), name.graph);
+      }
+    });
   }
   
   function sendGraph(data){
 
   }
 
-  function createGraphs(data){
-    graph = new Graph();
-    console.log(data.oriented);
+  function createGraphs(data, currentGraph){
+    graph = currentGraph;
+    console.log(currentGraph.nodes.length);
+    graph.id = currentGraph.id;
+    graph.name = currentGraph.name;
     graph.oriented = data.oriented;
     data.nodes.forEach(dataNode=>{
       var node = new Node(dataNode.x, dataNode.y);
@@ -1302,18 +1311,21 @@ $(document).ready(function(){
       }
       edge.createFromJson(dataEdge);
       graph.edges.push(edge);
+      
     });
-
+    showNumbOfVertexes.innerHTML = graph.nodes.length;
+    showNumbOfedges.innerHTML = graph.edges.length;
+    
   }
 
 
-  function graphToJson(currentGrah){
+  function graphToJson(currentGraph){
     this.obj = {
       nodes: [],
       edges: [],
-      oriented: currentGrah.oriented,
+      oriented: currentGraph.oriented,
     } 
-    currentGrah.nodes.forEach(node=>{
+    currentGraph.nodes.forEach(node=>{
       this.obj.nodes.push({
         name: node.text.textContent,
         color: node.color,
@@ -1322,7 +1334,7 @@ $(document).ready(function(){
         y: node.coordY,
       });
     });
-    currentGrah.edges.forEach(edge=>{
+    currentGraph.edges.forEach(edge=>{
       this.obj.edges.push({
         firstNode: edge.firstNode.text.textContent,
         secondNode: edge.secondNode.text.textContent,
