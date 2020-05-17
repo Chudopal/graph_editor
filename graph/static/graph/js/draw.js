@@ -444,6 +444,7 @@ $(document).ready(function(){
         this.setListeners();
       }
       if(this.isCircle){
+        this.radius = 20;
         this.nameOfFigure = "circle";
         this.figure.remove();
         this.figure = document.createElementNS(ns, 'circle');
