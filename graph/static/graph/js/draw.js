@@ -52,6 +52,7 @@ $(document).ready(function(){
     this.text.addEventListener("click", (e)=>{
       clear()
       getCurrentGraph(this);
+      is_tree();
     });
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -1223,7 +1224,21 @@ $(document).ready(function(){
         console.log( "Прибыли данные: " + data);
       }
     });
+  }
 
+  function is_tree(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/IS_TREE/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        console.log( "Прибыли данные: " + data);
+      }
+    });
   }
 
   function createMenu(names){

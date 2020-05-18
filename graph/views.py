@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from graph.models import Graph
 from django.http import JsonResponse
+from . import convertation as cn
 import json
+
 # Create your views here.
 
 def canvas_view(request):
@@ -93,6 +95,8 @@ def is_tree(request):
     "1" -- it is a tree,
     "0" -- it is not a tree.
     """
+    graph = request.GET.dict()
+    cn.to_matrix(graph["graph"])
     pass
 
 
