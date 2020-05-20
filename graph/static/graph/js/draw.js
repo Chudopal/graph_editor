@@ -28,6 +28,7 @@ $(document).ready(function(){
 
   $("#save").on("click", function(){
     save();
+    is_tree();
   })
 
   function Graph(name){
@@ -52,7 +53,7 @@ $(document).ready(function(){
     this.text.addEventListener("click", (e)=>{
       clear()
       getCurrentGraph(this);
-      is_tree();
+      
     });
 
     this.text.addEventListener("mouseover", (e)=>{

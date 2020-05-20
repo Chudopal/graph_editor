@@ -18,7 +18,7 @@ def to_matrix(graph):
 
         ]
     }
-    print(graph)
+    print("HERE IS NAME OF VERTEX", len(graph["nodes"]))
     #return graph_view
 
 

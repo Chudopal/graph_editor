@@ -41,13 +41,11 @@ def save_graph(request):
     graph into server.
     """
     structure = request.GET.dict()
-    print('THIS IS STRUCTURE', structure)
     graph = Graph.objects.get(id=int(structure["id"]))
     graph.name = structure["name"]
     with open(graph.path_to_graph, 'w') as f:
         json.dump(structure, f)
         f.close() 
-    print(graph.name)
     graph.save()
     return HttpResponse()
 
@@ -64,7 +62,6 @@ def get_graph(request):
     data = {}
     with open(graph.path_to_graph) as file:
         data = json.load(file)
-    print(data["graph"])
     return JsonResponse(data)
 
 
@@ -81,7 +78,6 @@ def get_list_of_graphs(request):
             "id": graph["id"],
         }
         names.append(data_graph)
-    print(names)
     data ={
         "names": names
     }
@@ -96,7 +92,8 @@ def is_tree(request):
     "0" -- it is not a tree.
     """
     graph = request.GET.dict()
-    cn.to_matrix(graph["graph"])
+    print(graph)
+    cn.to_matrix(json.loads(graph["graph"]))
     pass
 
 
