@@ -20,7 +20,6 @@ $(document).ready(function(){
   $.ajax({
     url: "/edit-graph/GET_LIST_OF_GRAPHS/",
     success: function(data){
-      //console.log( "Прибыли данные: " + data.names);
       createMenu(data.names)
     }
   });
@@ -28,7 +27,6 @@ $(document).ready(function(){
 
   $("#save").on("click", function(){
     save();
-    is_tree();
   })
 
   function Graph(name){
@@ -53,7 +51,7 @@ $(document).ready(function(){
     this.text.addEventListener("click", (e)=>{
       clear()
       getCurrentGraph(this);
-      
+      is_tree();
     });
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -304,6 +302,7 @@ $(document).ready(function(){
           graph.nodes.splice(graph.nodes.indexOf(this), graph.nodes.indexOf(this));
           delete this;
           return false;
+          is_tree();
       };
       this.figure.addEventListener("mousedown", (e)=>{
         if(!rightButton){
@@ -408,6 +407,7 @@ $(document).ready(function(){
             graph.edges[graph.edges.length - 1].changeEdge = false;
             mouseMove = true;
             showNumbOfedges.innerHTML = graph.edges.length;
+            is_tree();
           }
         }else{
           this.coordX = e.clientX - 50;
@@ -647,6 +647,7 @@ $(document).ready(function(){
         "background-color: #424242;"
       );  
     }
+    is_tree();
   }
 
   function Edge(node){
@@ -746,6 +747,7 @@ $(document).ready(function(){
         graph.edges.splice(graph.edges.indexOf(this),graph.edges.indexOf(this));
         delete this;
         return false;
+        is_tree();
     };
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
@@ -899,6 +901,7 @@ $(document).ready(function(){
         graph.edges.splice(graph.edges.indexOf(this),graph.edges.indexOf(this));
         delete this;
         return false;
+        is_tree();
     };
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
@@ -1229,6 +1232,7 @@ $(document).ready(function(){
 
   function is_tree(){
     json_data = graphToJson(graph);
+    console.log(json_data)
     $.ajax({
       url: "/edit-graph/IS_TREE/",
       data: {
@@ -1237,7 +1241,12 @@ $(document).ready(function(){
         graph: JSON.stringify(json_data),
       },
       success: function(data){
-        console.log( "Прибыли данные: " + data);
+        if(Number (data.result)){
+          document.getElementById("is_tree").innerHTML = "yes";
+        }
+        else{
+          document.getElementById("is_tree").innerHTML = "no";
+        }
       }
     });
   }

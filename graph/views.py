@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from graph.models import Graph
 from django.http import JsonResponse
 from . import convertation as cn
+import networkx as nx
+import numpy as np
 import json
 
 # Create your views here.
@@ -91,10 +93,15 @@ def is_tree(request):
     "1" -- it is a tree,
     "0" -- it is not a tree.
     """
-    graph = request.GET.dict()
-    print(graph)
-    cn.to_matrix(json.loads(graph["graph"]))
-    pass
+    graph_data = request.GET.dict()
+    matrix = np.matrix(cn.to_matrix(json.loads(graph_data["graph"])))
+    
+    graph = nx.from_numpy_matrix(matrix,create_using=nx.MultiDiGraph())
+    print(int(nx.is_tree(graph)))
+    data ={
+        "result": int(nx.is_tree(graph))
+    }
+    return JsonResponse(data)
 
 
 def make_tree(request):
