@@ -51,7 +51,7 @@ $(document).ready(function(){
     this.text.addEventListener("click", (e)=>{
       clear()
       getCurrentGraph(this);
-      is_tree();
+      
     });
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -286,23 +286,26 @@ $(document).ready(function(){
       this.figure.oncontextmenu = (e)=>  {
           rightButton = true;
           this.edgesIn.forEach(element=>{
-              element.triangle.remove();
-              graph.edges.splice(graph.edges.indexOf(element),graph.edges.indexOf(element));
-              delete element;
+              element.delete();
           });
+          if(this.edgesIn.length){
+            this.edgesIn[0].delete()
+          }
           this.edgesOut.forEach(element=>{
-              element.triangle.remove();
-              graph.edges.splice(graph.edges.indexOf(element), graph.edges.indexOf(element));
-              delete element;
+              element.delete();
           });
+          if(this.edgesOut.length){
+            this.edgesOut[0].delete();
+          }
+          console.log(this.edgesOut);
           this.degreeOfNode.remove();
           this.text.remove();
           this.information.remove();
           this.figure.remove();
-          graph.nodes.splice(graph.nodes.indexOf(this), graph.nodes.indexOf(this));
+          graph.nodes.splice(graph.nodes.indexOf(this), 1);
           delete this;
-          return false;
           is_tree();
+          return false;
       };
       this.figure.addEventListener("mousedown", (e)=>{
         if(!rightButton){
@@ -743,12 +746,21 @@ $(document).ready(function(){
       }
     });
     this.triangle.oncontextmenu = (e)=>  {
-        this.triangle.remove();
-        graph.edges.splice(graph.edges.indexOf(this),graph.edges.indexOf(this));
-        delete this;
-        return false;
-        is_tree();
+      this.delete();
+      return false;
     };
+
+    this.delete = ()=>{
+      this.triangle.remove();
+      graph.edges.splice(graph.edges.indexOf(this),1);
+      this.firstNode.edgesOut.splice(this.firstNode.edgesOut.indexOf(this),1);
+      this.firstNode.calculateDegree();
+      this.secondNode.edgesIn.splice(this.secondNode.edgesIn.indexOf(this),1);
+      this.secondNode.calculateDegree();
+      delete this;
+      is_tree();
+    }
+
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
         var tgOfNearAngle = (beginY - endY) /
@@ -897,12 +909,21 @@ $(document).ready(function(){
     });
 
     this.triangle.oncontextmenu = (e)=>  {
-        this.triangle.remove();
-        graph.edges.splice(graph.edges.indexOf(this),graph.edges.indexOf(this));
-        delete this;
+        this.delete()
         return false;
-        is_tree();
     };
+
+    this.delete = ()=>{
+      this.triangle.remove();
+        this.firstNode.edgesOut.splice(this.firstNode.edgesOut.indexOf(this),1);
+        this.firstNode.calculateDegree();
+        this.secondNode.edgesIn.splice(this.secondNode.edgesIn.indexOf(this),1);
+        this.secondNode.calculateDegree();
+        graph.edges.splice(graph.edges.indexOf(this),1);
+        delete this;
+        is_tree();
+    }
+
     this.setPosition = function(beginX, beginY, endX, endY, r){
       if(this.changeEdge){
         var tgOfNearAngle = (beginY - endY) /
