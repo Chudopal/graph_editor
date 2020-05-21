@@ -347,6 +347,7 @@ $(document).ready(function(){
           delete this;
           is_tree();
           diameter();
+          radius();
           return false;
       };
       this.figure.addEventListener("mousedown", (e)=>{
@@ -454,6 +455,7 @@ $(document).ready(function(){
             showNumbOfedges.innerHTML = graph.edges.length;
             is_tree();
             diameter();
+            radius();
           }
         }else{
           this.coordX = e.clientX - 50;
@@ -695,6 +697,7 @@ $(document).ready(function(){
     }
     is_tree();
     diameter();
+    radius();
   }
 
   function Edge(node){
@@ -804,6 +807,7 @@ $(document).ready(function(){
       delete this;
       is_tree();
       diameter();
+      radius();
     }
 
     this.setPosition = function(beginX, beginY, endX, endY, r){
@@ -968,6 +972,7 @@ $(document).ready(function(){
         delete this;
         is_tree();
         diameter();
+        radius();
     }
 
     this.setPosition = function(beginX, beginY, endX, endY, r){
@@ -1331,6 +1336,7 @@ $(document).ready(function(){
         createGraphs(data, graph);
         is_tree();
         diameter();
+        radius();
       }
     });
   }
@@ -1350,6 +1356,7 @@ $(document).ready(function(){
         createGraphs(data, graph);
         is_tree();
         diameter();
+        radius();
       }
     });
   }
@@ -1367,7 +1374,8 @@ $(document).ready(function(){
         clear()
         createGraphs(data, graph);
         is_tree();
-        diameter()
+        diameter();
+        radius();
       }
     });
   }
@@ -1398,9 +1406,8 @@ $(document).ready(function(){
         graph: JSON.stringify(json_data),
       },
       success: function(data){
-        clear()
-        createGraphs(data, graph);
-        is_tree()
+          console.log(data.result)
+          document.getElementById("radius").innerHTML = data.result;     
       }
     });
   }
@@ -1514,6 +1521,7 @@ $(document).ready(function(){
     showNumbOfedges.innerHTML = graph.edges.length;
     is_tree();
     diameter();
+    radius();
   }
 
 

@@ -177,6 +177,18 @@ def find_radius(request):
     This function is getting a graph and returns 
     his radius or "0".
     """
+    raw_data = request.GET.dict()
+    print("RAW DATA",raw_data)
+    graph_data = json.loads(raw_data["graph"])
+    matrix = np.matrix(cn.to_matrix(graph_data))
+    print("HEREEEE", matrix)
+    graph = nx.from_numpy_matrix(matrix)
+    graph = create_graph(matrix, graph_data)
+    data = {
+        "result": nx.radius(graph.to_undirected())
+    }
+    return JsonResponse(data)
+
     pass
 
 
