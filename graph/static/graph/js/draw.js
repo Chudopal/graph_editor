@@ -29,9 +29,14 @@ $(document).ready(function(){
   })
 
   $("#make_tree").on("click", function(){
-    console.log("HERE");
     make_tree();
   })
+
+
+  $("#make_binary_tree").on("click", function(){
+    make_binary_tree();
+  })
+
 
   function Graph(name){
     this.nodes = [];
@@ -1304,6 +1309,25 @@ $(document).ready(function(){
       }
     });
   }
+
+
+  function make_binary_tree(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/MAKE_BINARY_TREE/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree()
+      }
+    });
+  }
+
 
   function createMenu(names){
     names.forEach(name=>{

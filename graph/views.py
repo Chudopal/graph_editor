@@ -120,9 +120,7 @@ def make_tree(request):
     raw_data = request.GET.dict()
     graph_data = json.loads(raw_data["graph"])
     graph = nx.random_tree(len(graph_data["nodes"]))
-    print(nx.to_numpy_matrix(graph))
     data = cn.to_json(nx.to_numpy_matrix(graph).tolist(), graph_data)
-    print("HEREEEE", data)
     return JsonResponse(data)
 
 
@@ -132,7 +130,12 @@ def make_binary_tree(request):
     This function is getting a graph,
     and returns a binary tree or "0".
     """
-    pass
+    raw_data = request.GET.dict()
+    graph_data = json.loads(raw_data["graph"])
+    matrix = cn.make_binary_tree(len(graph_data["nodes"]))
+    print(matrix)
+    data = cn.to_json(matrix, graph_data)
+    return JsonResponse(data)
 
 
 def find_hamilton_cycle(request):
