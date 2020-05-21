@@ -159,10 +159,8 @@ def find_diameter(request):
     his diameter or "0".
     """
     raw_data = request.GET.dict()
-    print("RAW DATA",raw_data)
     graph_data = json.loads(raw_data["graph"])
     matrix = np.matrix(cn.to_matrix(graph_data))
-    print("HEREEEE", matrix)
     graph = nx.from_numpy_matrix(matrix)
     graph = create_graph(matrix, graph_data)
     data = {
@@ -178,10 +176,8 @@ def find_radius(request):
     his radius or "0".
     """
     raw_data = request.GET.dict()
-    print("RAW DATA",raw_data)
     graph_data = json.loads(raw_data["graph"])
     matrix = np.matrix(cn.to_matrix(graph_data))
-    print("HEREEEE", matrix)
     graph = nx.from_numpy_matrix(matrix)
     graph = create_graph(matrix, graph_data)
     data = {
@@ -189,16 +185,24 @@ def find_radius(request):
     }
     return JsonResponse(data)
 
-    pass
 
-
-def find_centre():
+def find_centre(request):
     """Function for find a centre of a graph
 
     This function is getting a graph and returns 
     his centre or "0".
     """
-    pass
+    raw_data = request.GET.dict()
+    graph_data = json.loads(raw_data["graph"])
+    matrix = np.matrix(cn.to_matrix(graph_data))
+    graph = nx.from_numpy_matrix(matrix)
+    graph = create_graph(matrix, graph_data)
+    list_center = nx.center(graph.to_undirected())
+    print(list_center)
+    matrix = cn.make_matrix_from_list(list_center)
+    data = cn.to_json(matrix, graph_data)
+    print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",data)
+    return JsonResponse(data)
 
 
 def vector_product():

@@ -19,7 +19,7 @@ urlpatterns = [
     path('FIND_HAMILTON_CYCLE/', views.find_hamilton_cycle),
     path('FIND_DIAMETER/', views.find_diameter),
     path('FIND_RADIUS/', views.find_radius),
-    path('FIND_CENTRE', views.find_centre),
-    path('VECTOR_PRODUCT', views.vector_product),
-    path('CARTESIAN_PRODUCT', views.cartesian_product),
+    path('FIND_CENTRE/', views.find_centre),
+    path('VECTOR_PRODUCT/', views.vector_product),
+    path('CARTESIAN_PRODUCT/', views.cartesian_product),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)

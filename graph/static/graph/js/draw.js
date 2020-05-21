@@ -40,10 +40,6 @@ $(document).ready(function(){
     hamiltonian_cycle();
   })
 
-  $("#radius").on("click", function(){
-    radius();
-  })
-
   $("#centre").on("click", function(){
     centre();
   })
@@ -1424,7 +1420,9 @@ $(document).ready(function(){
       success: function(data){
         clear()
         createGraphs(data, graph);
-        is_tree()
+        is_tree();
+        diameter();
+        radius();
       }
     });
   }
