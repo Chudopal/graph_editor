@@ -1299,8 +1299,8 @@ $(document).ready(function(){
       },
       success: function(data){
         clear()
-        graph = new Graph("now");
         createGraphs(data, graph);
+        is_tree()
       }
     });
   }

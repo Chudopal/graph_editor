@@ -31,51 +31,32 @@ def to_json(matrix, graph_data):
     if len(matrix) != len(graph_data["nodes"]):
         print("a")
     else:
-        if graph_data["oriented"]:
-            for node_numb in range(0, len(matrix)):
-                for edge_numb in range(0, len(matrix[node_numb])):
-                    if matrix[node_numb][edge_numb]:
-                        first_node = graph_data["nodes"][node_numb]
-                        second_node = graph_data["nodes"][edge_numb]
-                        edge_exists = False
-                        for edge in graph_data["edges"]:
-                            if (edge["firstNode"] == first_node["name"] and
-                                edge["secondNode"] == second_node["name"]):
-                                edge_exists = True
-                        if not edge_exists:
+        for node_numb in range(0, len(matrix)):
+            for edge_numb in range(0, len(matrix[node_numb])):
+                if matrix[node_numb][edge_numb]:
+                    first_node = graph_data["nodes"][node_numb]
+                    second_node = graph_data["nodes"][edge_numb]
+                    edge_exists = False
+                    for edge in graph_data["edges"]:
+                        if (edge["firstNode"] == first_node["name"] and
+                            edge["secondNode"] == second_node["name"]):
+                            edge_exists = True
+                    if not edge_exists:
+                        if graph_data["oriented"]:
                             edge = create_dir_edge(first_node, second_node)
                             graph_data["edges"].append(edge)
-                    else:
-                        first_node = graph_data["nodes"][node_numb]
-                        second_node = graph_data["nodes"][edge_numb]
-                        for edge in graph_data["edges"]:
-                            if (edge["firstNode"] == first_node["name"] and
-                                edge["secondNode"] == second_node["name"]):
-                                edge_numb = graph_data["edges"].index(edge)
-                                del graph_data["edges"][edge_numb]
-            graph_data = make_dir(graph_data)
-        else:
-            for node_numb in range(0, len(matrix)):
-                for edge_numb in range(0, len(matrix[node_numb])):
-                    if matrix[node_numb][edge_numb]:
-                        first_node = graph_data["nodes"][node_numb]
-                        second_node = graph_data["nodes"][edge_numb]
-                        edge_exists = False
-                        for edge in graph_data["edges"]:
-                            if (edge["firstNode"] == first_node["name"] and
-                                edge["secondNode"] == second_node["name"]):
-                                edge_exists = True
-                        if not edge_exists:
+                        else:
                             edge = create_undir_edge(first_node, second_node)
                             graph_data["edges"].append(edge)
-                    else:
-                        first_node = graph_data["nodes"][node_numb]
-                        second_node = graph_data["nodes"][edge_numb]
-                        for edge in graph_data["edges"]:
-                            if (edge["firstNode"] == first_node["name"] and
-                                edge["secondNode"] == second_node["name"]):
-                                edge_numb = graph_data["edges"].index(edge)
-                                del graph_data["edges"][edge_numb]
+                else:
+                    first_node = graph_data["nodes"][node_numb]
+                    second_node = graph_data["nodes"][edge_numb]
+                    for edge in graph_data["edges"]:
+                        if (edge["firstNode"] == first_node["name"] and
+                            edge["secondNode"] == second_node["name"]):
+                            edge_numb = graph_data["edges"].index(edge)
+                            del graph_data["edges"][edge_numb]
+    graph_data = make_dir(graph_data)
     return graph_data
 
 
