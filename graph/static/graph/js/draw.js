@@ -24,16 +24,23 @@ $(document).ready(function(){
     }
   });
 
-
   $("#save").on("click", function(){
     save();
+  })
+
+  $("#make_tree").on("click", function(){
+    console.log("HERE");
+    make_tree();
   })
 
   function Graph(name){
     this.nodes = [];
     this.edges = [];
     this.oriented = false;
-    this.name = new NameOfGraph(name, this);
+    this.name;
+    this.createName = ()=>{
+      this.name = new NameOfGraph(name, this);
+    }
     this.id;
   }
 
@@ -42,7 +49,7 @@ $(document).ready(function(){
     graphsInformation.append(this.text);
     this.id;
     this.graph = currentGraph;
-
+    this.is_select = false;
     this.text.setAttributeNS(null, "class", "record");
     this.text.innerHTML = text;
     this.text.setAttributeNS(null, "contenteditable", "true");
@@ -51,14 +58,24 @@ $(document).ready(function(){
     this.text.addEventListener("click", (e)=>{
       clear()
       getCurrentGraph(this);
-      
+      menuOfGraphs.forEach(element=>{
+        element.text.setAttributeNS(null, "class", "record");
+        element.is_select = false;
+      });
+      this.text.setAttributeNS(null, "class", "selected_record");
+      this.is_select = true
     });
 
+
     this.text.addEventListener("mouseover", (e)=>{
-      this.text.setAttributeNS(null, "class", "active_record");
+      if(!this.is_select){
+        this.text.setAttributeNS(null, "class", "active_record");
+      }
     });
     this.text.addEventListener("mouseout", (e)=>{
-      this.text.setAttributeNS(null, "class", "record");
+      if(!this.is_select){
+        this.text.setAttributeNS(null, "class", "record");
+      }
     });
   }
 
@@ -1253,7 +1270,6 @@ $(document).ready(function(){
 
   function is_tree(){
     json_data = graphToJson(graph);
-    console.log(json_data)
     $.ajax({
       url: "/edit-graph/IS_TREE/",
       data: {
@@ -1272,9 +1288,27 @@ $(document).ready(function(){
     });
   }
 
+  function make_tree(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/MAKE_TREE/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        graph = new Graph("now");
+        createGraphs(data, graph);
+      }
+    });
+  }
+
   function createMenu(names){
     names.forEach(name=>{
       graph = new Graph(name.name);
+      graph.createName();
       graph.name.id = name.id;
       menuOfGraphs.push(graph.name);
     })
@@ -1282,6 +1316,7 @@ $(document).ready(function(){
 
   function createNewGraph(oriented){
     graph = new Graph();
+    graph.createName();
     graph.oriented = oriented;
     $.ajax({
       url: "/edit-graph/NEW_GRAPH/",
@@ -1311,7 +1346,6 @@ $(document).ready(function(){
 
   function createGraphs(data, currentGraph){
     graph = currentGraph;
-    console.log(currentGraph.nodes.length);
     graph.id = currentGraph.id;
     graph.name = currentGraph.name;
     graph.oriented = data.oriented;
@@ -1362,7 +1396,7 @@ $(document).ready(function(){
     });
     showNumbOfVertexes.innerHTML = graph.nodes.length;
     showNumbOfedges.innerHTML = graph.edges.length;
-    
+    is_tree();
   }
 
 

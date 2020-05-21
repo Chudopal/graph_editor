@@ -86,6 +86,14 @@ def get_list_of_graphs(request):
     return JsonResponse(data)
 
 
+def create_graph(matrix, graph_data):
+    if graph_data["oriented"]:
+        graph = nx.from_numpy_matrix(matrix,create_using=nx.MultiDiGraph())
+    else: 
+        graph = nx.from_numpy_matrix(matrix)
+    return graph
+
+
 def is_tree(request):
     """Function for determination is graph tree or no
 
@@ -93,12 +101,11 @@ def is_tree(request):
     "1" -- it is a tree,
     "0" -- it is not a tree.
     """
-    graph_data = request.GET.dict()
-    matrix = np.matrix(cn.to_matrix(json.loads(graph_data["graph"])))
-    
-    graph = nx.from_numpy_matrix(matrix,create_using=nx.MultiDiGraph())
-    print(int(nx.is_tree(graph)))
-    data ={
+    raw_data = request.GET.dict()
+    graph_data = json.loads(raw_data["graph"])
+    matrix = np.matrix(cn.to_matrix(graph_data))
+    graph = create_graph(matrix, graph_data)
+    data = {
         "result": int(nx.is_tree(graph))
     }
     return JsonResponse(data)
@@ -110,7 +117,13 @@ def make_tree(request):
     This function is getting a graph,
     and returns a tree or "0".
     """
-    pass
+    raw_data = request.GET.dict()
+    graph_data = json.loads(raw_data["graph"])
+    graph = nx.random_tree(len(graph_data["nodes"]))
+    print(nx.to_numpy_matrix(graph))
+    data = cn.to_json(nx.to_numpy_matrix(graph).tolist(), graph_data)
+    print("HEREEEE", data)
+    return JsonResponse(data)
 
 
 def make_binary_tree(request):
