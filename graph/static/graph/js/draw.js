@@ -40,10 +40,6 @@ $(document).ready(function(){
     hamiltonian_cycle();
   })
 
-  $("#diameter").on("click", function(){
-    diameter();
-  })
-
   $("#radius").on("click", function(){
     radius();
   })
@@ -74,6 +70,7 @@ $(document).ready(function(){
   function NameOfGraph(text, currentGraph){
     this.text = document.createElement('div');
     graphsInformation.append(this.text);
+    menuOfGraphs.push(this);
     this.id;
     this.graph = currentGraph;
     this.is_select = false;
@@ -349,6 +346,7 @@ $(document).ready(function(){
           graph.nodes.splice(graph.nodes.indexOf(this), 1);
           delete this;
           is_tree();
+          diameter();
           return false;
       };
       this.figure.addEventListener("mousedown", (e)=>{
@@ -455,6 +453,7 @@ $(document).ready(function(){
             mouseMove = true;
             showNumbOfedges.innerHTML = graph.edges.length;
             is_tree();
+            diameter();
           }
         }else{
           this.coordX = e.clientX - 50;
@@ -695,6 +694,7 @@ $(document).ready(function(){
       );  
     }
     is_tree();
+    diameter();
   }
 
   function Edge(node){
@@ -803,6 +803,7 @@ $(document).ready(function(){
       this.secondNode.calculateDegree();
       delete this;
       is_tree();
+      diameter();
     }
 
     this.setPosition = function(beginX, beginY, endX, endY, r){
@@ -966,6 +967,7 @@ $(document).ready(function(){
         graph.edges.splice(graph.edges.indexOf(this),1);
         delete this;
         is_tree();
+        diameter();
     }
 
     this.setPosition = function(beginX, beginY, endX, endY, r){
@@ -1327,7 +1329,8 @@ $(document).ready(function(){
       success: function(data){
         clear()
         createGraphs(data, graph);
-        is_tree()
+        is_tree();
+        diameter();
       }
     });
   }
@@ -1345,7 +1348,8 @@ $(document).ready(function(){
       success: function(data){
         clear()
         createGraphs(data, graph);
-        is_tree()
+        is_tree();
+        diameter();
       }
     });
   }
@@ -1362,7 +1366,8 @@ $(document).ready(function(){
       success: function(data){
         clear()
         createGraphs(data, graph);
-        is_tree()
+        is_tree();
+        diameter()
       }
     });
   }
@@ -1377,30 +1382,11 @@ $(document).ready(function(){
         graph: JSON.stringify(json_data),
       },
       success: function(data){
-        clear()
-        createGraphs(data, graph);
-        is_tree()
+          console.log(data.result)
+          document.getElementById("diameter").innerHTML = "<br/>" + data.result;     
       }
     });
   }
-
-  function diameter(){
-    json_data = graphToJson(graph);
-    $.ajax({
-      url: "/edit-graph/FIND_DIAMETER/",
-      data: {
-        name: graph.name.text.textContent,
-        id: graph.name.id,
-        graph: JSON.stringify(json_data),
-      },
-      success: function(data){
-        clear()
-        createGraphs(data, graph);
-        is_tree()
-      }
-    });
-  }
-
 
   function radius(){
     json_data = graphToJson(graph);
@@ -1465,7 +1451,6 @@ $(document).ready(function(){
         id: name.id
       },
       success: function(data){
-        //console.log( "Прибыли данные: " + (JSON.parse(data.graph)));
         createGraphs(JSON.parse(data.graph), name.graph);
       }
     });
@@ -1528,6 +1513,7 @@ $(document).ready(function(){
     showNumbOfVertexes.innerHTML = graph.nodes.length;
     showNumbOfedges.innerHTML = graph.edges.length;
     is_tree();
+    diameter();
   }
 
 

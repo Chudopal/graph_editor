@@ -172,9 +172,7 @@ def hamilton(G):
             confs.append((conf_g,conf_p))
         for g,p in confs:
             if len(p)==n:
-                make_matrix_from_list(p)
-                print(p)
-                return p
+                return make_matrix_from_list(p)
             else:
                 F.append((g,p))
     return None
@@ -193,5 +191,4 @@ def make_matrix_from_list(list_of_nodes):
             matrix[list_of_nodes[node]][list_of_nodes[node+1]] = 1
         else:
             matrix[list_of_nodes[node]][0] = 1
-    print(matrix)
-    pass
+    return matrix

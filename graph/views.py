@@ -148,9 +148,8 @@ def find_hamilton_cycle(request):
     matrix = cn.make_binary_tree(len(graph_data["nodes"]))
     matrix = np.matrix(cn.to_matrix(graph_data))
     graph = create_graph(matrix, graph_data)
-    cn.make_binary_tree(cn.hamilton(graph))
-    #print(nx.algorithms.tournament.hamiltonian_path(graph))
-    pass
+    data = cn.to_json(cn.hamilton(graph), graph_data)
+    return JsonResponse(data)
 
 
 def find_diameter(request):
@@ -159,7 +158,17 @@ def find_diameter(request):
     This function is getting a graph and returns 
     his diameter or "0".
     """
-    pass
+    raw_data = request.GET.dict()
+    print("RAW DATA",raw_data)
+    graph_data = json.loads(raw_data["graph"])
+    matrix = np.matrix(cn.to_matrix(graph_data))
+    print("HEREEEE", matrix)
+    graph = nx.from_numpy_matrix(matrix)
+    graph = create_graph(matrix, graph_data)
+    data = {
+        "result": nx.diameter(graph.to_undirected())
+    }
+    return JsonResponse(data)
 
 
 def find_radius(request):
