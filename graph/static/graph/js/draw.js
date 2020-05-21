@@ -32,11 +32,33 @@ $(document).ready(function(){
     make_tree();
   })
 
-
   $("#make_binary_tree").on("click", function(){
     make_binary_tree();
   })
 
+  $("#hamiltonian_cycle").on("click", function(){
+    hamiltonian_cycle();
+  })
+
+  $("#diameter").on("click", function(){
+    diameter();
+  })
+
+  $("#radius").on("click", function(){
+    radius();
+  })
+
+  $("#centre").on("click", function(){
+    centre();
+  })
+
+  $("#vector_product").on("click", function(){
+    make_binary_tree();
+  })
+
+  $("#cartesian_product").on("click", function(){
+    make_binary_tree();
+  })
 
   function Graph(name){
     this.nodes = [];
@@ -1328,6 +1350,91 @@ $(document).ready(function(){
     });
   }
 
+  function hamiltonian_cycle(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/FIND_HAMILTON_CYCLE/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree()
+      }
+    });
+  }
+
+  function diameter(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/FIND_DIAMETER/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree()
+      }
+    });
+  }
+
+  function diameter(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/FIND_DIAMETER/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree()
+      }
+    });
+  }
+
+
+  function radius(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/FIND_RADIUS/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree()
+      }
+    });
+  }
+
+  function centre(){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/FIND_CENTRE/",
+      data: {
+        name: graph.name.text.textContent,
+        id: graph.name.id,
+        graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree()
+      }
+    });
+  }
 
   function createMenu(names){
     names.forEach(name=>{
