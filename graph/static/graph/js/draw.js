@@ -65,7 +65,7 @@ $(document).ready(function(){
     this.edges = [];
     this.oriented = false;
     this.name;
-    this.createName = ()=>{
+    this.createName = (name)=>{
       this.name = new NameOfGraph(name, this);
     }
     this.id;
@@ -1438,8 +1438,8 @@ $(document).ready(function(){
 
   function createMenu(names){
     names.forEach(name=>{
-      graph = new Graph(name.name);
-      graph.createName();
+      graph = new Graph();
+      graph.createName(name.name);
       graph.name.id = name.id;
       menuOfGraphs.push(graph.name);
     })
@@ -1447,8 +1447,8 @@ $(document).ready(function(){
 
   function createNewGraph(oriented){
     graph = new Graph();
-    graph.createName();
     graph.oriented = oriented;
+    graph.createName();
     $.ajax({
       url: "/edit-graph/NEW_GRAPH/",
       success: function(data){

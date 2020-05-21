@@ -133,7 +133,6 @@ def make_binary_tree(request):
     raw_data = request.GET.dict()
     graph_data = json.loads(raw_data["graph"])
     matrix = cn.make_binary_tree(len(graph_data["nodes"]))
-    print(matrix)
     data = cn.to_json(matrix, graph_data)
     return JsonResponse(data)
 
@@ -144,6 +143,13 @@ def find_hamilton_cycle(request):
     This function is getting a graph and returns 
     his Hamelton cycle or "0".
     """
+    raw_data = request.GET.dict()
+    graph_data = json.loads(raw_data["graph"])
+    matrix = cn.make_binary_tree(len(graph_data["nodes"]))
+    matrix = np.matrix(cn.to_matrix(graph_data))
+    graph = create_graph(matrix, graph_data)
+    cn.make_binary_tree(cn.hamilton(graph))
+    #print(nx.algorithms.tournament.hamiltonian_path(graph))
     pass
 
 

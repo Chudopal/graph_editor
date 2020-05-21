@@ -1,4 +1,5 @@
 import math
+import networkx as nx
 
 
 def to_matrix(graph):
@@ -58,6 +59,8 @@ def to_json(matrix, graph_data):
                         del graph_data["edges"][edge_numb]
     graph_data = make_dir(graph_data)
     return graph_data
+
+
 
 
 def create_dir_edge(first_node, second_node):
@@ -152,5 +155,43 @@ def make_binary_tree(numb_of_nodes):
         matrix[node_numb][node_numb*2+1] = 1
         if (node_numb*2+1) != (len(matrix)-1) :
             matrix[node_numb][node_numb*2+2] = 1
-    print(matrix)
     return matrix
+
+
+def hamilton(G):
+    F = [(G,[list(G.nodes())[0]])]
+    n = G.number_of_nodes()
+    while F:
+        graph,path = F.pop()
+        confs = []
+        for node in graph.neighbors(path[-1]):
+            conf_p = path[:]
+            conf_p.append(node)
+            conf_g = nx.Graph(graph)
+            conf_g.remove_node(path[-1])
+            confs.append((conf_g,conf_p))
+        for g,p in confs:
+            if len(p)==n:
+                make_matrix_from_list(p)
+                print(p)
+                return p
+            else:
+                F.append((g,p))
+    return None
+
+
+def make_matrix_from_list(list_of_nodes):
+    numb_of_nodes = len(list_of_nodes)
+    matrix = [[0] * numb_of_nodes for i in range(0, numb_of_nodes)]
+    '''for number in range(0, len(matrix)):
+        if(number < len(list_of_nodes) - 1):
+            matrix[number][list_of_nodes[number+1]] = 1
+        else:
+            matrix[number][list_of_nodes[0]] = 1'''
+    for node in range(0, len(list_of_nodes)):
+        if node < len(matrix) - 1:
+            matrix[list_of_nodes[node]][list_of_nodes[node+1]] = 1
+        else:
+            matrix[list_of_nodes[node]][0] = 1
+    print(matrix)
+    pass
