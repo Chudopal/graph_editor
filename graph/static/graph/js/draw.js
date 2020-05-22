@@ -1418,11 +1418,7 @@ $(document).ready(function(){
         graph: JSON.stringify(json_data),
       },
       success: function(data){
-        clear()
-        createGraphs(data, graph);
-        is_tree();
-        diameter();
-        radius();
+        make_centre(data.centre);
       }
     });
   }
@@ -1461,8 +1457,10 @@ $(document).ready(function(){
     });
   }
   
-  function sendGraph(data){
-
+  function make_centre(list_centre){
+    list_centre.forEach(node_numb=>{
+      graph.nodes[node_numb].makeBigger();
+    });
   }
 
   function createGraphs(data, currentGraph){

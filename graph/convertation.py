@@ -181,14 +181,9 @@ def hamilton(G):
 def make_matrix_from_list(list_of_nodes):
     numb_of_nodes = len(list_of_nodes)
     matrix = [[0] * numb_of_nodes for i in range(0, numb_of_nodes)]
-    '''for number in range(0, len(matrix)):
-        if(number < len(list_of_nodes) - 1):
-            matrix[number][list_of_nodes[number+1]] = 1
-        else:
-            matrix[number][list_of_nodes[0]] = 1'''
     for node in range(0, len(list_of_nodes)):
         if node < len(matrix) - 1:
             matrix[list_of_nodes[node]][list_of_nodes[node+1]] = 1
         else:
-            matrix[list_of_nodes[node]][0] = 1
+            matrix[list_of_nodes[node]][0] = 1  
     return matrix

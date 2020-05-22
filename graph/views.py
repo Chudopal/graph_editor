@@ -198,10 +198,9 @@ def find_centre(request):
     graph = nx.from_numpy_matrix(matrix)
     graph = create_graph(matrix, graph_data)
     list_center = nx.center(graph.to_undirected())
-    print(list_center)
-    matrix = cn.make_matrix_from_list(list_center)
-    data = cn.to_json(matrix, graph_data)
-    print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",data)
+    data = {
+        "centre": list_center
+    }
     return JsonResponse(data)
 
 
