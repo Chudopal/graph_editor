@@ -204,7 +204,7 @@ def find_centre(request):
     return JsonResponse(data)
 
 
-def vector_product():
+def vector_product(request):
     """Funstion for calculating a vector product of 2 graphs
 
     This function is getting 2 graphs and return their vector
@@ -213,7 +213,7 @@ def vector_product():
     pass
 
 
-def cartesian_product():
+def cartesian_product(request):
     """Funstion for calculating a cartesian product of 2 graphs
 
     This function is getting 2 graphs and return their cartesian

@@ -17,6 +17,8 @@ $(document).ready(function(){
   var menuOfGraphs = [];
   var select = document.getElementById("select");
   var graph_is_select = false;
+  var is_vector_prod = false;
+  var is_cartes_prod = false;
 
   
   $.ajax({
@@ -47,11 +49,11 @@ $(document).ready(function(){
   })
 
   $("#vector_product").on("click", function(){
-    make_binary_tree();
+    is_vector_prod = true;
   })
 
   $("#cartesian_product").on("click", function(){
-    make_binary_tree();
+    cartes_product();
   })
 
   function Graph(name){
@@ -78,7 +80,15 @@ $(document).ready(function(){
 
 
     this.text.addEventListener("click", (e)=>{
-      this.go_to_cur_graph();
+      if(is_vector_prod){
+        is_vector_prod = false;
+        vector_product(this.id);
+        
+      }else if(is_cartes_prod){
+
+      }else{
+        this.go_to_cur_graph();
+      }
     });
 
 
@@ -1424,6 +1434,20 @@ $(document).ready(function(){
         name: graph.name.text.textContent,
         id: graph.name.id,
         graph: JSON.stringify(json_data),
+      },
+      success: function(data){
+        make_centre(data.centre);
+      }
+    });
+  }
+
+  function vector_product(id){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/VECTOR_PRODUCT/",
+      data: {
+        first_graph: JSON.stringify(json_data_first),
+        second_graph: id
       },
       success: function(data){
         make_centre(data.centre);
