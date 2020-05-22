@@ -182,3 +182,12 @@
     background-color: #eebebe;
     border: 2px solid #4b4b4b;
 }
+
+#select{
+    position: fixed;
+    top: 350px;
+    left: 100px;
+    color: #fffae1;
+    font-size: 70px;
+    font-family: "Courier New", Courier, monospace; 
+}

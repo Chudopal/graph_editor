@@ -15,7 +15,9 @@ $(document).ready(function(){
   var graph;
   var buffer;
   var menuOfGraphs = [];
-  
+  var select = document.getElementById("select");
+  var graph_is_select = false;
+
   
   $.ajax({
     url: "/edit-graph/GET_LIST_OF_GRAPHS/",
@@ -76,6 +78,12 @@ $(document).ready(function(){
 
 
     this.text.addEventListener("click", (e)=>{
+      this.go_to_cur_graph();
+    });
+
+
+    this.go_to_cur_graph = () => {
+      select_graph()
       clear()
       getCurrentGraph(this);
       menuOfGraphs.forEach(element=>{
@@ -84,7 +92,7 @@ $(document).ready(function(){
       });
       this.text.setAttributeNS(null, "class", "selected_record");
       this.is_select = true
-    });
+    }
 
 
     this.text.addEventListener("mouseover", (e)=>{
@@ -1553,16 +1561,24 @@ $(document).ready(function(){
   unorientedButton.addEventListener("click", clear);
   unorientedButton.addEventListener("click", (e)=>{
     createNewGraph(false);
+    graph.name.go_to_cur_graph();
+    select_graph()
   });
 
   orientedButton.addEventListener("click", clear);
   orientedButton.addEventListener("click", (e)=>{
     createNewGraph(true);
+    graph.name.go_to_cur_graph();
+    select_graph()
   });
 
+  function select_graph(){
+    select.remove()
+    graph_is_select = true;
+  }
 
   draw.addEventListener("dblclick", (e)=>{
-    if(isCreating){
+    if(isCreating && graph_is_select){
       var node = new Node(e.clientX -50, e.clientY-1);
       graph.nodes.push(node);
       showNumbOfVertexes.innerHTML = graph.nodes.length;
