@@ -414,7 +414,7 @@ $(document).ready(function(){
                 this.coordY,
                 element.secondNode.coordX,
                 element.secondNode.coordY,
-                this.radius
+                10
               );
               element.changeEdge = false;
             });
@@ -425,7 +425,7 @@ $(document).ready(function(){
                 element.firstNode.coordY,
                 this.coordX,
                 this.coordY,
-                element.firstNode.radius
+                10
               );
               element.changeEdge = false;
             });
@@ -1470,7 +1470,7 @@ $(document).ready(function(){
     $.ajax({
       url: "/edit-graph/CARTESIAN_PRODUCT/",
       data: {
-        first_graph: JSON.stringify(json_data_first),
+        first_graph: JSON.stringify(json_data),
         second_graph: id
       },
       success: function(data){

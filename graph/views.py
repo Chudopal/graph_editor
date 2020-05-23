@@ -89,10 +89,10 @@ def get_list_of_graphs(request):
 def create_graph(matrix, graph_data):
     if graph_data["oriented"]:
         graph = nx.from_numpy_matrix(matrix,create_using=nx.MultiDiGraph())
+        return graph.to_directed()
     else: 
         graph = nx.from_numpy_matrix(matrix)
-    return graph
-
+        return graph.to_undirected()
 
 def is_tree(request):
     """Function for determination is graph tree or no
@@ -145,7 +145,6 @@ def find_hamilton_cycle(request):
     """
     raw_data = request.GET.dict()
     graph_data = json.loads(raw_data["graph"])
-    matrix = cn.make_binary_tree(len(graph_data["nodes"]))
     matrix = np.matrix(cn.to_matrix(graph_data))
     graph = create_graph(matrix, graph_data)
     data = cn.to_json(cn.hamilton(graph), graph_data)
@@ -210,10 +209,20 @@ def vector_product(request):
     This function is getting 2 graphs and return their vector
     product
     """
-    print("HERE HERE HERE HERE HERE")
     raw_data = request.GET.dict()
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",raw_data)
-    pass
+    first_graph = raw_data["first_graph"]
+    sec_graph_data = Graph.objects.get(id=int(raw_data["second_graph"]))
+    with open(sec_graph_data.path_to_graph) as file:
+        second_graph = json.load(file)
+    second_graph = json.loads(second_graph["graph"])
+    first_graph = json.loads(first_graph)
+    first_matrix = np.matrix(cn.to_matrix(first_graph))
+    second_matrix = np.matrix(cn.to_matrix(second_graph))
+    first_graph_nx = create_graph(first_matrix, first_graph)
+    second_graph_nx = create_graph(second_matrix, second_graph)
+    product = nx.lexicographic_product(first_graph_nx, second_graph_nx)
+    data = cn.to_json(nx.to_numpy_matrix(product).tolist(), first_graph)
+    return JsonResponse(data)
 
 
 def cartesian_product(request):
@@ -222,12 +231,24 @@ def cartesian_product(request):
     This function is getting 2 graphs and return their cartesian
     product
     """
-    pass
+    raw_data = request.GET.dict()
+    first_graph = raw_data["first_graph"]
+    sec_graph_data = Graph.objects.get(id=int(raw_data["second_graph"]))
+    with open(sec_graph_data.path_to_graph) as file:
+        second_graph = json.load(file)
+    second_graph = json.loads(second_graph["graph"])
+    first_graph = json.loads(first_graph)
+    first_matrix = np.matrix(cn.to_matrix(first_graph))
+    second_matrix = np.matrix(cn.to_matrix(second_graph))
+    first_graph_nx = create_graph(first_matrix, first_graph)
+    second_graph_nx = create_graph(second_matrix, second_graph)
+    product = nx.cartesian_product(first_graph_nx, second_graph_nx)
+    data = cn.to_json(nx.to_numpy_matrix(product).tolist(), first_graph)
+    return JsonResponse(data)
 
 
 def del_graph(request):
     """This function allows to delete graph"""
     raw_data = request.GET.dict()
     Graph.objects.get(id=raw_data["id"]).delete()
-
     return HttpResponse()

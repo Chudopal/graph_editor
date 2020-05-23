@@ -1,5 +1,6 @@
 import math
 import networkx as nx
+import random
 
 
 def to_matrix(graph):
@@ -29,11 +30,20 @@ def to_json(matrix, graph_data):
     This function if getting the matrix and
     returns the json-view.
     """
-    if len(matrix) != len(graph_data["nodes"]):
-        print("a")
-    
+    if len(matrix) > len(graph_data["nodes"]):
+        for node_numb in range(len(graph_data["nodes"]), len(matrix)):
+            node = {
+                "name": "vertex" + str(node_numb),
+                "color": "#F5A9A9",
+                "figure": "ball",
+                'x':random.randint(100, 990),
+                'y':random.randint(50, 790)
+            }
+            graph_data["nodes"].append(node)
+    print("DDDDDDDAAAAAA",graph_data)
     for node_numb in range(0, len(matrix)):
         for edge_numb in range(0, len(matrix[node_numb])):
+            print(matrix[node_numb][edge_numb])
             if matrix[node_numb][edge_numb]:
                 first_node = graph_data["nodes"][node_numb]
                 second_node = graph_data["nodes"][edge_numb]
