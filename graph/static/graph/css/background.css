@@ -64,6 +64,19 @@
     border: 5px solid rgb(28, 42, 47);
 }
 
+.prod_record{
+    color:#eee5be ;
+    font-size: xx-large;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+    width: 620px;
+    position: relative;
+    left: 25;
+    top: 25; 
+    background-color: #ff57bf;
+    border: 5px solid rgb(28, 42, 47);
+}
+
 .text{
     text-align: center;
     color: rgb(255, 227, 227);

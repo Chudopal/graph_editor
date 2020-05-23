@@ -210,6 +210,9 @@ def vector_product(request):
     This function is getting 2 graphs and return their vector
     product
     """
+    print("HERE HERE HERE HERE HERE")
+    raw_data = request.GET.dict()
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",raw_data)
     pass
 
 
@@ -220,3 +223,11 @@ def cartesian_product(request):
     product
     """
     pass
+
+
+def del_graph(request):
+    """This function allows to delete graph"""
+    raw_data = request.GET.dict()
+    Graph.objects.get(id=raw_data["id"]).delete()
+
+    return HttpResponse()

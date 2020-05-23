@@ -22,4 +22,5 @@ urlpatterns = [
     path('FIND_CENTRE/', views.find_centre),
     path('VECTOR_PRODUCT/', views.vector_product),
     path('CARTESIAN_PRODUCT/', views.cartesian_product),
+    path('DELETE_GRAPH/', views.del_graph),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)

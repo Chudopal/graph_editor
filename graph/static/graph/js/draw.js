@@ -49,11 +49,12 @@ $(document).ready(function(){
   })
 
   $("#vector_product").on("click", function(){
+    console.log(graph.id)
     is_vector_prod = true;
   })
 
   $("#cartesian_product").on("click", function(){
-    cartes_product();
+    is_cartes_prod = true;
   })
 
   function Graph(name){
@@ -82,15 +83,20 @@ $(document).ready(function(){
     this.text.addEventListener("click", (e)=>{
       if(is_vector_prod){
         is_vector_prod = false;
+        console.log(this.id);
         vector_product(this.id);
-        
       }else if(is_cartes_prod){
-
+        is_cartes_prod = false;
+        cartes_product(this.id);
       }else{
         this.go_to_cur_graph();
       }
     });
 
+    this.text.oncontextmenu = (e)=>{
+      delete_graph(this);
+      return false;
+    }
 
     this.go_to_cur_graph = () => {
       select_graph()
@@ -103,11 +109,13 @@ $(document).ready(function(){
       this.text.setAttributeNS(null, "class", "selected_record");
       this.is_select = true
     }
-
-
     this.text.addEventListener("mouseover", (e)=>{
       if(!this.is_select){
-        this.text.setAttributeNS(null, "class", "active_record");
+        if(is_cartes_prod || is_vector_prod){
+          this.text.setAttributeNS(null, "class", "prod_record");
+        }else{
+          this.text.setAttributeNS(null, "class", "active_record");
+        }
       }
     });
     this.text.addEventListener("mouseout", (e)=>{
@@ -116,7 +124,6 @@ $(document).ready(function(){
       }
     });
   }
-
 
   function Node(coordX, coordY){
     this.coordX = coordX;
@@ -1420,7 +1427,6 @@ $(document).ready(function(){
         graph: JSON.stringify(json_data),
       },
       success: function(data){
-          console.log(data.result)
           document.getElementById("radius").innerHTML = data.result;     
       }
     });
@@ -1446,14 +1452,53 @@ $(document).ready(function(){
     $.ajax({
       url: "/edit-graph/VECTOR_PRODUCT/",
       data: {
+        first_graph: JSON.stringify(json_data),
+        second_graph: id
+      },
+      success: function(data){
+        clear()
+        createGraphs(data, graph);
+        is_tree();
+        diameter();
+        radius();
+      }
+    });
+  }
+
+  function cartes_product(id){
+    json_data = graphToJson(graph);
+    $.ajax({
+      url: "/edit-graph/CARTESIAN_PRODUCT/",
+      data: {
         first_graph: JSON.stringify(json_data_first),
         second_graph: id
       },
       success: function(data){
-        make_centre(data.centre);
+        clear()
+        createGraphs(data, graph);
+        is_tree();
+        diameter();
+        radius();
       }
     });
   }
+
+  function delete_graph(name_of_graph){
+    $.ajax({
+      url: "/edit-graph/DELETE_GRAPH/",
+      data: {
+        id: name_of_graph.id
+      },
+      success: function(){
+        if (graph.id == name_of_graph.id){
+          console.log("HRERE");
+          clear()
+        }
+        name_of_graph.text.remove();
+      }
+    });
+  }
+
 
   function createMenu(names){
     names.forEach(name=>{
