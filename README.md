@@ -25,15 +25,15 @@ Graph editor is a program for creating and editing graph structures.
 
 2. Creating edge:
 
-    <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/create_edge.gif width=720 height=406>
+    <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/crate_edge.gif width=720 height=406>
 
 3. Change edge's position and form:
 
-    <img src=https:https://github.com/Chudopal/Graph_editor/blob/master/images/change_edge.gif width=720 height=406>
+    <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/change_edge.gif width=720 height=406>
 
 4. **Double click** on the elemen to change its form and color(node) or just its color(edge):
 
-    <img src=https://github.com/Chudopal/Graph_editor/blob/master/change_node.gif width=720 height=406>
+    <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/change_node.gif width=720 height=406>
 
 5. **Right click** to delete an object (edge, node, graph).
 
