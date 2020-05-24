@@ -2,20 +2,6 @@
 <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/intro.png width=720 height=406>
 Graph editor is a program for creating and editing graph structures.
 
-## Instalation(for linux)
-1. Clone this repo. Type in terminal:
-    ```git clone https://github.com/Chudopal/Graph_editor.git```
-
-2. Activate virtual environment. Go to the root directory and type in the terminal:
-    ```source ./env/bin/activate```
-
-3. Make migration. Type in the terminal:
-    1. ```python manage.py migrate```
-    2. ```python manage.py makemigrations```
-4. Run the application:
-    ```python manage.py runserver```
-
-5. Go to the localhost:8000
 
 ## Capabilities
 
