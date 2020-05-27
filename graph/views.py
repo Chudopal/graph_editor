@@ -9,6 +9,7 @@ import json
 
 # Create your views here.
 
+
 def canvas_view(request):
     """Function for main view
 
@@ -21,7 +22,7 @@ def canvas_view(request):
 def new_graph(request):
     """Function for creating new graph
 
-    This function allows to ceating a new record
+    This function allows to creating a new record
     in the database.
     """
     graph = Graph(name="new graph")
@@ -60,8 +61,6 @@ def get_graph(request):
     """
     id_of_graph = request.GET.dict()["id"]
     graph = Graph.objects.get(id=int(id_of_graph))
-    path_to_graph = graph.path_to_graph
-    data = {}
     with open(graph.path_to_graph) as file:
         data = json.load(file)
     return JsonResponse(data)
@@ -88,11 +87,12 @@ def get_list_of_graphs(request):
 
 def create_graph(matrix, graph_data):
     if graph_data["oriented"]:
-        graph = nx.from_numpy_matrix(matrix,create_using=nx.MultiDiGraph())
+        graph = nx.from_numpy_matrix(matrix, create_using=nx.MultiDiGraph())
         return graph.to_directed()
     else: 
         graph = nx.from_numpy_matrix(matrix)
         return graph.to_undirected()
+
 
 def is_tree(request):
     """Function for determination is graph tree or no
@@ -153,7 +153,7 @@ def find_hamilton_cycle(request):
 
 def find_diameter(request):
     """Function for find a diameter of a graph
-
+    
     This function is getting a graph and returns 
     his diameter or "0".
     """
@@ -204,7 +204,7 @@ def find_centre(request):
 
 
 def vector_product(request):
-    """Funstion for calculating a vector product of 2 graphs
+    """Function for calculating a vector product of 2 graphs
 
     This function is getting 2 graphs and return their vector
     product
@@ -226,7 +226,7 @@ def vector_product(request):
 
 
 def cartesian_product(request):
-    """Funstion for calculating a cartesian product of 2 graphs
+    """Function for calculating a cartesian product of 2 graphs
 
     This function is getting 2 graphs and return their cartesian
     product
