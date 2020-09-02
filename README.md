@@ -13,7 +13,7 @@ Graph editor is a program for creating and editing graph structures.
 
     <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/crate_node.gif width=720 height=406>
 
-3. Creating edge:
+3. Creating an edge:
 
     <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/crate_edge.gif width=720 height=406>
 
@@ -41,7 +41,7 @@ Graph editor is a program for creating and editing graph structures.
 
     <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/centre.gif width=720 height=406>
 
-10. Make tree ar binary tree.
+10. Make tree or binary tree.
 
     <img src=https://github.com/Chudopal/Graph_editor/blob/master/images/make_tree.gif width=720 height=406>
 
